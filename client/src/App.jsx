@@ -1,9 +1,12 @@
-export default function App() {
+import FrontNavbar from "./components/FrontNavbar";
+import AppRoutes from "./routes/AppRoutes";
+
+function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <h1 className="text-4xl font-bold text-green-400">
-        Tailwind Working ✅
-      </h1>
-    </div>
+    <>
+      <AppRoutes />
+    </>
   );
 }
+
+export default App;
