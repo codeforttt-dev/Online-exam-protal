@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const pool = require("../../config/db");
+const User = require("../../models/User");
 
 const signup = async (req, res) => {
   try {
@@ -9,22 +9,18 @@ const signup = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // check existing user
-    const [existing] = await pool.query(
-      "SELECT id FROM users WHERE email = ?",
-      [email]
-    );
-
-    if (existing.length > 0) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return res.status(400).json({ message: "Email already registered" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.query(
-      "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hashedPassword]
-    );
+    await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
     res.status(201).json({
       success: true,
