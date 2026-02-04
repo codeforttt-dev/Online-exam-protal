@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
+import logo from "../../assets/logo.jpeg";
 
 function FrontNavbar() {
   const [open, setOpen] = useState(false);
@@ -16,17 +17,17 @@ function FrontNavbar() {
 
       {/* Logo */}
       <NavLink to="/" className="flex items-center gap-3">
-        <div className="w-12 h-12 rounded-full 
-          bg-gradient-to-r from-red-500 via-pink-500 to-orange-400 
-          flex items-center justify-center shadow-lg">
-          <span className="text-white font-bold text-sm">TTT</span>
+        <div className=" ">
+          
         </div>
 
-        <h1 className="text-2xl font-bold 
-          bg-gradient-to-r from-red-500 to-pink-500 
-          bg-clip-text text-transparent">
-          THE TRUE TOPPER
-        </h1>
+       <div className="flex justify-right ml-2">
+                <img
+                  src={logo}
+                  alt="Logo"
+                  className="w-30 h-30 object-contain"
+                />
+              </div>
       </NavLink>
 
       {/* Desktop Links */}
