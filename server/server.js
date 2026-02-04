@@ -1,9 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-
 import connectDB from "./src/config/db.js";
 import userRoutes from "./src/routes/userRoutes.js";
+import examRoutes from "./src/routes/examRoutes.js";
+import registrationRoutes from "./src/routes/registrationRoutes.js";
+
+
 
 dotenv.config();
 
@@ -28,6 +31,9 @@ app.use(
 
 // routes
 app.use("/api/users", userRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/registrations", registrationRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("🚀 Server Running...");
