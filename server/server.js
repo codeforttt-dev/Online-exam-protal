@@ -1,44 +1,41 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 
-// Load env variables
+import connectDB from "./src/config/db.js";
+import userRoutes from "./src/routes/userRoutes.js";
+
 dotenv.config();
 
-// Import MongoDB connection
-const connectDB = require("./src/config/db");
+// connect database
+connectDB();
 
-// Import routes
-const router = require("./src/routes/router");
-
-// Initialize app
 const app = express();
 
-// Middleware
-app.use(cors());
 app.use(express.json());
 
-// Test route
+
+// ✅ CORS
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
+
+// routes
+app.use("/api/users", userRoutes);
+
 app.get("/", (req, res) => {
-  res.send("Online Exam Portal API running 🚀");
+  res.send("🚀 Server Running...");
 });
 
-// API routes
-app.use("/api", router);
 
-// Start server AFTER DB connection
 const PORT = process.env.PORT || 5000;
 
-const startServer = async () => {
-  try {
-    await connectDB(); // ✅ MongoDB Atlas connect
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error("❌ Failed to start server:", error.message);
-    process.exit(1);
-  }
-};
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
+});
