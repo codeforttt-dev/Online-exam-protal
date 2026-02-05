@@ -2,9 +2,10 @@
   "name": "online-exam-portal-server",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "Yuvraj",
@@ -16,6 +17,7 @@
     "dotenv": "^17.2.3",
     "express": "^4.22.1",
     "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.5",
     "mysql2": "^3.16.2"
   },
   "devDependencies": {

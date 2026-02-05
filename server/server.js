@@ -1,32 +1,47 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-// import databese & router
-const router = require("./src/routes/router"); 
-const pool = require("./src/config/db");       
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import connectDB from "./src/config/db.js";
+import userRoutes from "./src/routes/userRoutes.js";
+import examRoutes from "./src/routes/examRoutes.js";
+import registrationRoutes from "./src/routes/registrationRoutes.js";
+
+
 
 dotenv.config();
 
+// connect database
+connectDB();
+
 const app = express();
 
-app.use(cors());
 app.use(express.json());
 
+
+// ✅ CORS
+app.use(
+  cors({
+    origin: ["http://localhost:5173"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
+
+// routes
+app.use("/api/users", userRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/registrations", registrationRoutes);
+
+
 app.get("/", (req, res) => {
-  res.send("Online Exam Portal API running 🚀");
+  res.send("🚀 Server Running...");
 });
 
-app.use("/api", router);
-// Port Check
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, async () => {
-  console.log(`Server running on port ${PORT}`);
 
-  // ✅  DATABASE CHECK
-  try {
-    await pool.query("SELECT 1");
-    console.log("✅ Database Connected");
-  } catch (error) {
-    console.log("❌ Database Not Connected");
-  }
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });
