@@ -14,11 +14,6 @@ const performanceData = [
   { value: 30 }, { value: 28 }, { value: 45 }, { value: 40 }
 ];
 
-
-
-  
-     
-
 const Dashboard = () => {
 
  const [userName, setUserName] = useState("");
@@ -87,10 +82,10 @@ const Dashboard = () => {
                   <h3 className="text-left font-bold text-lg mb-4">Upcoming Tests</h3>
                   <div className="flex justify-center my-6">
                     <div className="relative">
-                      <div className="w-32 h-32 bg-yellow-400 opacity-20 rounded-full blur-2xl absolute"></div>
-                      <img src="https://cdn-icons-png.flaticon.com/512/2622/2622415.png" alt="flask" className="w-32 relative z-10" />
-                    </div>
-                  </div>
+  <div className="w-32 h-32 bg-yellow-400 opacity-20 rounded-full blur-2xl absolute"></div>
+<img src="https://cdn-icons-png.flaticon.com/512/2622/2622415.png" alt="flask" className="w-32 relative z-10" />
+     </div>
+                </div>
                   <h4 className="font-bold">Organic Chemistry <span className="text-gray-400 font-normal">( 50 marks )</span></h4>
                   <p className="text-xs text-gray-400 mt-1">Chapter 2 & 3 (MCQs)</p>
                   <p className="text-xs text-orange-400 font-bold mt-2 italic">Deadline : 2nd May 2021</p>

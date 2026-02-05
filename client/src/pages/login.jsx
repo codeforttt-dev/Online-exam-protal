@@ -1,45 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../features/authSlice";
 import logo from "../assets/logo.jpeg";
-import { NavLink } from "react-router-dom";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { isAuthenticated } = useSelector((state) => state.auth);
+
   const [showPassword, setShowPassword] = useState(false);
 
   const [loginData, setLoginData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   const handleChange = (e) => {
     setLoginData({
       ...loginData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleLogin = () => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-
-    if (!storedUser) {
-      alert("No user found. Please signup first.");
-      return;
-    }
-
-    if (
-      loginData.email === storedUser.email &&
-      loginData.password === storedUser.password
-    ) {
-      alert("Login Successful 🎉");
-
-      // Redirect to Home page
-      navigate("/dashboard");
-    } else {
-      alert("Invalid Email or Password");
-    }
+    dispatch(login(loginData));
   };
+
+  // Redirect after login
+  useEffect(() => {
+    if (isAuthenticated) {
+      alert("Login Successful 🎉");
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center 

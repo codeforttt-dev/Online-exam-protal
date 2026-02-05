@@ -56,11 +56,14 @@ const examCards = [
 
 const ServiceCard = ({ title, desc, icon1, icon2, bgColor }) => {
   return (
-    <div
-      className={`${bgColor} backdrop-blur-md border border-white-300 
-      rounded-[2.5rem] p-8 shadow-sm flex flex-col relative 
-      transition-transform hover:scale-[1.02] duration-300`}
-    >
+   <div
+  className={`${bgColor} backdrop-blur-md border border-gray-200
+  rounded-2xl p-4
+  shadow-sm flex flex-col relative
+  min-h-[90px]
+  transition-transform hover:scale-105 duration-300`}
+>
+
       {/* Top Icons */}
       <div className="flex justify-between items-start mb-8">
         <div className="flex gap-3">

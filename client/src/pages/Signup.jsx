@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpeg";
+import { signup } from "../features/authSlice";
 
 function Signup() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -39,9 +41,9 @@ function Signup() {
       alert("Passwords do not match");
       return;
     }
-
+dispatch(signup(formData));
     // Store data in localStorage
-    localStorage.setItem("user", JSON.stringify(formData));
+    // localStorage.setItem("user", JSON.stringify(formData));
 
 
     // Redirect to login
