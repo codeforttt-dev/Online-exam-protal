@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.jpeg";
-import { signup } from "../features/authSlice";
+import { registerUser } from "../features/authSlice";
+import { useDispatch, useSelector} from "react-redux";
 
 function Signup() {
   const navigate = useNavigate();
@@ -14,6 +15,8 @@ function Signup() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    username:" ",
+    phoneNo:" ",
     password: "",
     confirmPassword: ""
   });
@@ -30,18 +33,20 @@ function Signup() {
       !formData.name ||
       !formData.email ||
       !formData.password ||
-      !formData.Username ||
-      !formData.phoneNO ||
+     // !formData.Username ||
+     // !formData.phoneNO ||
       !formData.confirmPassword
     ) {
       
     }
 
+    /*
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
-dispatch(signup(formData));
+      */
+dispatch(registerUser(formData));
     // Store data in localStorage
     // localStorage.setItem("user", JSON.stringify(formData));
 
@@ -111,9 +116,9 @@ dispatch(signup(formData));
           <div className="flex items-center border-b border-amber-900 pb-2">
             <FaEnvelope className="text-amber-500 mr-3" />
             <input
-              type="email"
-              name="email"
-              placeholder="Email"
+              type="text"
+              name="username"
+              placeholder="User Name"
               onChange={handleChange}
               className="w-full bg-transparent outline-none placeholder-amber-900"
             />
@@ -123,14 +128,15 @@ dispatch(signup(formData));
           <div className="flex items-center border-b border-amber-900 pb-2">
             <FaEnvelope className="text-amber-500 mr-3" />
             <input
-              type="userName"
-              name="User Name"
-              placeholder=" User Name "
+              type="text"
+              name="email"
+              placeholder=" email "
               onChange={handleChange}
               className="w-full bg-transparent outline-none placeholder-amber-900"
             />
           </div>
         </div>
+        {/*}
           <div className="mb-8">
           <div className="flex items-center border-b border-amber-900 pb-2">
             <FaEnvelope className="text-amber-500 mr-3" />
@@ -143,6 +149,7 @@ dispatch(signup(formData));
             />
           </div>
         </div>
+        */}
 
         {/* Password */}
         <div className="mb-8">
@@ -168,7 +175,8 @@ dispatch(signup(formData));
           </div>
         </div>
 
-        {/* Confirm Password */}
+       { /* Confirm Password
+
         <div className="mb-8">
           <div className="flex items-center border-b border-amber-900 pb-2">
             <FaLock className="text-amber-500 mr-3" />
@@ -191,6 +199,7 @@ dispatch(signup(formData));
             </button>
           </div>
         </div>
+        */}
 
         {/* Remember */}
         <div className="flex items-center gap-2 mb-10 text-sm text-gray-600">

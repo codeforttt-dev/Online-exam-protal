@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate, NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../features/authSlice";
+import { loginUser } from "../features/authSlice";
 import logo from "../assets/logo.jpeg";
 
 function Login() {
@@ -13,9 +13,9 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
+  username: "",
+  password: "",
+});
 
   const handleChange = (e) => {
     setLoginData({
@@ -25,7 +25,8 @@ function Login() {
   };
 
   const handleLogin = () => {
-    dispatch(login(loginData));
+    dispatch(loginUser(loginData));
+
   };
 
   // Redirect after login
@@ -83,9 +84,9 @@ function Login() {
           <div className="flex items-center border-b border-yellow-400 pb-2">
             <FaEnvelope className="text-yellow-600 mr-3" />
             <input
-              type="email"
-              name="email"
-              placeholder="Username/Email"
+              type="text"
+              name="username"
+              placeholder="Username"
               onChange={handleChange}
               className="w-full bg-transparent outline-none placeholder-yellow-600"
             />
