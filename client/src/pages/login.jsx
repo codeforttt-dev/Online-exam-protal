@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../features/authSlice";
+import { loginUser } from "../redux/thunks/userThunk";
 import logo from "../assets/logo.jpeg";
 
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.auth);
+ const { user, token } = useSelector((state) => state.user);
+
 
   const [showPassword, setShowPassword] = useState(false);
 
   const [loginData, setLoginData] = useState({
-  username: "",
-  password: "",
-});
+    username: "",
+    password: "",
+  });
 
   const handleChange = (e) => {
     setLoginData({
@@ -24,134 +25,71 @@ function Login() {
     });
   };
 
-  const handleLogin = () => {
-    dispatch(loginUser(loginData));
-
+  const handleLogin = async (e) => {
+    e.preventDefault(); // ✅ stop refresh
+    await dispatch(loginUser(loginData));
   };
 
-  // Redirect after login
+  // redirect after success
   useEffect(() => {
-    if (isAuthenticated) {
-      alert("Login Successful 🎉");
+    if (token) {
       navigate("/dashboard");
     }
-  }, [isAuthenticated, navigate]);
+  }, [token, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center 
-      bg-gradient-to-bl from-[#fff7db] via-[#ffe9a8] to-[#ffd86b] 
-      relative overflow-hidden">
+      bg-gradient-to-bl from-[#fff7db] via-[#ffe9a8] to-[#ffd86b]">
 
-      {/* Right Side Curve Background */}
-      <div className="absolute top-0 right-0 w-full h-full pointer-events-none">
-        <svg
-          viewBox="0 0 1440 900"
-          className="absolute top-0 right-0 w-full h-full"
-          preserveAspectRatio="none"
-        >
-          <path
-            fill="#facc15"
-            fillOpacity="0.5"
-            d="M1440,0 
-               C1100,200 1200,400 950,500 
-               C700,600 800,800 500,900 
-               L1440,900 Z"
-          />
-        </svg>
-      </div>
+      <div className="relative z-10 w-[420px] px-10 py-12 border-2 border-yellow-500 rounded-2xl bg-[#fff8e1] shadow-xl">
 
-      {/* Login Card */}
-      <div className="relative z-10 w-[420px] px-10 py-12 
-        border-2 border-yellow-500 rounded-2xl 
-        bg-[#fff8e1] shadow-xl">
+        <div className="flex justify-right mb-5">
+          <img src={logo} alt="Logo" className="w-30 h-28 object-contain" />
+        </div>
 
-        {/* Logo */}
-         <div className="flex justify-right mb-5">
-                  <img
-                    src={logo}
-                    alt="Logo"
-                    className="w-30 h-28 object-contain"
-                  />
-                </div>
+        <h2 className="text-2xl font-bold text-center mb-10">LOGIN</h2>
 
-        {/* Title */}
-        <h2 className="text-2xl font-bold text-center text-black mb-10">
-          LOGIN
-        </h2>
+        <form onSubmit={handleLogin}>
 
-        {/* Email */}
-        <div className="mb-8">
-          <div className="flex items-center border-b border-yellow-400 pb-2">
-            <FaEnvelope className="text-yellow-600 mr-3" />
+          {/* Username */}
+          <div className="mb-8 flex items-center border-b border-yellow-400 pb-2">
+            <FaEnvelope className="mr-3" />
             <input
               type="text"
               name="username"
               placeholder="Username"
               onChange={handleChange}
-              className="w-full bg-transparent outline-none placeholder-yellow-600"
+              className="w-full bg-transparent outline-none"
             />
           </div>
-        </div>
 
-        {/* Password */}
-        <div className="mb-8">
-          <div className="flex items-center border-b border-yellow-400 pb-2">
-            <FaLock className="text-yellow-600 mr-3" />
+          {/* Password */}
+          <div className="mb-8 flex items-center border-b border-yellow-400 pb-2">
+            <FaLock className="mr-3" />
             <input
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
               onChange={handleChange}
-              className="w-full bg-transparent outline-none placeholder-yellow-600"
+              className="w-full bg-transparent outline-none"
             />
+
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? (
-                <FaEyeSlash className="text-gray-700" />
-              ) : (
-                <FaEye className="text-gray-700" />
-              )}
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
             </button>
           </div>
-        </div>
 
-        {/* Remember */}
-        <div className="flex justify-between items-center mb-8 text-sm text-gray-700">
-  
-  <label className="flex items-center gap-2">
-    <input type="checkbox" className="accent-yellow-700" />
-    Remember me
-  </label>
+          <button
+            type="submit"
+            className="w-full bg-yellow-400 font-bold py-3 rounded-xl"
+          >
+            LOGIN
+          </button>
 
-  <NavLink 
-  to="/forgot-password"
-  className="text-orange-600 hover:underline">
-  Forgot password?
-</NavLink>
-
-</div>
-
-        {/* Button */}
-        <button
-          onClick={handleLogin}
-          className="w-full bg-yellow-400 hover:bg-yellow-500 
-          text-black font-bold py-3 rounded-xl 
-          shadow-md transition duration-300 hover:scale-105">
-          LOGIN
-        </button>
-
-        {/* Signup Link */}
-        <p className="text-center mt-8 text-sm text-black">
-          Don't have an account?{" "}
-          <span
-            onClick={() => navigate("/signup")}
-            className="text-orange-600 font-semibold cursor-pointer hover:underline">
-            Signup
-          </span>
-        </p>
-
+        </form>
       </div>
     </div>
   );

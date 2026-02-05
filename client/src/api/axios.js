@@ -1,10 +1,13 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5000/api/auth",
+  baseURL: "https://online-exam-protal.onrender.com/api",
 });
+// const API = axios.create({
+//   baseURL: "lohhhh/api",
+// });
 
-// Attach token automatically
+// attach token automatically
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
 
