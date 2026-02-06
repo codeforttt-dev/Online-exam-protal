@@ -30,7 +30,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["student", "admin"],
       default: "student"
-    }
+    },
+        // ⭐ NEW FIELDS (for forgot password)
+    resetToken: String,
+    resetTokenExpire: Date
   },
   { timestamps: true }
 );
