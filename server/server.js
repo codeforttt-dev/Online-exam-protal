@@ -5,7 +5,8 @@ import connectDB from "./src/config/db.js";
 import userRoutes from "./src/routes/userRoutes.js";
 import examRoutes from "./src/routes/examRoutes.js";
 import registrationRoutes from "./src/routes/registrationRoutes.js";
-
+import studentRoutes from "./src/routes/studentRoutes.js";
+import adminRoutes from "./src/routes/adminRoutes.js";
 
 
 dotenv.config();
@@ -34,6 +35,9 @@ app.use("/api/users", userRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/registrations", registrationRoutes);
 
+// Dashboard
+app.use("/api/student", studentRoutes);
+app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 Server Running...");

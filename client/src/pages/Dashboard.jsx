@@ -24,6 +24,7 @@ const Dashboard = () => {
       setUserName(storedUser.name);
     }
   }, []);
+
   return (
 <div className="min-h-screen relative overflow-hidden 
   bg-gradient-to-br from-[#fff8dc] via-[#ffe9a8] to-[#ffd86b] 
@@ -242,3 +243,7 @@ const ResultRow = ({ title, chapter, date, score, color }) => (
 );
 
 export default Dashboard;
+
+
+
+
