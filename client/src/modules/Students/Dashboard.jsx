@@ -1,9 +1,22 @@
 // src/components/Dashboard.jsx
-import { 
-  FaTrophy, FaClock, FaChartLine, FaCalendarCheck, 
-  FaBook, FaVideo, FaFileAlt, FaChartBar, 
-  FaFlask, FaAtom, FaDna, FaAward, FaStar, 
-  FaPlayCircle, FaCalendar, FaDownload, FaHeadset 
+import {
+  FaTrophy,
+  FaClock,
+  FaChartLine,
+  FaCalendarCheck,
+  FaBook,
+  FaVideo,
+  FaFileAlt,
+  FaChartBar,
+  FaFlask,
+  FaAtom,
+  FaDna,
+  FaAward,
+  FaStar,
+  FaPlayCircle,
+  FaCalendar,
+  FaDownload,
+  FaHeadset,
 } from 'react-icons/fa';
 
 // StatCard – compact
@@ -18,12 +31,18 @@ const StatCard = ({ title, value, icon, color = 'primary' }) => {
   return (
     <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
       <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-lg ${colorClasses[color]} flex items-center justify-center text-lg`}>
+        <div
+          className={`w-10 h-10 rounded-lg ${colorClasses[color]} flex items-center justify-center text-lg`}
+        >
           {icon}
         </div>
         <div className="flex flex-col">
-          <h3 className="text-xl font-bold text-gray-800 leading-tight">{value}</h3>
-          <p className="text-xs md:text-sm text-gray-600 leading-snug">{title}</p>
+          <h3 className="text-xl font-bold text-gray-800 leading-tight">
+            {value}
+          </h3>
+          <p className="text-xs md:text-sm text-gray-600 leading-snug">
+            {title}
+          </p>
         </div>
       </div>
     </div>
@@ -31,21 +50,25 @@ const StatCard = ({ title, value, icon, color = 'primary' }) => {
 };
 
 // OlympiadCard – chhota + less padding
-const OlympiadCard = ({ 
-  title, 
-  subtitle, 
-  status, 
-  testsCompleted, 
-  currentScore, 
-  progress, 
-  color = 'from-orange-500 to-orange-600'
+const OlympiadCard = ({
+  title,
+  subtitle,
+  status,
+  testsCompleted,
+  currentScore,
+  progress,
+  color = 'from-orange-500 to-orange-600',
 }) => {
   const getStatusColor = (status) => {
-    switch(status.toLowerCase()) {
-      case 'active': return 'bg-green-500';
-      case 'upcoming': return 'bg-yellow-500';
-      case 'completed': return 'bg-blue-500';
-      default: return 'bg-gray-500';
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'bg-green-500';
+      case 'upcoming':
+        return 'bg-yellow-500';
+      case 'completed':
+        return 'bg-blue-500';
+      default:
+        return 'bg-gray-500';
     }
   };
 
@@ -58,38 +81,46 @@ const OlympiadCard = ({
             <p className="text-xs opacity-90 mt-1">{subtitle}</p>
           </div>
           <span className="px-2.5 py-1 rounded-full text-[11px] font-medium flex items-center gap-1 bg-white/20">
-            <span className={`inline-block w-2 h-2 rounded-full ${getStatusColor(status)}`}></span>
+            <span
+              className={`inline-block w-2 h-2 rounded-full ${getStatusColor(
+                status,
+              )}`}
+            ></span>
             {status}
           </span>
         </div>
       </div>
-      
+
       <div className="px-4 py-4 space-y-4">
         <div className="space-y-2">
           <div className="flex justify-between text-sm py-1 border-b border-gray-100">
             <span className="text-gray-600">Tests Completed</span>
-            <span className="font-semibold text-gray-800">{testsCompleted}</span>
+            <span className="font-semibold text-gray-800">
+              {testsCompleted}
+            </span>
           </div>
-          
+
           <div className="flex justify-between text-sm py-1">
             <span className="text-gray-600">Current Score</span>
-            <span className="font-semibold text-gray-800">{currentScore}</span>
+            <span className="font-semibold text-gray-800">
+              {currentScore}
+            </span>
           </div>
         </div>
-        
+
         <div className="space-y-1">
           <div className="flex justify-between text-xs">
             <span className="text-gray-600">Progress</span>
             <span className="font-semibold text-gray-800">{progress}%</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-1.5">
-            <div 
+            <div
               className="h-1.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-700"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         </div>
-        
+
         <button className="w-full mt-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-lg text-sm transition-colors duration-200">
           {status === 'Active' ? 'Continue' : 'View Details'}
         </button>
@@ -98,24 +129,40 @@ const OlympiadCard = ({
   );
 };
 
-// Generic ResourceCard – (bottom global use ke liye, abhi optional)
-const ResourceCard = ({ title, description, icon, clickable = true, onClick }) => {
+// Generic ResourceCard – abhi use nahi ho raha, future use ke liye rehne do
+const ResourceCard = ({
+  title,
+  description,
+  icon,
+  clickable = true,
+  onClick,
+}) => {
   return (
-    <div 
+    <div
       className={`bg-white rounded-xl px-4 py-4 text-center shadow-sm border border-gray-100 transition-all duration-200 ${
-        clickable ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer' : ''
+        clickable
+          ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer'
+          : ''
       }`}
       onClick={onClick}
     >
       <div className="flex flex-col items-center gap-3">
-        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
-          clickable ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-600'
-        }`}>
+        <div
+          className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
+            clickable
+              ? 'bg-orange-100 text-orange-600'
+              : 'bg-gray-100 text-gray-600'
+          }`}
+        >
           {icon}
         </div>
         <div className="space-y-1">
-          <h4 className="font-semibold text-sm md:text-base text-gray-800 leading-tight">{title}</h4>
-          <p className="text-xs md:text-sm text-gray-600 leading-snug">{description}</p>
+          <h4 className="font-semibold text-sm md:text-base text-gray-800 leading-tight">
+            {title}
+          </h4>
+          <p className="text-xs md:text-sm text-gray-600 leading-snug">
+            {description}
+          </p>
         </div>
       </div>
     </div>
@@ -125,52 +172,135 @@ const ResourceCard = ({ title, description, icon, clickable = true, onClick }) =
 // Main Dashboard Component
 const Dashboard = () => {
   const stats = [
-    { id: 1, title: 'Active Olympiads', value: '3', icon: <FaTrophy />, color: 'primary' },
-    { id: 2, title: 'Study Time This Week', value: '24h', icon: <FaClock />, color: 'success' },
-    { id: 3, title: 'Performance Improvement', value: '+12%', icon: <FaChartLine />, color: 'info' },
-    { id: 4, title: 'Upcoming Deadlines', value: '2', icon: <FaCalendarCheck />, color: 'warning' },
+    {
+      id: 1,
+      title: 'Active Olympiads',
+      value: '3',
+      icon: <FaTrophy />,
+      color: 'primary',
+    },
+    {
+      id: 2,
+      title: 'Study Time This Week',
+      value: '24h',
+      icon: <FaClock />,
+      color: 'success',
+    },
+    {
+      id: 3,
+      title: 'Performance Improvement',
+      value: '+12%',
+      icon: <FaChartLine />,
+      color: 'info',
+    },
+    {
+      id: 4,
+      title: 'Upcoming Deadlines',
+      value: '2',
+      icon: <FaCalendarCheck />,
+      color: 'warning',
+    },
   ];
 
   const olympiads = [
-    { 
-      id: 1, 
-      title: 'NSO 2026 - National Round', 
+    {
+      id: 1,
+      title: 'NSO 2026 - National Round',
       subtitle: 'Ends: March 30, 2026',
       status: 'Active',
       testsCompleted: '3/5',
       currentScore: '275/300',
       progress: 60,
-      color: 'from-orange-500 to-orange-600'
+      color: 'from-orange-500 to-orange-600',
     },
-    { 
-      id: 2, 
-      title: 'Physics Olympiad 2026', 
+    {
+      id: 2,
+      title: 'Physics Olympiad 2026',
       subtitle: 'Starts: April 10, 2026',
       status: 'Upcoming',
       testsCompleted: '0/4',
       currentScore: 'Not Started',
       progress: 0,
-      color: 'from-blue-500 to-blue-600'
+      color: 'from-blue-500 to-blue-600',
     },
   ];
 
   const resources = [
-    { id: 1, title: 'Physics Textbook', description: 'Advanced concepts and practice problems', icon: <FaBook /> },
-    { id: 2, title: 'Video Lectures', description: '50+ hours of expert instruction', icon: <FaVideo /> },
-    { id: 3, title: 'Practice Papers', description: 'Previous years question papers', icon: <FaFileAlt /> },
-    { id: 4, title: 'Analytics Report', description: 'Your performance analysis', icon: <FaChartBar /> },
+    {
+      id: 1,
+      title: 'Physics Textbook',
+      description: 'Advanced concepts and practice problems',
+      icon: <FaBook />,
+    },
+    {
+      id: 2,
+      title: 'Video Lectures',
+      description: '50+ hours of expert instruction',
+      icon: <FaVideo />,
+    },
+    {
+      id: 3,
+      title: 'Practice Papers',
+      description: 'Previous years question papers',
+      icon: <FaFileAlt />,
+    },
+    {
+      id: 4,
+      title: 'Analytics Report',
+      description: 'Your performance analysis',
+      icon: <FaChartBar />,
+    },
   ];
 
   const upcomingTests = [
-    { id: 1, title: 'Chemistry - Organic Compounds', subtitle: 'NSO 2026 • Test #4', time: 'Feb 9, 10:00 AM', icon: <FaFlask /> },
-    { id: 2, title: 'Physics - Thermodynamics', subtitle: 'NSO 2026 • Test #5', time: 'Feb 11, 2:00 PM', icon: <FaAtom /> },
-    { id: 3, title: 'Biology - Genetics', subtitle: 'Practice Test', time: 'Feb 12, 11:00 AM', icon: <FaDna /> },
+    {
+      id: 1,
+      title: 'Chemistry - Organic Compounds',
+      subtitle: 'NSO 2026 • Test #4',
+      time: 'Feb 9, 10:00 AM',
+      icon: <FaFlask />,
+    },
+    {
+      id: 2,
+      title: 'Physics - Thermodynamics',
+      subtitle: 'NSO 2026 • Test #5',
+      time: 'Feb 11, 2:00 PM',
+      icon: <FaAtom />,
+    },
+    {
+      id: 3,
+      title: 'Biology - Genetics',
+      subtitle: 'Practice Test',
+      time: 'Feb 12, 11:00 AM',
+      icon: <FaDna />,
+    },
   ];
 
   const recentResults = [
-    { id: 1, title: 'Physics - Mechanics', subtitle: 'NSO 2026 • Feb 3, 2026', score: '96%', icon: <FaAward />, color: 'bg-green-500' },
-    { id: 2, title: 'Chemistry - Stoichiometry', subtitle: 'NSO 2026 • Jan 28, 2026', score: '88%', icon: <FaStar />, color: 'bg-blue-500' },
-    { id: 3, title: 'Biology - Cell Biology', subtitle: 'NSO 2026 • Jan 21, 2026', score: '82%', icon: <FaChartLine />, color: 'bg-yellow-500' },
+    {
+      id: 1,
+      title: 'Physics - Mechanics',
+      subtitle: 'NSO 2026 • Feb 3, 2026',
+      score: '96%',
+      icon: <FaAward />,
+      color: 'bg-green-500',
+    },
+    {
+      id: 2,
+      title: 'Chemistry - Stoichiometry',
+      subtitle: 'NSO 2026 • Jan 28, 2026',
+      score: '88%',
+      icon: <FaStar />,
+      color: 'bg-blue-500',
+    },
+    {
+      id: 3,
+      title: 'Biology - Cell Biology',
+      subtitle: 'NSO 2026 • Jan 21, 2026',
+      score: '82%',
+      icon: <FaChartLine />,
+      color: 'bg-yellow-500',
+    },
   ];
 
   const leaderboardData = [
@@ -181,10 +311,30 @@ const Dashboard = () => {
   ];
 
   const quickActions = [
-    { id: 1, title: 'Start Practice Test', description: 'Take a timed practice test', icon: <FaPlayCircle /> },
-    { id: 2, title: 'View Study Plan', description: 'Your personalized schedule', icon: <FaCalendar /> },
-    { id: 3, title: 'Download Materials', description: 'Get study materials offline', icon: <FaDownload /> },
-    { id: 4, title: 'Get Help', description: 'Contact support or mentor', icon: <FaHeadset /> },
+    {
+      id: 1,
+      title: 'Start Practice Test',
+      description: 'Take a timed practice test',
+      icon: <FaPlayCircle />,
+    },
+    {
+      id: 2,
+      title: 'View Study Plan',
+      description: 'Your personalized schedule',
+      icon: <FaCalendar />,
+    },
+    {
+      id: 3,
+      title: 'Download Materials',
+      description: 'Get study materials offline',
+      icon: <FaDownload />,
+    },
+    {
+      id: 4,
+      title: 'Get Help',
+      description: 'Contact support or mentor',
+      icon: <FaHeadset />,
+    },
   ];
 
   return (
@@ -193,9 +343,12 @@ const Dashboard = () => {
       <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-2xl px-5 py-5 md:px-6 md:py-6 shadow-md">
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
           <div>
-            <h2 className="text-xl md:text-2xl font-bold mb-1">Welcome back, Sarah! 👋</h2>
+            <h2 className="text-xl md:text-2xl font-bold mb-1">
+              Welcome back, Sarah! 👋
+            </h2>
             <p className="text-sm md:text-base text-white/90 max-w-xl">
-              You're doing great! Your next test is in 3 days. Check the new study materials added this week.
+              You're doing great! Your next test is in 3 days. Check the new study
+              materials added this week.
             </p>
           </div>
           <div className="flex space-x-6">
@@ -230,7 +383,9 @@ const Dashboard = () => {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
               <h3 className="text-lg font-bold text-gray-800">My Olympiads</h3>
-              <span className="text-xs md:text-sm text-gray-600">Active Registrations</span>
+              <span className="text-xs md:text-sm text-gray-600">
+                Active Registrations
+              </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {olympiads.map((olympiad) => (
@@ -239,27 +394,29 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Study Resources + Quick Actions – clean 2×2 + 2×2 */}
+          {/* Study Resources + Quick Actions */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
             {/* Header */}
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800">Study Resources</h3>
+              <h3 className="text-lg font-bold text-gray-800">
+                Study Resources
+              </h3>
               <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1.5 px-3 rounded-lg text-xs md:text-sm transition-colors">
                 View All
               </button>
             </div>
 
-            {/* 2×2 Resource cards */}
+            {/* 2×2 Resource cards – equal height, buttons at bottom */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               {resources.map((resource) => (
                 <div
                   key={resource.id}
-                  className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+                  className="flex flex-col h-full bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-all duration-200"
                 >
-                  {/* Orange header like My Olympiads */}
+                  {/* Small header */}
                   <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-sm">
+                      <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-sm text-white">
                         {resource.icon}
                       </div>
                       <h4 className="text-sm font-semibold text-white leading-tight">
@@ -268,12 +425,30 @@ const Dashboard = () => {
                     </div>
                   </div>
 
-                  {/* Body text */}
-                  <div
-                    className="px-4 py-3 text-xs md:text-sm text-gray-700 hover:bg-orange-50 cursor-pointer transition-colors"
-                    onClick={() => alert(`Opening ${resource.title}`)}
-                  >
-                    {resource.description}
+                  {/* Body + buttons */}
+                  <div className="flex-1 flex flex-col p-4 text-xs md:text-sm">
+                    <p className="text-gray-700 mb-3 leading-snug">
+                      {resource.description}
+                    </p>
+
+                    {/* spacer to push buttons bottom */}
+                    <div className="flex-1" />
+
+                    {/* Buttons */}
+                    <div className="flex gap-2 pt-2 border-t border-gray-100">
+                      <button
+                        className="flex-1 inline-flex items-center justify-center rounded-lg border border-gray-300 px-3 py-2 text-xs md:text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                        onClick={() => alert(`Viewing ${resource.title}`)}
+                      >
+                        View
+                      </button>
+                      <button
+                        className="flex-1 inline-flex items-center justify-center rounded-lg bg-blue-500 px-3 py-2 text-xs md:text-sm font-semibold text-white hover:bg-orange-600 transition-colors"
+                        onClick={() => alert(`Reading ${resource.title}`)}
+                      >
+                        Read
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -314,20 +489,31 @@ const Dashboard = () => {
           {/* Upcoming Tests */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800">Upcoming Tests</h3>
-              <span className="text-xs md:text-sm text-gray-600">Next 7 Days</span>
+              <h3 className="text-lg font-bold text-gray-800">
+                Upcoming Tests
+              </h3>
+              <span className="text-xs md:text-sm text-gray-600">
+                Next 7 Days
+              </span>
             </div>
             <div className="space-y-3">
               {upcomingTests.map((test) => (
-                <div key={test.id} className="flex items-center p-2.5 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                <div
+                  key={test.id}
+                  className="flex items-center p-2.5 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                >
                   <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mr-3">
                     {test.icon}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-gray-800 leading-tight">{test.title}</h4>
+                    <h4 className="font-semibold text-sm text-gray-800 leading-tight">
+                      {test.title}
+                    </h4>
                     <p className="text-xs text-gray-600">{test.subtitle}</p>
                   </div>
-                  <div className="text-xs font-semibold text-orange-600">{test.time}</div>
+                  <div className="text-xs font-semibold text-orange-600">
+                    {test.time}
+                  </div>
                 </div>
               ))}
             </div>
@@ -336,22 +522,35 @@ const Dashboard = () => {
           {/* Recent Results */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800">Recent Results</h3>
+              <h3 className="text-lg font-bold text-gray-800">
+                Recent Results
+              </h3>
               <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1.5 px-3 rounded-lg text-xs md:text-sm transition-colors">
                 View All
               </button>
             </div>
             <div className="space-y-3">
               {recentResults.map((result) => (
-                <div key={result.id} className="flex items-center p-2.5 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-                  <div className={`w-10 h-10 rounded-lg ${result.color} text-white flex items-center justify-center mr-3`}>
+                <div
+                  key={result.id}
+                  className="flex items-center p-2.5 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                >
+                  <div
+                    className={`w-10 h-10 rounded-lg ${result.color} text-white flex items-center justify-center mr-3`}
+                  >
                     {result.icon}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-gray-800 leading-tight">{result.title}</h4>
-                    <p className="text-xs text-gray-600">{result.subtitle}</p>
+                    <h4 className="font-semibold text-sm text-gray-800 leading-tight">
+                      {result.title}
+                    </h4>
+                    <p className="text-xs text-gray-600">
+                      {result.subtitle}
+                    </p>
                   </div>
-                  <div className="text-lg font-bold text-gray-800">{result.score}</div>
+                  <div className="text-lg font-bold text-gray-800">
+                    {result.score}
+                  </div>
                 </div>
               ))}
             </div>
@@ -360,41 +559,73 @@ const Dashboard = () => {
           {/* Leaderboard */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
             <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
-              <h3 className="text-lg font-bold text-gray-800">National Leaderboard</h3>
-              <span className="text-xs md:text-sm text-gray-600">NSO 2026</span>
+              <h3 className="text-lg font-bold text-gray-800">
+                National Leaderboard
+              </h3>
+              <span className="text-xs md:text-sm text-gray-600">
+                NSO 2026
+              </span>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100">
-                    <th className="text-left pb-2 text-gray-600 font-semibold">Rank</th>
-                    <th className="text-left pb-2 text-gray-600 font-semibold">Student</th>
-                    <th className="text-left pb-2 text-gray-600 font-semibold">Score</th>
+                    <th className="text-left pb-2 text-gray-600 font-semibold">
+                      Rank
+                    </th>
+                    <th className="text-left pb-2 text-gray-600 font-semibold">
+                      Student
+                    </th>
+                    <th className="text-left pb-2 text-gray-600 font-semibold">
+                      Score
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {leaderboardData.map((student) => (
-                    <tr 
-                      key={student.rank} 
-                      className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${student.highlight ? 'bg-orange-50' : ''}`}
+                    <tr
+                      key={student.rank}
+                      className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                        student.highlight ? 'bg-orange-50' : ''
+                      }`}
                     >
                       <td className="py-2.5">
-                        <span className={`font-bold ${student.rank <= 3 ? 'text-yellow-500' : 'text-orange-500'}`}>
+                        <span
+                          className={`font-bold ${
+                            student.rank <= 3
+                              ? 'text-yellow-500'
+                              : 'text-orange-500'
+                          }`}
+                        >
                           {student.rank}
                         </span>
                       </td>
                       <td className="py-2.5">
                         <div className="flex items-center">
-                          <div className={`w-7 h-7 rounded-full flex items-center justify-center mr-2.5 ${student.highlight ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                          <div
+                            className={`w-7 h-7 rounded-full flex items-center justify-center mr-2.5 ${
+                              student.highlight
+                                ? 'bg-orange-500 text-white'
+                                : 'bg-gray-200 text-gray-700'
+                            }`}
+                          >
                             {student.initials}
                           </div>
-                          <span className={student.highlight ? 'font-semibold' : ''}>{student.name}</span>
+                          <span
+                            className={student.highlight ? 'font-semibold' : ''}
+                          >
+                            {student.name}
+                          </span>
                         </div>
                       </td>
                       <td className="py-2.5">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                          student.score >= 290 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
-                        }`}>
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                            student.score >= 290
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-orange-100 text-orange-800'
+                          }`}
+                        >
                           {student.score}
                         </span>
                       </td>

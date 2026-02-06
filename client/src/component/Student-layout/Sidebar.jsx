@@ -52,7 +52,7 @@ const Sidebar = ({
       <aside
         className={`
           fixed top-0 left-0 h-screen z-40 flex flex-col
-          bg-gradient-to-b from-[#0f172a] via-[#1e3a8a] to-[#1e40af]
+          bg-gradient-to-b from-[#FFA600] via-[#F97316] to-[#EA580C]
           text-white transition-all duration-300
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
@@ -61,42 +61,28 @@ const Sidebar = ({
       >
         {/* ===== HEADER / BRAND ===== */}
         {/* ===== USER PROFILE (ONLY ONE HEADING) ===== */}
-<div className="p-4 border-b border-white/10 flex items-center justify-between">
-  <div className="flex items-center">
-    <div className="w-10 h-10 rounded-full bg-white text-[#1e3a8a] flex items-center justify-center font-bold">
-      SR
-    </div>
-
-    {!isCollapsed && (
-      <div className="ml-3">
-        <p className="text-sm font-semibold">Sarah Robinson</p>
-        <p className="text-xs text-white/70">Grade 11</p>
-      </div>
-    )}
-  </div>
-
-  {/* Collapse button INSIDE profile */}
-  <button
-    onClick={() => setIsCollapsed(!isCollapsed)}
-    className="hidden lg:flex w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 items-center justify-center"
-  >
-    {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
-  </button>
-</div>
-
-
-        {/* ===== USER ===== */} 
-        {/* <div className="p-4 border-b border-white/10 flex items-center justify-center">
-          {/* <div className="w-10 h-10 rounded-full bg-white text-[#1e3a8a] flex items-center justify-center font-bold">
-            SR
-          </div>
-          {!isCollapsed && (
-            <div className="ml-3">
-              <p className="text-sm font-semibold">Sarah Robinson</p>
-              <p className="text-xs text-white/70">Grade 11</p>
+        <div className="p-4 border-b border-white/10 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-full bg-white text-[#1e3a8a] flex items-center justify-center font-bold">
+              SR
             </div>
-          )}
-        </div> */}
+
+            {!isCollapsed && (
+              <div className="ml-3">
+                <p className="text-sm font-semibold">Sarah Robinson</p>
+                <p className="text-xs text-white/70">Grade 11</p>
+              </div>
+            )}
+          </div>
+
+          {/* Collapse button INSIDE profile */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:flex w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 items-center justify-center"
+          >
+            {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
+          </button>
+        </div>
 
         {/* ===== NAVIGATION ===== */}
         <nav className="flex-1 px-2 py-3">
