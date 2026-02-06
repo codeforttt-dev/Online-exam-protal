@@ -1,8 +1,12 @@
 // src/components/Dashboard.jsx
-import { useState } from 'react';
-import { FaTrophy, FaClock, FaChartLine, FaCalendarCheck, FaBook, FaVideo, FaFileAlt, FaChartBar, FaFlask, FaAtom, FaDna, FaAward, FaStar, FaPlayCircle, FaCalendar, FaDownload, FaHeadset, FaSchool, FaCity, FaMedal, FaFire, FaEye, FaArrowUp } from 'react-icons/fa';
+import { 
+  FaTrophy, FaClock, FaChartLine, FaCalendarCheck, 
+  FaBook, FaVideo, FaFileAlt, FaChartBar, 
+  FaFlask, FaAtom, FaDna, FaAward, FaStar, 
+  FaPlayCircle, FaCalendar, FaDownload, FaHeadset 
+} from 'react-icons/fa';
 
-// Simple StatCard component
+// StatCard – compact
 const StatCard = ({ title, value, icon, color = 'primary' }) => {
   const colorClasses = {
     primary: 'bg-orange-100 text-orange-600',
@@ -12,21 +16,21 @@ const StatCard = ({ title, value, icon, color = 'primary' }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-orange-500">
-      <div className="flex items-center">
-        <div className={`w-12 h-12 rounded-lg ${colorClasses[color]} flex items-center justify-center mr-4 text-xl`}>
+    <div className="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
+      <div className="flex items-center gap-3">
+        <div className={`w-10 h-10 rounded-lg ${colorClasses[color]} flex items-center justify-center text-lg`}>
           {icon}
         </div>
-        <div>
-          <h3 className="text-2xl font-bold text-gray-800">{value}</h3>
-          <p className="text-gray-600">{title}</p>
+        <div className="flex flex-col">
+          <h3 className="text-xl font-bold text-gray-800 leading-tight">{value}</h3>
+          <p className="text-xs md:text-sm text-gray-600 leading-snug">{title}</p>
         </div>
       </div>
     </div>
   );
 };
 
-// Simple OlympiadCard component
+// OlympiadCard – chhota + less padding
 const OlympiadCard = ({ 
   title, 
   subtitle, 
@@ -38,54 +42,55 @@ const OlympiadCard = ({
 }) => {
   const getStatusColor = (status) => {
     switch(status.toLowerCase()) {
-      case 'active': return 'text-green-600';
-      case 'upcoming': return 'text-yellow-600';
-      case 'completed': return 'text-blue-600';
-      default: return 'text-gray-600';
+      case 'active': return 'bg-green-500';
+      case 'upcoming': return 'bg-yellow-500';
+      case 'completed': return 'bg-blue-500';
+      default: return 'bg-gray-500';
     }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
-      <div className={`bg-gradient-to-r ${color} text-white p-5`}>
-        <div className="flex justify-between items-start">
-          <div>
-            <h4 className="text-lg font-semibold">{title}</h4>
-            <p className="text-sm opacity-90 mt-1">{subtitle}</p>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all duration-300">
+      <div className={`bg-gradient-to-r ${color} text-white px-4 py-3`}>
+        <div className="flex justify-between items-start gap-3">
+          <div className="flex flex-col">
+            <h4 className="text-base font-semibold leading-tight">{title}</h4>
+            <p className="text-xs opacity-90 mt-1">{subtitle}</p>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium bg-white/20`}>
+          <span className="px-2.5 py-1 rounded-full text-[11px] font-medium flex items-center gap-1 bg-white/20">
+            <span className={`inline-block w-2 h-2 rounded-full ${getStatusColor(status)}`}></span>
             {status}
           </span>
         </div>
       </div>
       
-      <div className="p-5">
-        <div className="space-y-3 mb-4">
-          <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-600">Tests Completed:</span>
-            <span className="font-semibold">{testsCompleted}</span>
+      <div className="px-4 py-4 space-y-4">
+        <div className="space-y-2">
+          <div className="flex justify-between text-sm py-1 border-b border-gray-100">
+            <span className="text-gray-600">Tests Completed</span>
+            <span className="font-semibold text-gray-800">{testsCompleted}</span>
           </div>
           
-          <div className="flex justify-between py-2">
-            <span className="text-gray-600">Current Score:</span>
-            <span className="font-semibold">{currentScore}</span>
+          <div className="flex justify-between text-sm py-1">
+            <span className="text-gray-600">Current Score</span>
+            <span className="font-semibold text-gray-800">{currentScore}</span>
           </div>
         </div>
         
-        <div className="mb-5">
-          <div className="flex justify-between mb-1">
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs">
             <span className="text-gray-600">Progress</span>
-            <span className="font-semibold">{progress}%</span>
+            <span className="font-semibold text-gray-800">{progress}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
             <div 
-              className="h-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-1000"
+              className="h-1.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 transition-all duration-700"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         </div>
         
-        <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg transition-colors duration-300">
+        <button className="w-full mt-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-lg text-sm transition-colors duration-200">
           {status === 'Active' ? 'Continue' : 'View Details'}
         </button>
       </div>
@@ -93,22 +98,26 @@ const OlympiadCard = ({
   );
 };
 
-// Simple ResourceCard component
+// Generic ResourceCard – (bottom global use ke liye, abhi optional)
 const ResourceCard = ({ title, description, icon, clickable = true, onClick }) => {
   return (
     <div 
-      className={`bg-white rounded-xl p-5 text-center shadow-sm border border-gray-100 transition-all duration-300 hover:shadow-lg cursor-pointer ${
-        clickable ? 'hover:bg-orange-500 hover:text-white' : ''
+      className={`bg-white rounded-xl px-4 py-4 text-center shadow-sm border border-gray-100 transition-all duration-200 ${
+        clickable ? 'hover:shadow-md hover:-translate-y-0.5 cursor-pointer' : ''
       }`}
       onClick={onClick}
     >
-      <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl ${
-        clickable ? 'bg-orange-100 text-orange-600 group-hover:bg-white group-hover:text-orange-500' : 'bg-gray-100 text-gray-600'
-      }`}>
-        {icon}
+      <div className="flex flex-col items-center gap-3">
+        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${
+          clickable ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-600'
+        }`}>
+          {icon}
+        </div>
+        <div className="space-y-1">
+          <h4 className="font-semibold text-sm md:text-base text-gray-800 leading-tight">{title}</h4>
+          <p className="text-xs md:text-sm text-gray-600 leading-snug">{description}</p>
+        </div>
       </div>
-      <h4 className="font-semibold text-gray-800 mb-2">{title}</h4>
-      <p className="text-sm text-gray-600">{description}</p>
     </div>
   );
 };
@@ -179,139 +188,188 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-5 p-4 md:p-5 lg:p-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-2xl p-6 md:p-8 shadow-lg">
-        <div className="flex flex-col lg:flex-row justify-between items-center">
-          <div className="mb-6 lg:mb-0 lg:mr-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, Sarah! 👋</h2>
-            <p className="text-white/90 max-w-2xl">
-              You're doing great! Keep up the momentum. Your next test is in 3 days. 
-              Don't forget to check the new study materials added this week.
+      <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white rounded-2xl px-5 py-5 md:px-6 md:py-6 shadow-md">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div>
+            <h2 className="text-xl md:text-2xl font-bold mb-1">Welcome back, Sarah! 👋</h2>
+            <p className="text-sm md:text-base text-white/90 max-w-xl">
+              You're doing great! Your next test is in 3 days. Check the new study materials added this week.
             </p>
           </div>
-          <div className="flex space-x-8">
+          <div className="flex space-x-6">
             <div className="text-center">
-              <h3 className="text-3xl md:text-4xl font-bold">92%</h3>
-              <p className="text-sm opacity-90">Average Score</p>
+              <h3 className="text-2xl md:text-3xl font-bold">92%</h3>
+              <p className="text-xs md:text-sm opacity-90">Average Score</p>
             </div>
             <div className="text-center">
-              <h3 className="text-3xl md:text-4xl font-bold">8</h3>
-              <p className="text-sm opacity-90">Tests Completed</p>
+              <h3 className="text-2xl md:text-3xl font-bold">8</h3>
+              <p className="text-xs md:text-sm opacity-90">Tests Completed</p>
             </div>
             <div className="text-center">
-              <h3 className="text-3xl md:text-4xl font-bold">#15</h3>
-              <p className="text-sm opacity-90">National Rank</p>
+              <h3 className="text-2xl md:text-3xl font-bold">#15</h3>
+              <p className="text-xs md:text-sm opacity-90">National Rank</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
         {stats.map((stat) => (
           <StatCard key={stat.id} {...stat} />
         ))}
       </div>
 
       {/* Main Dashboard Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-5">
         {/* Left Column */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-4">
           {/* My Olympiads */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800">My Olympiads</h3>
-              <span className="text-gray-600">Active Registrations</span>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800">My Olympiads</h3>
+              <span className="text-xs md:text-sm text-gray-600">Active Registrations</span>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {olympiads.map((olympiad) => (
                 <OlympiadCard key={olympiad.id} {...olympiad} />
               ))}
             </div>
           </div>
 
-          {/* Study Resources */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800">Study Resources</h3>
-              <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
+          {/* Study Resources + Quick Actions – clean 2×2 + 2×2 */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
+            {/* Header */}
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800">Study Resources</h3>
+              <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1.5 px-3 rounded-lg text-xs md:text-sm transition-colors">
                 View All
               </button>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            {/* 2×2 Resource cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
               {resources.map((resource) => (
-                <ResourceCard 
-                  key={resource.id} 
-                  {...resource}
-                  onClick={() => alert(`Opening ${resource.title}`)}
-                />
+                <div
+                  key={resource.id}
+                  className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden"
+                >
+                  {/* Orange header like My Olympiads */}
+                  <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-2">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-sm">
+                        {resource.icon}
+                      </div>
+                      <h4 className="text-sm font-semibold text-white leading-tight">
+                        {resource.title}
+                      </h4>
+                    </div>
+                  </div>
+
+                  {/* Body text */}
+                  <div
+                    className="px-4 py-3 text-xs md:text-sm text-gray-700 hover:bg-orange-50 cursor-pointer transition-colors"
+                    onClick={() => alert(`Opening ${resource.title}`)}
+                  >
+                    {resource.description}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Quick Actions heading */}
+            <h4 className="text-sm font-semibold text-gray-800 mb-3">
+              Quick Actions
+            </h4>
+
+            {/* 2×2 Quick Actions cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {quickActions.map((action) => (
+                <div
+                  key={action.id}
+                  className="bg-gray-50 border border-gray-100 rounded-lg px-3 py-3 flex items-start gap-3 hover:bg-orange-50 transition-colors cursor-pointer"
+                  onClick={() => alert(`Action: ${action.title}`)}
+                >
+                  <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-sm mt-0.5">
+                    {action.icon}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-gray-800 leading-snug">
+                      {action.title}
+                    </p>
+                    <p className="text-xs text-gray-600 leading-snug">
+                      {action.description}
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
         {/* Right Column */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           {/* Upcoming Tests */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800">Upcoming Tests</h3>
-              <span className="text-gray-600 text-sm">Next 7 Days</span>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800">Upcoming Tests</h3>
+              <span className="text-xs md:text-sm text-gray-600">Next 7 Days</span>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {upcomingTests.map((test) => (
-                <div key={test.id} className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-                  <div className="w-12 h-12 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mr-4">
+                <div key={test.id} className="flex items-center p-2.5 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                  <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mr-3">
                     {test.icon}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800">{test.title}</h4>
-                    <p className="text-sm text-gray-600">{test.subtitle}</p>
+                    <h4 className="font-semibold text-sm text-gray-800 leading-tight">{test.title}</h4>
+                    <p className="text-xs text-gray-600">{test.subtitle}</p>
                   </div>
-                  <div className="text-orange-600 font-semibold text-sm">{test.time}</div>
+                  <div className="text-xs font-semibold text-orange-600">{test.time}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Recent Results */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800">Recent Results</h3>
-              <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded-lg text-sm transition-colors">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800">Recent Results</h3>
+              <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-1.5 px-3 rounded-lg text-xs md:text-sm transition-colors">
                 View All
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {recentResults.map((result) => (
-                <div key={result.id} className="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
-                  <div className={`w-12 h-12 rounded-lg ${result.color} text-white flex items-center justify-center mr-4`}>
+                <div key={result.id} className="flex items-center p-2.5 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
+                  <div className={`w-10 h-10 rounded-lg ${result.color} text-white flex items-center justify-center mr-3`}>
                     {result.icon}
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-semibold text-gray-800">{result.title}</h4>
-                    <p className="text-sm text-gray-600">{result.subtitle}</p>
+                    <h4 className="font-semibold text-sm text-gray-800 leading-tight">{result.title}</h4>
+                    <p className="text-xs text-gray-600">{result.subtitle}</p>
                   </div>
-                  <div className="text-xl font-bold text-gray-800">{result.score}</div>
+                  <div className="text-lg font-bold text-gray-800">{result.score}</div>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Leaderboard */}
-          <div className="bg-white rounded-xl shadow-md p-6">
-            <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100">
-              <h3 className="text-xl font-bold text-gray-800">National Leaderboard</h3>
-              <span className="text-gray-600 text-sm">NSO 2026</span>
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 md:p-5">
+            <div className="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+              <h3 className="text-lg font-bold text-gray-800">National Leaderboard</h3>
+              <span className="text-xs md:text-sm text-gray-600">NSO 2026</span>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-100">
-                    <th className="text-left pb-3 text-gray-600 font-semibold">Rank</th>
-                    <th className="text-left pb-3 text-gray-600 font-semibold">Student</th>
-                    <th className="text-left pb-3 text-gray-600 font-semibold">Score</th>
+                    <th className="text-left pb-2 text-gray-600 font-semibold">Rank</th>
+                    <th className="text-left pb-2 text-gray-600 font-semibold">Student</th>
+                    <th className="text-left pb-2 text-gray-600 font-semibold">Score</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -320,21 +378,21 @@ const Dashboard = () => {
                       key={student.rank} 
                       className={`border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${student.highlight ? 'bg-orange-50' : ''}`}
                     >
-                      <td className="py-3">
+                      <td className="py-2.5">
                         <span className={`font-bold ${student.rank <= 3 ? 'text-yellow-500' : 'text-orange-500'}`}>
                           {student.rank}
                         </span>
                       </td>
-                      <td className="py-3">
+                      <td className="py-2.5">
                         <div className="flex items-center">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-3 ${student.highlight ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center mr-2.5 ${student.highlight ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700'}`}>
                             {student.initials}
                           </div>
-                          <span className={`${student.highlight ? 'font-semibold' : ''}`}>{student.name}</span>
+                          <span className={student.highlight ? 'font-semibold' : ''}>{student.name}</span>
                         </div>
                       </td>
-                      <td className="py-3">
-                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      <td className="py-2.5">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                           student.score >= 290 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
                         }`}>
                           {student.score}
@@ -347,20 +405,6 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {quickActions.map((action) => (
-          <ResourceCard 
-            key={action.id}
-            title={action.title}
-            description={action.description}
-            icon={action.icon}
-            clickable={true}
-            onClick={() => alert(`Action: ${action.title}`)}
-          />
-        ))}
       </div>
     </div>
   );

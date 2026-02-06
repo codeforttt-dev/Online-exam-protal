@@ -1,157 +1,130 @@
 // src/modules/Students/OlympiadCard.jsx
-import { FaPlayCircle, FaChartBar, FaBookOpen, FaAward, FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
+import { FaTrophy, FaCalendarAlt } from 'react-icons/fa';
 
-const OlympiadCard = ({ 
-  title, 
-  subtitle, 
-  status, 
-  testsCompleted, 
-  currentScore, 
-  progress, 
-  color = 'from-primary to-primary-dark',
-  detailed = false,
-  showRank = false,
+const OlympiadCard = ({
+  title,
+  subtitle,
+  status,
+  testsCompleted,
+  currentScore,
+  progress,
+  // ignore custom "from-primary" etc, we give fallback
+  color,
+  showRank,
   rank,
-  showFee = false,
+  showFee,
   fee,
   paymentStatus,
   certificate,
-  performance
+  performance,
 }) => {
   const getStatusColor = (status) => {
-    switch(status.toLowerCase()) {
-      case 'active': return 'text-green-600 bg-green-100';
-      case 'upcoming': return 'text-yellow-600 bg-yellow-100';
-      case 'completed': return 'text-blue-600 bg-blue-100';
-      default: return 'text-gray-600 bg-gray-100';
+    if (!status) return 'bg-gray-400';
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'bg-green-500';
+      case 'upcoming':
+        return 'bg-yellow-500';
+      case 'completed':
+        return 'bg-blue-500';
+      default:
+        return 'bg-gray-400';
     }
   };
 
-  const getStatusText = (status) => {
-    switch(status.toLowerCase()) {
-      case 'active': return 'Active';
-      case 'upcoming': return 'Upcoming';
-      case 'completed': return 'Completed';
-      default: return status;
-    }
-  };
+  // fallback gradient color same as dashboard
+  const headerGradient =
+    color === 'blue'
+      ? 'from-blue-500 to-blue-600'
+      : color === 'green'
+      ? 'from-green-500 to-green-600'
+      : 'from-orange-500 to-orange-600';
 
   return (
-    <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300">
-      {/* Header with gradient */}
-      <div className={`bg-gradient-to-r ${color} text-white p-5`}>
-        <div className="flex justify-between items-start">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-sm">
+      {/* Gradient header */}
+      <div className={`bg-gradient-to-r ${headerGradient} px-4 py-2.5 flex items-center justify-between`}>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-xs text-white">
+            <FaTrophy />
+          </div>
           <div>
-            <h4 className="text-lg font-semibold">{title}</h4>
-            <p className="text-sm opacity-90 mt-1">{subtitle}</p>
+            <h3 className="text-white font-semibold text-sm leading-tight line-clamp-2">
+              {title}
+            </h3>
+            <p className="text-white/90 text-[11px] mt-0.5 flex items-center gap-1">
+              <FaCalendarAlt className="inline-block" />
+              <span>{subtitle}</span>
+            </p>
           </div>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(status)}`}>
-            {getStatusText(status)}
-          </span>
         </div>
+
+        <span className="px-2.5 py-1 rounded-full text-[11px] font-medium flex items-center gap-1 bg-white/15 text-white">
+          <span className={`inline-block w-2 h-2 rounded-full ${getStatusColor(status)}`}></span>
+          {status}
+        </span>
       </div>
-      
-      {/* Body */}
-      <div className="p-5">
-        {/* Info Items */}
-        <div className="space-y-3 mb-4">
-          {detailed && showRank && (
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-600 flex items-center">
-                <FaAward className="mr-2" /> Rank:
-              </span>
-              <span className="font-semibold">{rank}</span>
-            </div>
-          )}
-          
-          <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-600">Tests Completed:</span>
-            <span className="font-semibold">{testsCompleted}</span>
+
+      {/* Body – compact */}
+      <div className="px-4 py-3 space-y-3">
+        {/* Row: tests + score */}
+        <div className="flex justify-between gap-3">
+          <div className="flex-1">
+            <p className="text-[11px] text-gray-500">Tests Completed</p>
+            <p className="text-sm font-semibold text-gray-800">{testsCompleted}</p>
           </div>
-          
-          <div className="flex justify-between py-2 border-b border-gray-100">
-            <span className="text-gray-600">
-              {detailed && status === 'Completed' ? 'Final Score:' : 'Current Score:'}
-            </span>
-            <span className="font-semibold">{currentScore}</span>
+          <div className="flex-1 text-right">
+            <p className="text-[11px] text-gray-500">Current Score</p>
+            <p className="text-sm font-semibold text-gray-800">
+              {currentScore}
+            </p>
           </div>
-          
-          {detailed && showFee && (
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-600">Registration Fee:</span>
-              <span className="font-semibold">{fee}</span>
-            </div>
-          )}
-          
-          {detailed && paymentStatus && (
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-600">Payment Status:</span>
-              <span className="font-semibold text-green-600">{paymentStatus}</span>
-            </div>
-          )}
-          
-          {detailed && certificate && (
-            <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-gray-600">Certificate:</span>
-              <span className="font-semibold text-green-600">{certificate}</span>
-            </div>
-          )}
-          
-          {detailed && performance && (
-            <div className="flex justify-between py-2">
-              <span className="text-gray-600">Performance:</span>
-              <span className="font-semibold">{performance}</span>
-            </div>
-          )}
         </div>
-        
-        {/* Progress Bar */}
-        <div className="mb-5">
-          <div className="flex justify-between mb-1">
-            <span className="text-gray-600">
-              {detailed && status === 'Completed' ? 'Final Result' : 'Overall Progress'}
-            </span>
-            <span className="font-semibold">{progress}%</span>
+
+        {/* Progress bar */}
+        <div className="space-y-1">
+          <div className="flex justify-between text-[11px]">
+            <span className="text-gray-500">Progress</span>
+            <span className="font-semibold text-gray-800">{progress}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="h-2 rounded-full bg-gradient-to-r from-primary to-primary-dark transition-all duration-1000"
+          <div className="w-full bg-gray-200 rounded-full h-1.5">
+            <div
+              className="h-1.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
         </div>
-        
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          {status.toLowerCase() === 'active' ? (
-            <>
-              <button className="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center">
-                <FaPlayCircle className="mr-2" />
-                Continue
-              </button>
-              <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center">
-                <FaChartBar className="mr-2" />
-                Analytics
-              </button>
-            </>
-          ) : status.toLowerCase() === 'upcoming' ? (
-            <button className="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center">
-              <FaBookOpen className="mr-2" />
-              Start Prep
-            </button>
-          ) : status.toLowerCase() === 'completed' ? (
-            <>
-              <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center">
-                <FaAward className="mr-2" />
-                Certificate
-              </button>
-              <button className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2.5 rounded-lg transition-colors duration-300 flex items-center justify-center">
-                <FaChartBar className="mr-2" />
-                Results
-              </button>
-            </>
-          ) : null}
-        </div>
+
+        {/* Extra info pills */}
+        {(showRank || showFee || certificate || performance) && (
+          <div className="flex flex-wrap gap-1.5 text-[11px]">
+            {showRank && rank && (
+              <span className="px-2 py-0.5 rounded-full bg-orange-50 text-orange-700 font-semibold">
+                Rank {rank}
+              </span>
+            )}
+            {showFee && fee && (
+              <span className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
+                Fee: {fee} {paymentStatus ? `• ${paymentStatus}` : ''}
+              </span>
+            )}
+            {certificate && (
+              <span className="px-2 py-0.5 rounded-full bg-green-50 text-green-700">
+                {certificate}
+              </span>
+            )}
+            {performance && (
+              <span className="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700">
+                {performance}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Action button – small */}
+        <button className="w-full mt-1 bg-orange-500 hover:bg-orange-600 text-white font-semibold py-1.5 rounded-lg text-xs transition-colors">
+          {status === 'Active' ? 'Continue Olympiad' : status === 'Upcoming' ? 'View Details' : 'View Performance'}
+        </button>
       </div>
     </div>
   );
