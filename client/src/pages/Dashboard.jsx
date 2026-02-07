@@ -24,6 +24,7 @@ const Dashboard = () => {
       setUserName(storedUser.name);
     }
   }, []);
+
   return (
 
   <div className="bg-white rounded-xl w-full min-h-screen  flex">
@@ -246,3 +247,7 @@ const ResultRow = ({ title, chapter, date, score, color }) => (
 );
 
 export default Dashboard;
+
+
+
+
