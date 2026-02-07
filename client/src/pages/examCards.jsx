@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Layout,
   BarChart3,
@@ -8,62 +8,48 @@ import {
   Zap,
   Heart,
 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchExams } from "../redux/thunks/examThunks";
 
-const examCards = [
-  {
-    title: "Management",
-    desc: "Providing optimized solutions tailored to streamline business operations and team efficiency.",
-    icon1: <Layout className="text-purple-600" size={20} />,
-    icon2: <BarChart3 className="text-blue-500" size={20} />,
-    bgColor: "bg-green-50/60",
-  },
-  {
-    title: "Data Analytics",
-    desc: "Processing and interpreting complex data to provide actionable insights for your business.",
-    icon1: <Radio className="text-blue-800" size={20} />,
-    icon2: <Zap className="text-yellow-500" size={20} />,
-    bgColor: "bg-blue-50/60",
-  },
-  {
-    title: "CRM Automation",
-    desc: "Personalizing customer interactions with automated workflows that drive retention and growth.",
-    icon1: <Heart className="text-pink-400" size={20} />,
-    icon2: <Briefcase className="text-blue-600" size={20} />,
-    bgColor: "bg-purple-50/60",
-  },
-  {
-    title: "Project",
-    desc: "Planning and execution of high-impact projects with a focus on timeline and quality delivery.",
-    icon1: <Layout className="text-blue-400" size={20} />,
-    icon2: <BarChart3 className="text-gray-500" size={20} />,
-    bgColor: "bg-indigo-50/60",
-  },
-  {
-    title: "Marketing",
-    desc: "Driving brand awareness and engagement through data-driven multi-channel marketing strategies.",
-    icon1: <Megaphone className="text-green-500" size={20} />,
-    icon2: <Zap className="text-gray-800" size={20} />,
-    bgColor: "bg-orange-50/60",
-  },
-  {
-    title: "Automation",
-    desc: "Building seamless integrations that connect your tools and save hours of manual labor.",
-    icon1: <Briefcase className="text-teal-700" size={20} />,
-    icon2: <Zap className="text-teal-400" size={20} />,
-    bgColor: "bg-teal-50/60",
-  },
-];
+// 🎨 Function to assign styles dynamically
+const getStyle = () => {
+  const styles = [
+    {
+      icon1: <Layout className="text-purple-600" size={20} />,
+      icon2: <BarChart3 className="text-blue-500" size={20} />,
+      bgColor: "bg-green-50/60",
+    },
+    {
+      icon1: <Radio className="text-blue-800" size={20} />,
+      icon2: <Zap className="text-yellow-500" size={20} />,
+      bgColor: "bg-blue-50/60",
+    },
+    {
+      icon1: <Heart className="text-pink-400" size={20} />,
+      icon2: <Briefcase className="text-blue-600" size={20} />,
+      bgColor: "bg-purple-50/60",
+    },
+    {
+      icon1: <Megaphone className="text-green-500" size={20} />,
+      icon2: <Zap className="text-gray-800" size={20} />,
+      bgColor: "bg-orange-50/60",
+    },
+  ];
 
-const ServiceCard = ({ title, desc, icon1, icon2, bgColor }) => {
+  return styles[Math.floor(Math.random() * styles.length)];
+};
+
+const ServiceCard = ({ title, desc }) => {
+  const { icon1, icon2, bgColor } = getStyle();
+
   return (
-   <div
-  className={`${bgColor} backdrop-blur-md border border-gray-200
-  rounded-2xl p-4
-  shadow-sm flex flex-col relative
-  min-h-[90px]
-  transition-transform hover:scale-105 duration-300`}
->
-
+    <div
+      className={`${bgColor} backdrop-blur-md border border-gray-200
+      rounded-2xl p-4
+      shadow-sm flex flex-col relative
+      min-h-[90px]
+      transition-transform hover:scale-105 duration-300`}
+    >
       {/* Top Icons */}
       <div className="flex justify-between items-start mb-8">
         <div className="flex gap-3">
@@ -96,21 +82,41 @@ const ServiceCard = ({ title, desc, icon1, icon2, bgColor }) => {
     </div>
   );
 };
-
 const ServiceGrid = () => {
-  return (
-    <div className="min-h-screen relative overflow-hidden 
-bg-white-120
-  p-8 flex items-center justify-center font-sans">
-      <div className="max-w-6xl w-full grid grid-cols-1 
-        md:grid-cols-2 lg:grid-cols-3 gap-8"
-      >
-        {examCards.map((card, index) => (
-          <ServiceCard key={index} {...card} />
-        ))}
-      </div>
+  const dispatch = useDispatch();
+  const { exams = [], loading, error } = useSelector((state) => state.exam);
+
+  useEffect(() => {
+    dispatch(fetchExams());
+  }, [dispatch]);
+
+  if (loading) {
+    return <p className="text-center ">Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500">{error}</p>;
+  }
+
+ return (
+  <div className="w-full p-5">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {exams.length > 0 ? (
+        exams.map((exam) => (
+          <ServiceCard
+            key={exam._id}
+            title={exam.title}
+            desc={exam.description}
+          />
+        ))
+      ) : (
+        <p className="text-gray-400 col-span-full text-center">
+          No Exams Available
+        </p>
+      )}
     </div>
-  );
+  </div>
+ );
 };
 
 export default ServiceGrid;

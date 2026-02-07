@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../redux/thunks/userThunk";
 import logo from "../assets/logo.jpeg";
+import Layout from "../component/layout/Layout";
 
 function Login() {
   const navigate = useNavigate();
@@ -38,11 +39,19 @@ function Login() {
   }, [token, navigate]);
 
   return (
+    
+
+    <Layout>  
+     <div className="min-h-screen bg-gradient-to-bl from-[#fff7db] via-[#ffe9a8] to-[#ffd86b]">
+
+ 
+
+     
     <div className="min-h-screen flex items-center justify-center 
       bg-gradient-to-bl from-[#fff7db] via-[#ffe9a8] to-[#ffd86b]">
+     
 
       <div className="relative z-10 w-[420px] px-10 py-12 border-2 border-yellow-500 rounded-2xl bg-[#fff8e1] shadow-xl">
-
         <div className="flex justify-right mb-5">
           <img src={logo} alt="Logo" className="w-30 h-28 object-contain" />
         </div>
@@ -92,6 +101,8 @@ function Login() {
         </form>
       </div>
     </div>
+    </div>
+     </Layout>
   );
 }
 

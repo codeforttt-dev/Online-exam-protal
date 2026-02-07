@@ -25,10 +25,8 @@ const Dashboard = () => {
     }
   }, []);
   return (
-<div className="min-h-screen relative overflow-hidden 
-  bg-gradient-to-br from-[#fff8dc] via-[#ffe9a8] to-[#ffd86b] 
-  p-8 flex items-center justify-center font-sans">
-<div className="bg-white w-full max-w-6xl rounded-[40px] shadow-2xl flex overflow-hidden min-h-[800px] relative">
+
+  <div className="bg-white rounded-xl w-full min-h-screen  flex">
         
         {/* SIDEBAR */}
         <div className="w-24 bg-white flex flex-col items-center py-10 space-y-12 border-r border-gray-100">
@@ -44,7 +42,7 @@ const Dashboard = () => {
         </div>
 
         {/* MAIN CONTENT */}
-        <main className="flex-1 p-10 bg-[#FAF9F6]">
+        <main className="flex-1 p- bg-[#FAF9F6]">
           {/* Header */}
           <header className="flex justify-between items-center mb-10">
             <div className="relative w-96">
@@ -54,6 +52,7 @@ const Dashboard = () => {
                 placeholder="Search subject" 
                 className="w-full bg-white py-3 pl-12 pr-4 rounded-2xl shadow-sm focus:outline-none text-sm"
               />
+              
             </div>
             <div className="flex items-center space-x-6">
               <div className="flex items-center text-sm font-medium">EN <ChevronDown size={16} className="ml-1" /></div>
@@ -71,9 +70,14 @@ const Dashboard = () => {
 
             </div>
           </header>
-          <ExamCards/>
+          <div className="col-span-8 space-y-6">
 
-          <div className="grid grid-cols-12 gap-6">
+  {/* ✅ Dynamic Exams */}
+  <ExamCards />
+  </div>
+         
+
+          <div className="grid grid-cols-12 gap-6 pt-10">
             {/* Left Column */}
             <div className="col-span-8 space-y-6">
               <div className="grid grid-cols-2 gap-6">
@@ -191,7 +195,7 @@ const Dashboard = () => {
           </div>
         </main>
       </div>
-    </div>
+    
   );
 };
 

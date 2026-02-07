@@ -1,152 +1,271 @@
-import React from "react";
-import FrontNavbar from "../component/layout/FrontNavbar";
-<<<<<<< HEAD
-=======
+import React, { useState } from "react";
+import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { signupUser } from "../redux/thunks/userThunk";
 import heroVideo from "../assets/hero-video.mp4";
-
->>>>>>> 2a26ad3f0786e994ca267dca2cd9d8be8016f8d6
+import logo from "../assets/logo.jpeg";
+import Layout from "../component/layout/Layout";
 
 function Home() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    const { name, email, username, password } = formData;
+
+    if (!name || !email || !username || !password) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    const res = await dispatch(signupUser(formData));
+    if (res.meta.requestStatus === "fulfilled") {
+      alert("Signup Successful 🎉");
+      navigate("/login");
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden 
-<<<<<<< HEAD
-      bg-gradient-to-br from-amber-50 via-rose-50 to-orange-100">
+    <Layout>
+      <div className="relative min-h-screen overflow-hidden">
 
-      {/* Premium Soft Gradient Blobs */}
-      <div className="absolute -top-20 -right-20 w-[500px] h-[500px] 
-        bg-gradient-to-br from-pink-300/40 to-yellow-300/40 
-=======
-      bg-gradient-to-bl from-[#fff8dc] via-[#ffe9a8] to-[#ffd86b]">
+        {/* Background Video */}
+        <video
+          src={heroVideo}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
+        />
 
-      {/* Soft Golden Blobs */}
-      <div className="absolute -top-20 -right-20 w-[500px] h-[500px] 
-        bg-gradient-to-br from-yellow-300/40 to-amber-400/40 
->>>>>>> 2a26ad3f0786e994ca267dca2cd9d8be8016f8d6
-        rounded-full blur-3xl -z-10 animate-pulse">
-      </div>
-
-      <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] 
-<<<<<<< HEAD
-        bg-gradient-to-br from-orange-300/40 to-rose-300/40 
-=======
-        bg-gradient-to-br from-amber-300/40 to-yellow-400/40 
->>>>>>> 2a26ad3f0786e994ca267dca2cd9d8be8016f8d6
-        rounded-full blur-3xl -z-10">
-      </div>
-
-      {/* Navbar */}
-      <FrontNavbar />
-
-      {/* Hero Section */}
-      <div className="grid md:grid-cols-2 items-center 
-        px-10 md:px-24 py-20">
-
-        {/* Left Content */}
-        <div className="space-y-6">
-
-<<<<<<< HEAD
-          <h2 className="text-7xl font-bold 
-            bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 
-            bg-clip-text text-transparent drop-shadow-sm">
-            Online Test
-          </h2>
-
-          <p className="text-gray-900 text-xl leading-relaxed max-w-lg">
-            Practice exams, test your knowledge, and improve your skills 
-            with our premium interactive learning platform.
-             Practice exams, test your knowledge, and improve your skills 
-            with our premium interactive learning platform.
-             Practice exams, test your knowledge, and improve your skills 
-            with our premium interactive learning platform.
-          </p>
-
-          <div className="flex gap-4">
-            <button className="px-8 py-3 rounded-full 
-              bg-gradient-to-r from-red-500 to-pink-500 
-              text-white font-semibold shadow-lg 
-              hover:scale-105 hover:shadow-xl 
-              transition duration-300">
-              Get Started
-            </button>
-
-            <button className="px-8 py-3 rounded-full 
-              border border-red-400 text-red-500 
-              hover:bg-red-500 hover:text-white 
-=======
-          <h2 className="text-4xl font-bold 
-            bg-gradient-to-r from-gray-900  to-orange-500 
-            bg-clip-text text-transparent drop-shadow-sm">
-            The International Unconventional Olympaids ++
-          </h2>
-
-          <p className="text-gray-900 text-xl leading-relaxed max-w-lg">
-            Explore The International Unconventional Olympiads ++ .
-             A global platform for creative minds to compete in non-traditional challenges promoting critical thinking and innovation.
-          </p>
-
-          <div className="flex gap-4">
-       
-            
-            <button className="px-8 py-3 rounded-full gap-5
-              bg-gradient-to-r from-blue-200 to-blue-200 
-              text-black font-semibold shadow-lg 
-              hover:scale-105 hover:shadow-xl 
-              transition duration-300">
-          Login
-            </button>
-
-            <button className="px-8 py-3 rounded-full 
-              border border-yellow-600 text-yellow-700 
-              hover:bg-yellow-500 hover:text-black 
->>>>>>> 2a26ad3f0786e994ca267dca2cd9d8be8016f8d6
-              transition duration-300">
-              Learn More
-            </button>
-          </div>
-
+        {/* Overlay */}
+     
+        {/* Blur Effects */}
+        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] 
+          bg-gradient-to-br from-yellow-300/40 to-amber-400/40 
+          rounded-full blur-3xl animate-pulse">
         </div>
 
-<<<<<<< HEAD
-        {/* Right Animated Image */}
-        <div className="mt-12 md:mt-0 flex justify-center">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r 
-              from-pink-200 to-yellow-200 rounded-full 
-              blur-2xl opacity-60 animate-pulse">
-            </div>
-
-            <img
-              src="https://illustrations.popsy.co/amber/digital-nomad.svg"
-              alt="Illustration"
-              className="relative w-[95%] animate-float"
-            />
-          </div>
+        <div className="absolute bottom-0 -left-20 w-[400px] h-[400px] 
+          bg-gradient-to-br from-amber-300/40 to-yellow-400/40 
+          rounded-full blur-3xl">
         </div>
-=======
-       {/* Right Video */}
-<div className="mt-12 md:mt-0 flex justify-end -mr-10 md:-mr-24"> 
-   <div className="relative">
 
-    <div className="absolute inset-0 bg-gradient-to-r 
-      from-yellow-200 to-amber-300 rounded-2xl 
-      blur-2xl opacity-60 animate-pulse">
-    </div>
+        {/* Split Layout */}
+        <div className="relative z-10 grid md:grid-cols-2 items-center 
+          min-h-screen px-10 md:px-24 gap-16">
 
-    <video
-      src={heroVideo}
-      autoPlay
-      loop
-      muted
-      playsInline
-      className="relative w-[95%] rounded-2xl shadow-xl"
-    ></video>
+{/* LEFT SIDE LARGE GLASS CARD */}
+<div className="
+  relative
+  backdrop-blur-2xl
+  bg-yellow-100/70
+  border border-yellow-200
+  rounded-[60px]
+  p-24
+  shadow-2xl
+  w-[95%] md:w-[85%]
+  max-w-6xl
+  space-y-12
+">
+
+  {/* Heading */}
+  <h2 className="
+    text-4xl md:text-5xl
+    font-extrabold
+    text-gray-900
+    leading-tight
+  ">
+    The International
+    <span className="block mt-4">
+      Unconventional{" "}
+      <span className="text-orange-500">
+        Olympiads ++
+      </span>
+    </span>
+  </h2>
+
+  {/* Paragraph */}
+  <p className="
+    text-lg md:text-2xl
+    leading-[1.8]
+    text-gray-800
+    max-w-4xl
+  ">
+    Explore The International Unconventional Olympiads ++. 
+    A global platform for creative minds to compete in non-traditional 
+    challenges promoting critical thinking and innovation.
+  </p>
+
+  {/* Buttons */}
+  <div className="flex gap-8 mt-6">
+
+    <button className="
+      px-12 py-4
+      text-xl
+      rounded-full
+      bg-blue-200
+      text-gray-900
+      font-semibold
+      shadow-md
+      hover:bg-blue-300
+      transition-all duration-300
+    ">
+      Login
+    </button>
+
+    <button className="
+      px-12 py-4
+      text-xl
+      rounded-full
+      border border-orange-400
+      text-orange-600
+      font-semibold
+      hover:bg-orange-400
+      hover:text-white
+      transition-all duration-300
+    ">
+      Learn More
+    </button>
 
   </div>
 </div>
->>>>>>> 2a26ad3f0786e994ca267dca2cd9d8be8016f8d6
 
-      </div>
+
+
+          {/* RIGHT SIDE (Your Signup UI with improved padding) */}
+          <div className="flex justify-end">
+       <div className="
+  relative z-10
+  w-95% md:w-[70%]
+  min-h-[90vh]
+  px-10 md:px-16
+  py-12 md:py-16
+  border-2 border-yellow-400
+  rounded-3xl
+  bg-gradient-to-bl from-[#fde68a] via-[#fff7e6] to-[#fffaf5]
+  shadow-2xl
+  flex flex-col justify-center
+">
+
+  {/* Logo */}
+  <div className="flex justify-center mb-5">
+    <img src={logo} alt="Logo" className="w-35 h-35 object-contain" />
+  </div>
+
+  {/* Heading */}
+  <h2 className="text-2xl md:text-3xl font-bold mb-10 text-gray-800 text-center">
+    Create an Account
+  </h2>
+
+  {/* Form */}
+  <form onSubmit={handleSignup} className="space-y-8">
+
+    {/* Name */}
+    <div className="flex items-center border-b-2 border-amber-800 pb-4">
+      <FaUser className="text-amber-600 mr-4 text-2xl" />
+      <input
+        type="text"
+        name="name"
+        placeholder="Full Name"
+        onChange={handleChange}
+        className="w-full bg-transparent outline-none text-lg py-3"
+      />
     </div>
+
+    {/* Username */}
+    <div className="flex items-center border-b-2 border-amber-800 pb-4">
+      <FaUser className="text-amber-600 mr-4 text-2xl" />
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        onChange={handleChange}
+        className="w-full bg-transparent outline-none text-lg py-3"
+      />
+    </div>
+
+    {/* Email */}
+    <div className="flex items-center border-b-2 border-amber-800 pb-4">
+      <FaEnvelope className="text-amber-600 mr-4 text-xl" />
+      <input
+        type="email"
+        name="email"
+        placeholder="Email Address"
+        onChange={handleChange}
+        className="w-full bg-transparent outline-none text-lg py-3"
+      />
+    </div>
+
+    {/* Password */}
+    <div className="flex items-center border-b-2 border-amber-800 pb-4">
+      <FaLock className="text-amber-600 mr-4 text-xl" />
+      <input
+        type={showPassword ? "text" : "password"}
+        name="password"
+        placeholder="Password"
+        onChange={handleChange}
+        className="w-full bg-transparent outline-none text-lg py-3"
+      />
+      <button
+        type="button"
+        onClick={() => setShowPassword(!showPassword)}
+        className="ml-4 text-lg"
+      >
+        {showPassword ? <FaEyeSlash /> : <FaEye />}
+      </button>
+    </div>
+
+    {/* Button */}
+    <button
+      type="submit"
+      className="
+        w-full
+        py-5
+        text-xl
+        rounded-full
+        bg-gradient-to-r from-amber-400 via-yellow-300 to-amber-400
+        text-black
+        font-bold
+        hover:scale-105
+        transition-all duration-300
+      "
+    >
+      SIGN UP
+    </button>
+
+  </form>
+
+</div>
+ </div>
+            {/* Optional login link (currently commented out) */}
+            {/*
+            <p className="text-center mt-8 text-sm px-4">
+              Already have an account?{" "}
+              <NavLink to="/login" className="text-amber-600 font-semibold">
+                Login
+              </NavLink>
+            </p>
+            */}
+          </div>
+        </div>
+    
+    </Layout>
   );
 }
 

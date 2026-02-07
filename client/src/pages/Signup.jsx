@@ -4,7 +4,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signupUser } from "../redux/thunks/userThunk";
 import logo from "../assets/logo.jpeg";
-
+import Layout from "../component/layout/Layout";
 function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -47,6 +47,9 @@ function Signup() {
   };
 
   return (
+
+
+    <Layout>
     <div className="min-h-screen flex items-center justify-center 
       bg-gradient-to-bl from-[#fde68a] via-[#fff7e6] to-[#fffaf5] relative overflow-hidden">
 
@@ -140,6 +143,7 @@ function Signup() {
 
       </div>
     </div>
+     </Layout>
   );
 }
 
