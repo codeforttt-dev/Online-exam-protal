@@ -13,17 +13,9 @@ const router = express.Router();
 
 router.post("/signup", registerUser);
 router.post("/login", loginUser);
-router.get("/profile", protect, getUserProfile);
+router.get("/profile", protect, getUserProfile);  // ✅ YEHI MAIN ROUTE USE HOGI
 router.put("/profile", protect, updateUserProfile);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 
-
-// Protected route example
-router.get("/profile", protect, (req, res) => {
-  res.json(req.user);
-});
-
 export default router;
-
-
