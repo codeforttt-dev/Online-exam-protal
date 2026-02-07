@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
 const examSchema = new mongoose.Schema({
-  title: String,          // Math Olympiad
+  title: String,         
   description: String,
   price: Number,
-  duration: Number,      // minutes
+  duration: Number,      
   totalMarks: Number,
   isActive: {
     type: Boolean,

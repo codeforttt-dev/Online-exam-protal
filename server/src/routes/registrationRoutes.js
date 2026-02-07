@@ -11,6 +11,6 @@ const router = express.Router();
 
 // must login
 router.post("/register", protect, registerExam);
-router.get("/my", protect, myExams);
+router.get("/my-exams", protect, myExams);
 
 export default router;
