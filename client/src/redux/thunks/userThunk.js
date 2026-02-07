@@ -4,10 +4,10 @@ import API from "../../api/axios";
 
 // SIGNUP
 export const signupUser = createAsyncThunk(
-  "users/home",
+  "users/signup",
   async (data, { rejectWithValue }) => {
     try {
-      const res = await API.post("/users/home", data);
+      const res = await API.post("/users/signup", data);
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response.data.message);

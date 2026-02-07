@@ -9,6 +9,7 @@ import AdminDashboard from "../adminpages/adminDashboard";
 import OlympiadManagement from "../adminpages/olympaidManagement";
 import QuestionBank from "../adminpages/questionBank";
 import Participants from "../adminpages/participants";
+import ForgotPassword from "../pages/forgotPassword";
 function AppRoutes() {
   return (
     
@@ -22,6 +23,7 @@ function AppRoutes() {
      <Route path="/admindashboard"element={<AdminDashboard/>}/>
      <Route path="/olympiad-management" element={<OlympiadManagement />} />
      <Route path="/question-Bank" element={<QuestionBank/>}/>
+     <Route path="/forgot-password" element={<ForgotPassword />} />
 
            
         <Route path="/" element={<AdminDashboard />} />
