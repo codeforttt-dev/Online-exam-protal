@@ -5,7 +5,7 @@ import { signupUser, loginUser } from "../thunks/userThunk";
 const savedToken = localStorage.getItem("token");
 
 const initialState = {
-  user: null,
+  user: null,          // tabhi set hoga jab signup/login success hoga
   token: savedToken || null,
   loading: false,
   error: null,
@@ -33,7 +33,6 @@ const userSlice = createSlice({
         if (action.payload) {
           state.user = action.payload.user || null;
           state.token = action.payload.token || null;
-
           if (action.payload.token) {
             localStorage.setItem("token", action.payload.token);
           }

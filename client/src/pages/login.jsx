@@ -1,5 +1,5 @@
-// src/pages/Login.jsx (ya jahan bhi hai)
-import React, { useState, useEffect } from "react";
+// client/src/pages/Login.jsx
+import React, { useState } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import logo from "../assets/logo.jpeg";
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user, token, loading, error } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -25,16 +25,18 @@ function Login() {
     });
   };
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    await dispatch(loginUser(loginData));
+    dispatch(loginUser(loginData))
+      .unwrap()
+      .then(() => {
+        // ✅ sirf login success ke baad dashboard pe jao
+        navigate("/dashboard");
+      })
+      .catch(() => {
+        // error redux me aa jayega
+      });
   };
-
-  useEffect(() => {
-    if (token) {
-      navigate("/dashboard");
-    }
-  }, [token, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center 
