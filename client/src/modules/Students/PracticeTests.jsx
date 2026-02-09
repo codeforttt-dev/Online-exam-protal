@@ -1,5 +1,5 @@
 // src/components/PracticeTestsContent.jsx
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from "react";
 import {
   FaPlay,
   FaClock,
@@ -13,133 +13,68 @@ import {
   FaBook,
   FaCalculator,
   FaEye,
-} from 'react-icons/fa';
+} from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPracticeTests } from "../../redux/thunks/practiceTestThunk";
 
 const PracticeTestsContent = () => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [viewType, setViewType] = useState('card'); // 'card' | 'table'
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [viewType, setViewType] = useState("card"); // 'card' | 'table'
+
+  const dispatch = useDispatch();
+  const { items: apiTests, loading, error } = useSelector(
+    (state) => state.practiceTests
+  );
+
+  useEffect(() => {
+    dispatch(fetchPracticeTests());
+  }, [dispatch]);
 
   const categories = [
-    { id: 'all', label: 'All Tests' },
-    { id: 'physics', label: 'Physics' },
-    { id: 'chemistry', label: 'Chemistry' },
-    { id: 'biology', label: 'Biology' },
-    { id: 'mathematics', label: 'Mathematics' },
-    { id: 'mixed', label: 'Mixed' },
+    { id: "all", label: "All Tests" },
+    { id: "physics", label: "Physics" },
+    { id: "chemistry", label: "Chemistry" },
+    { id: "biology", label: "Biology" },
+    { id: "mathematics", label: "Mathematics" },
+    { id: "mixed", label: "Mixed" },
   ];
 
-  const tests = [
-    {
-      id: 1,
-      title: 'Physics - Thermodynamics',
-      category: 'physics',
-      description:
-        'Advanced thermodynamics concepts including laws, heat transfer, and entropy',
-      questions: 25,
-      duration: '45 min',
-      difficulty: 'hard',
-      icon: <FaFire />,
-      taken: 1245,
-      rating: 4.8,
-      isNew: false,
-    },
-    {
-      id: 2,
-      title: 'Chemistry - Organic Compounds',
-      category: 'chemistry',
-      description: 'Nomenclature, reactions and properties of organic compounds',
-      questions: 20,
-      duration: '35 min',
-      difficulty: 'medium',
-      icon: <FaFlask />,
-      taken: 1890,
-      rating: 4.6,
-      isNew: true,
-    },
-    {
-      id: 3,
-      title: 'Biology - Genetics',
-      category: 'biology',
-      description: 'Mendelian genetics, DNA replication, and genetic disorders',
-      questions: 30,
-      duration: '50 min',
-      difficulty: 'medium',
-      icon: <FaDna />,
-      taken: 1567,
-      rating: 4.7,
-      isNew: false,
-    },
-    {
-      id: 4,
-      title: 'Physics - Mechanics',
-      category: 'physics',
-      description: 'Motion, forces, energy, and momentum',
-      questions: 25,
-      duration: '40 min',
-      difficulty: 'easy',
-      icon: <FaAtom />,
-      taken: 2100,
-      rating: 4.5,
-      isNew: false,
-    },
-    {
-      id: 5,
-      title: 'Chemistry - Stoichiometry',
-      category: 'chemistry',
-      description: 'Chemical equations, mole concept, and limiting reagents',
-      questions: 22,
-      duration: '38 min',
-      difficulty: 'medium',
-      icon: <FaCalculator />,
-      taken: 1432,
-      rating: 4.4,
-      isNew: true,
-    },
-    {
-      id: 6,
-      title: 'NSO Mock Test - Full',
-      category: 'mixed',
-      description: 'Complete NSO pattern mock test with all subjects',
-      questions: 60,
-      duration: '120 min',
-      difficulty: 'hard',
-      icon: <FaBook />,
-      taken: 890,
-      rating: 4.9,
-      isNew: false,
-    },
-    {
-      id: 7,
-      title: 'Biology - Cell Biology',
-      category: 'biology',
-      description: 'Cell structure, organelles, and cellular processes',
-      questions: 28,
-      duration: '45 min',
-      difficulty: 'easy',
-      icon: <FaDna />,
-      taken: 1765,
-      rating: 4.3,
-      isNew: false,
-    },
-    {
-      id: 8,
-      title: 'Mathematics - Calculus',
-      category: 'mathematics',
-      description: 'Differential and integral calculus problems',
-      questions: 24,
-      duration: '55 min',
-      difficulty: 'hard',
-      icon: <FaChartLine />,
-      taken: 1120,
-      rating: 4.7,
-      isNew: true,
-    },
-  ];
+  // Map backend PracticeTest -> UI tests
+  const tests = useMemo(
+    () =>
+      apiTests.map((t, index) => {
+        const category = "mixed"; // abhi subject field nahi, sab mixed
+        const icons = [
+          <FaFlask key="flask" />,
+          <FaAtom key="atom" />,
+          <FaDna key="dna" />,
+          <FaBook key="book" />,
+          <FaCalculator key="calc" />,
+          <FaChartLine key="chart" />,
+        ];
+        const icon = icons[index % icons.length];
+
+        return {
+          id: t._id,
+          title: t.title,
+          category,
+          description: t.description || "Practice test",
+          questions: t.totalQuestions || 0,
+          duration: t.duration ? `${t.duration} min` : "—",
+          difficulty: "medium",
+          icon,
+          taken: 0,
+          rating: 0,
+          isNew: index < 3,
+        };
+      }),
+    [apiTests]
+  );
 
   const filteredTests = tests.filter((test) => {
     const matchesCategory =
-      activeCategory === 'all' || test.category === activeCategory;
+      activeCategory === "all" || test.category === activeCategory;
     const q = searchQuery.toLowerCase();
     const matchesSearch =
       test.title.toLowerCase().includes(q) ||
@@ -149,27 +84,30 @@ const PracticeTestsContent = () => {
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case 'easy':
-        return 'bg-green-100 text-green-800';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'hard':
-        return 'bg-red-100 text-red-800';
+      case "easy":
+        return "bg-green-100 text-green-800";
+      case "medium":
+        return "bg-yellow-100 text-yellow-800";
+      case "hard":
+        return "bg-red-100 text-red-800";
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const startRandomTest = () => {
+    if (!tests.length) return;
     const randomTest = tests[Math.floor(Math.random() * tests.length)];
-    alert(`Starting random test: ${randomTest.title}`);
+    alert(
+      `Starting random test: ${randomTest.title}\n\nDuration: ${randomTest.duration}\nQuestions: ${randomTest.questions}`
+    );
   };
 
   const startTest = (testId) => {
     const test = tests.find((t) => t.id === testId);
     if (!test) return;
     alert(
-      `Starting test: ${test.title}\n\nDuration: ${test.duration}\nQuestions: ${test.questions}`,
+      `Starting test: ${test.title}\n\nDuration: ${test.duration}\nQuestions: ${test.questions}`
     );
   };
 
@@ -179,10 +117,27 @@ const PracticeTestsContent = () => {
     alert(`Viewing details for: ${test.title}`);
   };
 
+  if (loading) {
+    return (
+      <div className="p-6 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
+        <p>Loading practice tests...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 text-center text-red-600">
+        {error}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col md-flex-row md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
             Practice Tests
@@ -197,21 +152,21 @@ const PracticeTestsContent = () => {
           <div className="flex border border-gray-300 rounded-lg overflow-hidden text-xs md:text-sm">
             <button
               className={`px-3 py-2 font-medium ${
-                viewType === 'card'
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-white text-gray-700'
+                viewType === "card"
+                  ? "bg-orange-500 text-white"
+                  : "bg-white text-gray-700"
               }`}
-              onClick={() => setViewType('card')}
+              onClick={() => setViewType("card")}
             >
               Cards
             </button>
             <button
               className={`px-3 py-2 font-medium ${
-                viewType === 'table'
-                  ? 'bg-orange-500 text-white'
-                  : 'bg-white text-gray-700'
+                viewType === "table"
+                  ? "bg-orange-500 text-white"
+                  : "bg-white text-gray-700"
               }`}
-              onClick={() => setViewType('table')}
+              onClick={() => setViewType("table")}
             >
               Table
             </button>
@@ -257,8 +212,8 @@ const PracticeTestsContent = () => {
             key={category.id}
             className={`px-4 py-2.5 rounded-full border-2 text-xs md:text-sm transition-all duration-200 ${
               activeCategory === category.id
-                ? 'bg-orange-500 border-orange-500 text-white shadow-sm'
-                : 'border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400'
+                ? "bg-orange-500 border-orange-500 text-white shadow-sm"
+                : "border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400"
             }`}
             onClick={() => setActiveCategory(category.id)}
           >
@@ -276,7 +231,9 @@ const PracticeTestsContent = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Total Tests</p>
-              <h3 className="text-xl font-bold text-gray-800">{tests.length}</h3>
+              <h3 className="text-xl font-bold text-gray-800">
+                {tests.length}
+              </h3>
             </div>
           </div>
         </div>
@@ -287,7 +244,7 @@ const PracticeTestsContent = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Avg. Duration</p>
-              <h3 className="text-xl font-bold text-gray-800">48 min</h3>
+              <h3 className="text-xl font-bold text-gray-800">—</h3>
             </div>
           </div>
         </div>
@@ -298,7 +255,7 @@ const PracticeTestsContent = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Completed</p>
-              <h3 className="text-xl font-bold text-gray-800">8</h3>
+              <h3 className="text-xl font-bold text-gray-800">—</h3>
             </div>
           </div>
         </div>
@@ -309,14 +266,14 @@ const PracticeTestsContent = () => {
             </div>
             <div>
               <p className="text-sm text-gray-600">Avg. Score</p>
-              <h3 className="text-xl font-bold text-gray-800">88%</h3>
+              <h3 className="text-xl font-bold text-gray-800">—</h3>
             </div>
           </div>
         </div>
       </div>
 
       {/* VIEW: CARD or TABLE */}
-      {viewType === 'card' ? (
+      {viewType === "card" ? (
         /* Compact Card View */
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {filteredTests.map((test) => (
@@ -337,7 +294,7 @@ const PracticeTestsContent = () => {
                       </h3>
                       <span
                         className={`inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full ${getDifficultyColor(
-                          test.difficulty,
+                          test.difficulty
                         )}`}
                       >
                         {test.difficulty.charAt(0).toUpperCase() +
@@ -408,30 +365,13 @@ const PracticeTestsContent = () => {
                   <div className="flex justify-between text-[10px] mb-1">
                     <span className="text-gray-600">Your Best Score</span>
                     <span className="font-semibold text-gray-800">
-                      {test.id % 3 === 0
-                        ? '92%'
-                        : test.id % 3 === 1
-                        ? '85%'
-                        : '78%'}
+                      0%
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5">
                     <div
-                      className={`h-1.5 rounded-full ${
-                        test.id % 3 === 0
-                          ? 'bg-green-500'
-                          : test.id % 3 === 1
-                          ? 'bg-yellow-500'
-                          : 'bg-blue-500'
-                      }`}
-                      style={{
-                        width:
-                          test.id % 3 === 0
-                            ? '92%'
-                            : test.id % 3 === 1
-                            ? '85%'
-                            : '78%',
-                      }}
+                      className="h-1.5 rounded-full bg-blue-500"
+                      style={{ width: "0%" }}
                     ></div>
                   </div>
                 </div>
@@ -477,10 +417,9 @@ const PracticeTestsContent = () => {
                   <tr
                     key={test.id}
                     className={`transition-colors ${
-                      idx % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'
+                      idx % 2 === 0 ? "bg-white" : "bg-gray-50/60"
                     } hover:bg-orange-50`}
                   >
-                    {/* Test name + icon */}
                     <td className="px-4 py-3 align-middle">
                       <div className="flex items-center">
                         <div className="w-8 h-8 rounded-md bg-orange-50 text-orange-500 flex items-center justify-center mr-2.5 text-sm">
@@ -496,56 +435,42 @@ const PracticeTestsContent = () => {
                         </div>
                       </div>
                     </td>
-
-                    {/* Category */}
                     <td className="px-4 py-3 align-middle">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 text-[11px] text-gray-700">
                         {categories.find((c) => c.id === test.category)?.label ||
                           test.category}
                       </span>
                     </td>
-
-                    {/* Difficulty */}
                     <td className="px-4 py-3 align-middle">
                       <span
                         className={`inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold ${getDifficultyColor(
-                          test.difficulty,
+                          test.difficulty
                         )}`}
                       >
                         {test.difficulty.charAt(0).toUpperCase() +
                           test.difficulty.slice(1)}
                       </span>
                     </td>
-
-                    {/* Questions */}
                     <td className="px-4 py-3 align-middle text-center">
                       <span className="text-sm font-semibold text-gray-800">
                         {test.questions}
                       </span>
                     </td>
-
-                    {/* Duration */}
                     <td className="px-4 py-3 align-middle text-center">
                       <span className="text-sm font-semibold text-gray-800">
                         {test.duration}
                       </span>
                     </td>
-
-                    {/* Taken */}
                     <td className="px-4 py-3 align-middle text-center">
                       <span className="text-sm font-semibold text-gray-800">
                         {test.taken.toLocaleString()}
                       </span>
                     </td>
-
-                    {/* Rating */}
                     <td className="px-4 py-3 align-middle text-center">
                       <span className="text-sm font-semibold text-gray-800">
                         {test.rating}
                       </span>
                     </td>
-
-                    {/* Actions */}
                     <td className="px-4 py-3 align-middle text-right">
                       <div className="flex justify-end gap-2">
                         <button
@@ -586,13 +511,12 @@ const PracticeTestsContent = () => {
         </div>
       )}
 
-      {/* No Results Message (card+table dono ke liye extra safety) */}
       {filteredTests.length === 0 && (
         <div className="text-center py-6">
           <button
             onClick={() => {
-              setActiveCategory('all');
-              setSearchQuery('');
+              setActiveCategory("all");
+              setSearchQuery("");
             }}
             className="px-5 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold shadow-sm transition-colors"
           >
@@ -601,7 +525,7 @@ const PracticeTestsContent = () => {
         </div>
       )}
 
-      {/* Quick Tips Section */}
+      {/* Quick Tips */}
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mt-4">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           📚 Test Preparation Tips
