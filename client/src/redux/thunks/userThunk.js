@@ -2,7 +2,6 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../../api/axios";
 
 
-// SIGNUP
 export const signupUser = createAsyncThunk(
   "users/signup",
   async (data, { rejectWithValue }) => {
@@ -10,10 +9,13 @@ export const signupUser = createAsyncThunk(
       const res = await API.post("/users/signup", data);
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(
+        err.response?.data?.message || "Signup Failed"
+      );
     }
   }
 );
+
 
 
 // LOGIN
@@ -24,7 +26,9 @@ export const loginUser = createAsyncThunk(
       const res = await API.post("/users/login", data);
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
-    }
+return rejectWithValue(
+  err.response?.data?.message || "Request Failed"
+);  
+  }
   }
 );

@@ -30,18 +30,27 @@ const userSlice = createSlice({
       })
 
       // login
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+      .addCase(loginUser.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+})
+.addCase(loginUser.fulfilled, (state, action) => {
+  state.loading = false;
 
-        localStorage.setItem("token", action.payload.token);
-      })
+  state.user = {
+    _id: action.payload._id,
+    username: action.payload.username,
+    role: action.payload.role,
+  };
 
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
+  state.token = action.payload.token;
+
+  localStorage.setItem("token", action.payload.token);
+})
+.addCase(loginUser.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload;
+});
   },
 });
 

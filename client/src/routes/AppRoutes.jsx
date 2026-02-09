@@ -10,6 +10,7 @@ import OlympiadManagement from "../adminpages/olympaidManagement";
 import QuestionBank from "../adminpages/questionBank";
 import Participants from "../adminpages/participants";
 import ForgotPassword from "../pages/forgotPassword";
+import ResetPassword from "../pages/resetPassword";
 function AppRoutes() {
   return (
     
@@ -24,6 +25,8 @@ function AppRoutes() {
      <Route path="/olympiad-management" element={<OlympiadManagement />} />
      <Route path="/question-Bank" element={<QuestionBank/>}/>
      <Route path="/forgot-password" element={<ForgotPassword />} />
+     <Route path="/reset-password/:token" element={<ResetPassword />} />
+
 
            
         <Route path="/" element={<AdminDashboard />} />
