@@ -7,6 +7,7 @@ import examRoutes from "./src/routes/examRoutes.js";
 import registrationRoutes from "./src/routes/registrationRoutes.js";
 import studentRoutes from "./src/routes/studentRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
+import practiceTestRoutes from "./src/routes/practiceTestRoutes.js";
 
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use(
 app.use("/api/users", userRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/registrations", registrationRoutes);
+app.use("/api/practice-tests", practiceTestRoutes);
 
 // Dashboard
 app.use("/api/student", studentRoutes);

@@ -1,29 +1,40 @@
+// client/src/redux/slices/examSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchExams } from "../thunks/examThunk";
+import { fetchStudentDashboard } from "../thunks/studentThunk";
 
 const examSlice = createSlice({
   name: "exam",
-
   initialState: {
-    exams: [],
+    dashboard: {
+      registrations: [],
+      results: [],
+      studyMinutes: 0,
+      upcomingExams: [],
+      resources: [],
+    },
     loading: false,
     error: null,
   },
-
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchExams.pending, (state) => {
+      .addCase(fetchStudentDashboard.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
-
-      .addCase(fetchExams.fulfilled, (state, action) => {
+      .addCase(fetchStudentDashboard.fulfilled, (state, action) => {
         state.loading = false;
-        state.exams = action.payload;
+        state.dashboard = {
+          registrations: action.payload.registrations || [],
+          results: action.payload.results || [],
+          studyMinutes: action.payload.studyMinutes || 0,
+          upcomingExams: action.payload.upcomingExams || [],
+          resources: action.payload.resources || [],
+        };
       })
-
-      .addCase(fetchExams.rejected, (state, action) => {
+      .addCase(fetchStudentDashboard.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error = action.payload || "Failed to load dashboard";
       });
   },
 });

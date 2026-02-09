@@ -8,7 +8,9 @@ export const fetchExams = createAsyncThunk(
       const res = await API.get("/exams");
       return res.data;
     } catch (err) {
-      return rejectWithValue(err.response.data.message);
+      return rejectWithValue(
+        err?.response?.data?.message || "Failed to load exams"
+      );
     }
   }
 );
