@@ -30,7 +30,6 @@ export const startPracticeTest = async (req, res) => {
   try {
     const { examId } = req.params;
 
-    // Exam fetch karo
     const exam = await Exam.findById(examId);
     if (!exam) {
       return res.status(404).json({
@@ -39,17 +38,14 @@ export const startPracticeTest = async (req, res) => {
       });
     }
 
-    // ✅ Question ko examCode se fetch karo (jaise tumne sample me dikhaya)
     const questions = await Question.find({
       examCode: exam.examCode,
     }).sort({ questionNumber: 1 });
 
-    // 1–15 (simple + multiple + confidence)
     const fixedQuestions = questions.filter(
       (q) => q.questionNumber >= 1 && q.questionNumber <= 15
     );
 
-    // X question (branch parent)
     const xQuestion = questions.find((q) => q.type === "branch_parent");
 
     return res.json({
@@ -239,9 +235,18 @@ export const submitPracticeTest = async (req, res) => {
       });
     }
 
+    // 🆕 yahan se: detailed attempts fetch karke response me bhej rahe h
+    const detailedAttempts = await PracticeAttempt.find({
+      user: userId,
+      exam: examId,
+    })
+      .sort({ questionNumber: 1 })
+      .lean();
+
     return res.json({
       success: true,
       totalMarks,
+      detailedAttempts,
     });
   } catch (error) {
     console.error("submitPracticeTest error:", error);

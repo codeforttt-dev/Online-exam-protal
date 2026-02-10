@@ -20,6 +20,13 @@ export default function PracticeTestExamPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
 
+  // 🆕 submit ke baad result card dikhane ke liye
+  const [showResultCard, setShowResultCard] = useState(false);
+  const [resultData, setResultData] = useState({
+    totalMarks: 0,
+    detailedAttempts: [],
+  });
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -137,6 +144,7 @@ export default function PracticeTestExamPage() {
     }
   };
 
+  // 🆕 updated handleSubmit
   const handleSubmit = async () => {
     try {
       const payloadAnswers = allQuestions.map((q) => {
@@ -156,9 +164,11 @@ export default function PracticeTestExamPage() {
       });
 
       if (data.success) {
-        // Aage chalke yahan modal ya result page dikha sakte ho
-        alert(`Test submitted! Total Marks: ${data.totalMarks}`);
-        navigate("/dashboard");
+        setResultData({
+          totalMarks: data.totalMarks,
+          detailedAttempts: data.detailedAttempts || [],
+        });
+        setShowResultCard(true);
       }
     } catch (e) {
       console.error("submit error", e);
@@ -208,6 +218,61 @@ export default function PracticeTestExamPage() {
     (a) => a.status === "skipped"
   ).length;
 
+  // 🆕 submit ke baad success card + animated button
+  if (showResultCard) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
+        <div className="bg-white border border-emerald-100 rounded-3xl shadow-lg max-w-md w-full p-6 text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="h-14 w-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+              <span className="text-2xl">✅</span>
+            </div>
+          </div>
+          <h1 className="text-lg font-semibold text-slate-800">
+            Test submitted successfully!
+          </h1>
+          <p className="text-sm text-slate-500">
+            You can now view your detailed answer sheet with correct answers,
+            your responses, and marks for each question.
+          </p>
+
+          <div className="flex items-center justify-center gap-4 text-xs">
+            <div className="px-3 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+              <div className="text-[10px] uppercase tracking-wide">
+                Total Marks
+              </div>
+              <div className="text-sm font-semibold">
+                {resultData.totalMarks}
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() =>
+              navigate(`/practice-tests/${examId}/review`, {
+                state: {
+                  totalMarks: resultData.totalMarks,
+                  detailedAttempts: resultData.detailedAttempts,
+                },
+              })
+            }
+            className="mt-2 inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-amber-500 text-white text-sm font-medium shadow-lg hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 animate-bounce"
+          >
+            View your result
+          </button>
+
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="block w-full mt-3 text-[11px] text-slate-500 hover:text-slate-700"
+          >
+            Go back to dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // normal exam UI
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-6xl mx-auto py-6 px-3 md:px-6 flex flex-col lg:flex-row gap-4">
@@ -425,7 +490,10 @@ export default function PracticeTestExamPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full bg-slate-100 border border-slate-300" />
-                <span>Not visited ({allQuestions.length - attemptedCount - skippedCount})</span>
+                <span>
+                  Not visited (
+                  {allQuestions.length - attemptedCount - skippedCount})
+                </span>
               </div>
             </div>
           </div>

@@ -7,8 +7,9 @@ import MainLayout from "../component/layout/Layout";
 
 import Dashboard from "../modules/Students/Dashboard";
 import Olympiads from "../modules/Students/Olympiads";
-import PracticeTests from "../modules/Students/PracticeTests"; // ✅ LIST PAGE
-import PracticeTestExamPage from "../pages/PracticeTestExamPage"; // ✅ EXAM PAGE (NEW)
+import PracticeTests from "../modules/Students/PracticeTests";
+import PracticeTestExamPage from "../pages/PracticeTestExamPage";
+import PracticeTestReviewPage from "../modules/Students/PracticeTestReview"; // 🆕 REVIEW PAGE
 import Results from "../modules/Students/Results";
 import StudyMaterials from "../modules/Students/StudyMaterials";
 import Leaderboard from "../modules/Students/Leaderboard";
@@ -26,12 +27,19 @@ function AppRoutes() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="olympiads" element={<Olympiads />} />
 
-        {/* Practice Test */}
+        {/* Practice Test list */}
         <Route path="practice-tests" element={<PracticeTests />} />
-        {/* yahan exam screen open hogi */}
+
+        {/* Exam screen */}
         <Route
           path="practice-tests/:id"
           element={<PracticeTestExamPage />}
+        />
+
+        {/* 🆕 Result / Review screen */}
+        <Route
+          path="practice-tests/:id/review"
+          element={<PracticeTestReviewPage />}
         />
 
         <Route path="results" element={<Results />} />
