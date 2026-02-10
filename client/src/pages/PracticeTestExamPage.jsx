@@ -251,7 +251,7 @@ export default function PracticeTestExamPage() {
 
           <button
             onClick={() =>
-              navigate(`/practice-tests/${examId}/review`, {
+              navigate(`/student/practice-tests/${examId}/review`, {
                 state: {
                   totalMarks: resultData.totalMarks,
                   detailedAttempts: resultData.detailedAttempts,
@@ -264,7 +264,7 @@ export default function PracticeTestExamPage() {
           </button>
 
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/student/dashboard")}
             className="block w-full mt-3 text-[11px] text-gray-500 hover:text-gray-700"
           >
             Go back to dashboard

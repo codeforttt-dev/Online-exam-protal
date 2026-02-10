@@ -1,15 +1,14 @@
-// src/component/Student-layout/StudentNavbar.jsx
 import { useLocation } from "react-router-dom";
 import { FaBell, FaMoon, FaSun, FaChevronDown, FaSearch } from "react-icons/fa";
 import { useState } from "react";
 
 const pageTitles = {
-  "/dashboard": "Dashboard",
-  "/olympiads": "Olympiads",
-  "/practice-tests": "Practice Tests",
-  "/results": "Results",
-  "/study-materials": "Study Materials",
-  "/leaderboard": "Leaderboard",
+  "/student/dashboard": "Dashboard",
+  "/student/olympiads": "Olympiads",
+  "/student/practice-tests": "Practice Tests",
+  "/student/results": "Results",
+  "/student/study-materials": "Study Materials",
+  "/student/leaderboard": "Leaderboard",
 };
 
 export default function StudentNavbar({ user }) {
@@ -17,10 +16,10 @@ export default function StudentNavbar({ user }) {
   const [darkMode] = useState(false);
 
   const currentPath = location.pathname;
-  const basePath = currentPath.split("/").slice(0, 2).join("/") || "/";
+  const basePath = currentPath.split("/").slice(0, 3).join("/") || "/";
   const title =
     pageTitles[basePath] ||
-    (currentPath.includes("/practice-tests/") ? "Practice Test" : "Student Panel");
+    (currentPath.includes("/student/practice-tests/") ? "Practice Test" : "Student Panel");
 
   const displayName = user?.name || "Student";
   const email = user?.email || "student@example.com";
@@ -29,7 +28,6 @@ export default function StudentNavbar({ user }) {
   return (
     <header className="sticky top-0 z-30 bg-[#FEECD5]/90 backdrop-blur-xl border-b border-[#FFE6A3] shadow-sm">
       <div className="h-16 max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between gap-4">
-        {/* Left: title + subtitle (Admin navbar style) */}
         <div className="flex flex-col min-w-0">
           <span className="text-sm md:text-base font-bold text-gray-900 truncate">
             {title}
@@ -39,7 +37,6 @@ export default function StudentNavbar({ user }) {
           </span>
         </div>
 
-        {/* Center: search */}
         <div className="hidden md:flex flex-1 max-w-md mx-4">
           <div className="relative w-full">
             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs" />
@@ -51,7 +48,6 @@ export default function StudentNavbar({ user }) {
           </div>
         </div>
 
-        {/* Right: status + actions (inspired by AdminNavbar) */}
         <div className="flex items-center gap-3">
           <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white/90 border border-[#FFE6A3] rounded-xl shadow-sm">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />

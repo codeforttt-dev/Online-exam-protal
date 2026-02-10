@@ -1,4 +1,3 @@
-// client/src/pages/Login.jsx
 import React, { useState } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -29,9 +28,10 @@ function Login() {
     e.preventDefault();
     dispatch(loginUser(loginData))
       .unwrap()
-      .then(() => {
-        // ✅ sirf login success ke baad dashboard pe jao
-        navigate("/dashboard");
+      .then((res) => {
+        // yahan res se token leke localStorage me save karo
+        // example: localStorage.setItem("nso_token", res.token);
+        navigate("/student/dashboard", { replace: true });
       })
       .catch(() => {
         // error redux me aa jayega

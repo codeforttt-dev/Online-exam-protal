@@ -1,4 +1,3 @@
-// src/component/layout/StudentSidebar.jsx
 import React, { useState, useEffect } from "react";
 import {
   FaTachometerAlt,
@@ -22,20 +21,34 @@ export default function StudentSidebar({ onWidthChange }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
-  const expandedWidth = 256;
-  const collapsedWidth = 80;
+  const expandedWidth = 256; // w-64
+  const collapsedWidth = 80; // w-20
 
   useEffect(() => {
-    onWidthChange && onWidthChange(isCollapsed ? collapsedWidth : expandedWidth);
+    if (onWidthChange) {
+      onWidthChange(isCollapsed ? collapsedWidth : expandedWidth);
+    }
   }, [isCollapsed, onWidthChange]);
 
   const menuItems = [
-    { id: "/dashboard", label: "Dashboard", icon: <FaTachometerAlt /> },
-    { id: "/olympiads", label: "My Olympiads", icon: <FaTrophy /> },
-    { id: "/practice-tests", label: "Practice Tests", icon: <FaClipboardList /> },
-    { id: "/results", label: "Results", icon: <FaChartLine /> },
-    { id: "/study-materials", label: "Study Materials", icon: <FaBook /> },
-    { id: "/leaderboard", label: "Leaderboard", icon: <FaAward /> },
+    { id: "/student/dashboard", label: "Dashboard", icon: <FaTachometerAlt /> },
+    { id: "/student/olympiads", label: "My Olympiads", icon: <FaTrophy /> },
+    {
+      id: "/student/practice-tests",
+      label: "Practice Tests",
+      icon: <FaClipboardList />,
+    },
+    { id: "/student/results", label: "Results", icon: <FaChartLine /> },
+    {
+      id: "/student/study-materials",
+      label: "Study Materials",
+      icon: <FaBook />,
+    },
+    {
+      id: "/student/leaderboard",
+      label: "Leaderboard",
+      icon: <FaAward />,
+    },
   ];
 
   const bottomMenuItems = [
@@ -51,6 +64,9 @@ export default function StudentSidebar({ onWidthChange }) {
       navigate(id);
     } else if (id === "logout") {
       alert("Logout");
+      // yahan logout pe token remove kar sakte ho:
+      // localStorage.removeItem("nso_token");
+      // navigate("/login", { replace: true });
     }
     if (window.innerWidth < 1024) setSidebarOpen(false);
   };

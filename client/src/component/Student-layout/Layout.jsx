@@ -1,8 +1,7 @@
-// src/component/Student-layout/Layout.jsx
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import StudentNavbar from "./StudentNavbar";
-import StudentSidebar from "./Sidebar";
+import StudentNavbar from "../Student-layout/StudentNavbar";
+import StudentSidebar from "../Student-layout/Sidebar";
 
 export default function StudentLayout() {
   const [sidebarWidth, setSidebarWidth] = useState(256); // 256 = w-64

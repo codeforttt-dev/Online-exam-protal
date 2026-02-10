@@ -85,13 +85,13 @@ const PracticeTestsContent = () => {
   };
 
   const startTest = (testId) => {
-    navigate(`/practice-tests/${testId}`);
+    navigate(`/student/practice-tests/${testId}`);
   };
 
   const startRandomTest = () => {
     if (!tests.length) return;
     const randomTest = tests[Math.floor(Math.random() * tests.length)];
-    navigate(`/practice-tests/${randomTest.id}`);
+    navigate(`/student/practice-tests/${randomTest.id}`);
   };
 
   const viewDetails = () => {

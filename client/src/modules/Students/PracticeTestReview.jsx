@@ -19,7 +19,7 @@ export default function PracticeTestReviewPage() {
             Please submit the test first, then open the result screen again.
           </p>
           <button
-            onClick={() => navigate("/dashboard")}
+            onClick={() => navigate("/student/dashboard")}
             className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-full bg-slate-900 text-white text-xs font-medium hover:bg-black"
           >
             Go to dashboard
@@ -76,7 +76,7 @@ export default function PracticeTestReviewPage() {
               <div className="text-sm font-semibold">{notVisited}</div>
             </div>
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/student/dashboard")}
               className="ml-auto px-4 py-2 rounded-full bg-slate-900 text-white text-xs font-medium hover:bg-black"
             >
               Back to dashboard
