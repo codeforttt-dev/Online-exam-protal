@@ -1,4 +1,3 @@
-// client/src/modules/Students/PracticeTests.jsx
 import { useState, useEffect, useMemo } from "react";
 import {
   FaPlay,
@@ -81,7 +80,8 @@ const PracticeTestsContent = () => {
   const getDifficultyColor = (difficulty) => {
     if (difficulty === "easy") return "bg-green-100 text-green-800";
     if (difficulty === "hard") return "bg-red-100 text-red-800";
-    return "bg-yellow-100 text-yellow-800";
+    // medium
+    return "bg-[#FFEDD5] text-[#9A3412]";
   };
 
   const startTest = (testId) => {
@@ -101,8 +101,8 @@ const PracticeTestsContent = () => {
   if (loading) {
     return (
       <div className="p-6 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto mb-4"></div>
-        <p>Loading practice tests...</p>
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#FFCD2C] mx-auto mb-3"></div>
+        <p className="text-gray-700 text-sm">Loading practice tests...</p>
       </div>
     );
   }
@@ -120,31 +120,31 @@ const PracticeTestsContent = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
             Practice Tests
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm text-gray-600">
             Attempt tests and improve your performance
           </p>
         </div>
 
-        <div className="flex gap-3">
-          <div className="flex border rounded-lg overflow-hidden text-sm">
+        <div className="flex gap-2 md:gap-3 items-center">
+          <div className="flex border border-[#FFE6A3] rounded-lg overflow-hidden text-[11px] bg-white">
             <button
-              className={`px-3 py-2 ${
+              className={`px-2.5 py-1.5 md:px-3 md:py-1.5 leading-none transition ${
                 viewType === "card"
-                  ? "bg-orange-500 text-white"
-                  : "bg-white"
+                  ? "bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 font-semibold"
+                  : "text-gray-700 hover:bg-[#FFF9E6]"
               }`}
               onClick={() => setViewType("card")}
             >
               Cards
             </button>
             <button
-              className={`px-3 py-2 ${
+              className={`px-2.5 py-1.5 md:px-3 md:py-1.5 leading-none transition ${
                 viewType === "table"
-                  ? "bg-orange-500 text-white"
-                  : "bg-white"
+                  ? "bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 font-semibold"
+                  : "text-gray-700 hover:bg-[#FFF9E6]"
               }`}
               onClick={() => setViewType("table")}
             >
@@ -154,19 +154,36 @@ const PracticeTestsContent = () => {
 
           <button
             onClick={startRandomTest}
-            className="px-4 py-2 bg-orange-500 text-white rounded-lg font-semibold"
+            className="px-3 md:px-3.5 py-1.5 bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 rounded-lg text-xs md:text-sm font-semibold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition inline-flex items-center"
           >
-            <FaPlay className="inline mr-2" />
+            <FaPlay className="mr-1.5 text-[10px]" />
             Random Test
           </button>
         </div>
+      </div>
+
+      {/* Category pills */}
+      <div className="flex gap-1.5 md:gap-2 flex-wrap">
+        {categories.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => setActiveCategory(c.id)}
+            className={`px-2.5 md:px-3 py-1.5 rounded-full text-[11px] font-medium border transition ${
+              activeCategory === c.id
+                ? "bg-[#FFEBB5] border-[#FFDF85] text-gray-900"
+                : "bg-white border-[#FFE6A3] text-gray-600 hover:bg-[#FFF9E6]"
+            }`}
+          >
+            {c.label}
+          </button>
+        ))}
       </div>
 
       {/* Search */}
       <input
         type="text"
         placeholder="Search tests..."
-        className="w-full px-4 py-2 border rounded-lg"
+        className="w-full px-3.5 py-2 border border-[#FFE6A3] rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#FFCD2C]"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
@@ -177,50 +194,54 @@ const PracticeTestsContent = () => {
           {filteredTests.map((test) => (
             <div
               key={test.id}
-              className="bg-white rounded-lg shadow border p-4"
+              className="bg-white/95 rounded-2xl shadow-md border border-[#FFE6A3] p-3.5 hover:shadow-lg hover:-translate-y-0.5 transition"
             >
               <div className="flex justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="text-orange-500">{test.icon}</div>
-                  <h3 className="font-semibold">{test.title}</h3>
+                  <div className="text-[#EA580C] bg-[#FFEDD5] rounded-lg p-1.5 text-sm">
+                    {test.icon}
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-sm line-clamp-2">
+                    {test.title}
+                  </h3>
                 </div>
                 {test.isNew && (
-                  <span className="text-xs bg-red-100 text-red-600 px-2 rounded-full">
+                  <span className="text-[9px] bg-[#FFEBB5] text-[#9A3412] px-1.5 py-0.5 rounded-full uppercase tracking-wide">
                     NEW
                   </span>
                 )}
               </div>
 
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-xs text-gray-600 mb-2.5 line-clamp-2">
                 {test.description}
               </p>
 
-              <div className="flex justify-between text-sm mb-3">
+              <div className="flex justify-between text-[11px] mb-2.5 text-gray-700">
                 <span>{test.questions} Qs</span>
                 <span>{test.duration}</span>
               </div>
 
               <span
-                className={`inline-block text-xs px-2 py-1 rounded-full mb-3 ${getDifficultyColor(
+                className={`inline-block text-[10px] px-2 py-1 rounded-full mb-2 capitalize ${getDifficultyColor(
                   test.difficulty
                 )}`}
               >
                 {test.difficulty}
               </span>
 
-              <div className="flex gap-2">
+              <div className="flex gap-1.5 mt-1">
                 <button
                   onClick={() => startTest(test.id)}
-                  className="flex-1 bg-orange-500 text-white py-2 rounded-lg text-sm"
+                  className="flex-1 bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 py-1.5 rounded-lg text-xs font-semibold shadow hover:shadow-md transition inline-flex items-center justify-center"
                 >
-                  <FaPlay className="inline mr-2" />
+                  <FaPlay className="mr-1 text-[9px]" />
                   Start
                 </button>
                 <button
                   onClick={viewDetails}
-                  className="px-3 border rounded-lg text-sm"
+                  className="px-2.5 py-1.5 border border-[#FFE6A3] rounded-lg text-xs text-gray-700 bg-[#FFF9E6] hover:bg-[#FFEBD0] transition flex items-center justify-center"
                 >
-                  <FaEye />
+                  <FaEye className="text-[11px]" />
                 </button>
               </div>
             </div>
@@ -230,34 +251,47 @@ const PracticeTestsContent = () => {
 
       {/* Table View */}
       {viewType === "table" && (
-        <div className="bg-white rounded-lg border overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left">Test</th>
-                <th className="px-4 py-3 text-center">Questions</th>
-                <th className="px-4 py-3 text-center">Duration</th>
-                <th className="px-4 py-3 text-center">Difficulty</th>
-                <th className="px-4 py-3 text-right">Action</th>
+        <div className="bg-white/95 rounded-2xl border border-[#FFE6A3] overflow-x-auto shadow-md">
+          <table className="min-w-full text-xs md:text-sm">
+            <thead className="bg-[#FFF9E6]">
+              <tr className="text-gray-700">
+                <th className="px-3 md:px-4 py-2.5 text-left">Test</th>
+                <th className="px-3 md:px-4 py-2.5 text-center">Questions</th>
+                <th className="px-3 md:px-4 py-2.5 text-center">Duration</th>
+                <th className="px-3 md:px-4 py-2.5 text-center">Difficulty</th>
+                <th className="px-3 md:px-4 py-2.5 text-right">Action</th>
               </tr>
             </thead>
             <tbody>
-              {filteredTests.map((test) => (
-                <tr key={test.id} className="border-t">
-                  <td className="px-4 py-3">{test.title}</td>
-                  <td className="px-4 py-3 text-center">
+              {filteredTests.map((test, idx) => (
+                <tr
+                  key={test.id}
+                  className={`border-t border-[#FFE6A3] ${
+                    idx % 2 === 0 ? "bg-white" : "bg-[#FFFDF5]"
+                  }`}
+                >
+                  <td className="px-3 md:px-4 py-2.5 text-gray-800">
+                    <span className="text-xs md:text-sm">{test.title}</span>
+                  </td>
+                  <td className="px-3 md:px-4 py-2.5 text-center text-gray-700">
                     {test.questions}
                   </td>
-                  <td className="px-4 py-3 text-center">
+                  <td className="px-3 md:px-4 py-2.5 text-center text-gray-700">
                     {test.duration}
                   </td>
-                  <td className="px-4 py-3 text-center">
-                    {test.difficulty}
+                  <td className="px-3 md:px-4 py-2.5 text-center">
+                    <span
+                      className={`inline-block px-2 py-0.5 rounded-full text-[10px] md:text-[11px] capitalize ${getDifficultyColor(
+                        test.difficulty
+                      )}`}
+                    >
+                      {test.difficulty}
+                    </span>
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-3 md:px-4 py-2.5 text-right">
                     <button
                       onClick={() => startTest(test.id)}
-                      className="bg-orange-500 text-white px-3 py-1 rounded text-xs"
+                      className="bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 px-2.5 md:px-3 py-1.5 rounded text-[10px] md:text-xs font-semibold shadow hover:shadow-md transition"
                     >
                       Start
                     </button>
@@ -270,7 +304,7 @@ const PracticeTestsContent = () => {
       )}
 
       {filteredTests.length === 0 && (
-        <div className="text-center py-10 text-gray-500">
+        <div className="text-center py-10 text-gray-500 text-sm">
           No tests found
         </div>
       )}

@@ -1,15 +1,19 @@
-// src/components/AppRoutes.jsx
+// src/routes/AppRoutes.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
+
+// Public pages
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
 import MainLayout from "../component/layout/Layout";
 
+// Student layout + components
+import StudentLayout from "../component/Student-layout/Layout";
 import Dashboard from "../modules/Students/Dashboard";
 import Olympiads from "../modules/Students/Olympiads";
 import PracticeTests from "../modules/Students/PracticeTests";
 import PracticeTestExamPage from "../pages/PracticeTestExamPage";
-import PracticeTestReviewPage from "../modules/Students/PracticeTestReview"; // 🆕 REVIEW PAGE
+import PracticeTestReviewPage from "../modules/Students/PracticeTestReview";
 import Results from "../modules/Students/Results";
 import StudyMaterials from "../modules/Students/StudyMaterials";
 import Leaderboard from "../modules/Students/Leaderboard";
@@ -17,26 +21,20 @@ import Leaderboard from "../modules/Students/Leaderboard";
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-
-      {/* Student Routes with Sidebar */}
+      {/* Public Routes - agar MainLayout iske around kuch common header/footer rakhta hai */}
       <Route path="/" element={<MainLayout />}>
+        <Route index element={<Home />} />
+        <Route path="login" element={<Login />} />
+        <Route path="signup" element={<Signup />} />
+      </Route>
+
+      {/* Student Routes with StudentLayout (Sidebar + Navbar) */}
+      <Route path="/" element={<StudentLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="olympiads" element={<Olympiads />} />
 
-        {/* Practice Test list */}
         <Route path="practice-tests" element={<PracticeTests />} />
-
-        {/* Exam screen */}
-        <Route
-          path="practice-tests/:id"
-          element={<PracticeTestExamPage />}
-        />
-
-        {/* 🆕 Result / Review screen */}
+        <Route path="practice-tests/:id" element={<PracticeTestExamPage />} />
         <Route
           path="practice-tests/:id/review"
           element={<PracticeTestReviewPage />}

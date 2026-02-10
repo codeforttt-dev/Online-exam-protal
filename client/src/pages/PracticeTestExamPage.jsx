@@ -1,3 +1,4 @@
+// PracticeTestExamPage.jsx
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
@@ -20,7 +21,6 @@ export default function PracticeTestExamPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
 
-  // 🆕 submit ke baad result card dikhane ke liye
   const [showResultCard, setShowResultCard] = useState(false);
   const [resultData, setResultData] = useState({
     totalMarks: 0,
@@ -144,7 +144,6 @@ export default function PracticeTestExamPage() {
     }
   };
 
-  // 🆕 updated handleSubmit
   const handleSubmit = async () => {
     try {
       const payloadAnswers = allQuestions.map((q) => {
@@ -178,10 +177,12 @@ export default function PracticeTestExamPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFF9E6] via-white to-[#FFF3C4]">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
-          <p className="text-sm text-slate-600">Loading your practice test...</p>
+          <div className="h-10 w-10 rounded-full border-2 border-[#FFCD2C] border-t-transparent animate-spin" />
+          <p className="text-sm text-gray-600">
+            Loading your practice test...
+          </p>
         </div>
       </div>
     );
@@ -189,12 +190,12 @@ export default function PracticeTestExamPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="bg-white border border-red-200 rounded-xl px-6 py-4 shadow-sm">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFF9E6] via-white to-[#FFF3C4]">
+        <div className="bg-white/90 border border-red-200 rounded-2xl px-6 py-4 shadow-lg">
           <p className="text-sm text-red-600">{error}</p>
           <button
             onClick={() => navigate(-1)}
-            className="mt-3 text-xs text-slate-600 underline"
+            className="mt-3 text-xs text-gray-600 underline"
           >
             Go back
           </button>
@@ -205,8 +206,10 @@ export default function PracticeTestExamPage() {
 
   if (!allQuestions.length) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <p className="text-sm text-slate-600">No questions found for this test.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFF9E6] via-white to-[#FFF3C4]">
+        <p className="text-sm text-gray-600">
+          No questions found for this test.
+        </p>
       </div>
     );
   }
@@ -218,26 +221,25 @@ export default function PracticeTestExamPage() {
     (a) => a.status === "skipped"
   ).length;
 
-  // 🆕 submit ke baad success card + animated button
   if (showResultCard) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
-        <div className="bg-white border border-emerald-100 rounded-3xl shadow-lg max-w-md w-full p-6 text-center space-y-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FFF9E6] via-white to-[#FFF3C4] px-4">
+        <div className="bg-white/90 border border-emerald-100 rounded-3xl shadow-2xl max-w-md w-full p-6 text-center space-y-4">
           <div className="flex justify-center">
             <div className="h-14 w-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
               <span className="text-2xl">✅</span>
             </div>
           </div>
-          <h1 className="text-lg font-semibold text-slate-800">
+          <h1 className="text-lg font-semibold text-gray-800">
             Test submitted successfully!
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-gray-600">
             You can now view your detailed answer sheet with correct answers,
             your responses, and marks for each question.
           </p>
 
           <div className="flex items-center justify-center gap-4 text-xs">
-            <div className="px-3 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+            <div className="px-3 py-2 rounded-xl bg-[#FFF7DA] text-[#E0AC00] border border-[#FFE6A3]">
               <div className="text-[10px] uppercase tracking-wide">
                 Total Marks
               </div>
@@ -256,14 +258,14 @@ export default function PracticeTestExamPage() {
                 },
               })
             }
-            className="mt-2 inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-amber-500 text-white text-sm font-medium shadow-lg hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 animate-bounce"
+            className="mt-2 inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 text-sm font-semibold shadow-xl hover:shadow-2xl hover:translate-y-[-2px] transition"
           >
-            View your result
+            View your result →
           </button>
 
           <button
             onClick={() => navigate("/dashboard")}
-            className="block w-full mt-3 text-[11px] text-slate-500 hover:text-slate-700"
+            className="block w-full mt-3 text-[11px] text-gray-500 hover:text-gray-700"
           >
             Go back to dashboard
           </button>
@@ -272,32 +274,31 @@ export default function PracticeTestExamPage() {
     );
   }
 
-  // normal exam UI
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#FFF9E6] via-white to-[#FFF3C4]">
       <div className="max-w-6xl mx-auto py-6 px-3 md:px-6 flex flex-col lg:flex-row gap-4">
         {/* Left: Question + options */}
         <div className="flex-1 space-y-4">
           {/* Top bar */}
-          <div className="bg-white border border-slate-200 rounded-2xl px-4 py-3 flex items-center justify-between shadow-sm">
+          <div className="bg-white/90 border border-[#FFE6A3] rounded-2xl px-4 py-3 flex items-center justify-between shadow-md">
             <div>
-              <h1 className="text-lg font-semibold text-slate-800">
+              <h1 className="text-lg font-semibold text-gray-900">
                 Practice Test
               </h1>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-gray-500">
                 Question {currentIndex + 1} of {allQuestions.length}
               </p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="hidden sm:flex items-center gap-2 text-xs text-slate-500">
+              <div className="hidden sm:flex items-center gap-2 text-xs text-gray-600">
                 <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                 <span>Attempted: {attemptedCount}</span>
-                <span className="inline-flex h-2 w-2 rounded-full bg-amber-400 ml-3" />
+                <span className="inline-flex h-2 w-2 rounded-full bg-[#FFCD2C] ml-3" />
                 <span>Skipped: {skippedCount}</span>
               </div>
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 rounded-full bg-emerald-600 text-white text-xs font-medium shadow hover:bg-emerald-700 transition"
+                className="px-4 py-2 rounded-full bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 text-xs font-semibold shadow-lg hover:shadow-xl hover:translate-y-[-1px] transition"
               >
                 Submit Test
               </button>
@@ -305,17 +306,17 @@ export default function PracticeTestExamPage() {
           </div>
 
           {/* Question card */}
-          <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 md:p-6">
+          <div className="bg-white/95 border border-[#FFE6A3] rounded-2xl shadow-md p-5 md:p-6">
             {/* Question header */}
             <div className="flex justify-between items-start gap-3 mb-4">
               <div className="space-y-1">
-                <p className="text-[11px] uppercase tracking-wide text-amber-500 font-semibold">
+                <p className="text-[11px] uppercase tracking-[0.15em] text-[#E0AC00] font-semibold">
                   Question {currentIndex + 1}
                 </p>
-                <h2 className="font-semibold text-slate-800 leading-relaxed">
+                <h2 className="font-semibold text-gray-900 leading-relaxed">
                   {currentQuestion?.questionText}
                 </h2>
-                <p className="text-[11px] text-slate-500">
+                <p className="text-[11px] text-gray-500">
                   {currentQuestion?.type === "simple" &&
                     "Single correct question"}
                   {currentQuestion?.type === "multiple" &&
@@ -328,7 +329,7 @@ export default function PracticeTestExamPage() {
                     "Question from your selected branch path"}
                 </p>
               </div>
-              <div className="shrink-0 text-[10px] px-2 py-1 rounded-full bg-slate-100 text-slate-600 capitalize">
+              <div className="shrink-0 text-[10px] px-2 py-1 rounded-full bg-[#FFF7DA] text-gray-700 capitalize border border-[#FFE6A3]">
                 {currentQuestion?.type || "—"}
               </div>
             </div>
@@ -352,20 +353,20 @@ export default function PracticeTestExamPage() {
                     onClick={() => handleOptionClick(currentQuestion, opt.key)}
                     className={`w-full text-left px-3.5 py-2.5 rounded-xl border text-sm flex items-start gap-2 transition ${
                       isSelected
-                        ? "border-amber-500 bg-amber-50 shadow-sm"
-                        : "border-slate-200 bg-white hover:border-amber-400"
+                        ? "border-[#FFCD2C] bg-[#FFF7DA] shadow-sm"
+                        : "border-gray-200 bg-white hover:border-[#FFCD2C]"
                     }`}
                   >
                     <span
                       className={`mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
                         isSelected
-                          ? "bg-amber-500 text-white"
-                          : "bg-slate-100 text-slate-700"
+                          ? "bg-gradient-to-br from-[#FFCD2C] to-[#E0AC00] text-gray-900"
+                          : "bg-gray-100 text-gray-700"
                       }`}
                     >
                       {opt.key}
                     </span>
-                    <span className="text-slate-800">{opt.text}</span>
+                    <span className="text-gray-900">{opt.text}</span>
                   </button>
                 );
               })}
@@ -373,12 +374,12 @@ export default function PracticeTestExamPage() {
 
             {/* Confidence section */}
             {currentQuestion?.type === "confidence" && (
-              <div className="mt-4 border-t border-slate-100 pt-4">
+              <div className="mt-4 border-t border-gray-100 pt-4">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-xs font-semibold text-slate-700">
+                  <h3 className="text-xs font-semibold text-gray-800">
                     Confidence Level
                   </h3>
-                  <p className="text-[10px] text-slate-500">
+                  <p className="text-[10px] text-gray-500">
                     Select after choosing an option
                   </p>
                 </div>
@@ -392,15 +393,15 @@ export default function PracticeTestExamPage() {
                       }
                       className={`px-3 py-1.5 text-[11px] rounded-full border transition ${
                         aid?.confidence === c.value
-                          ? "bg-emerald-600 text-white border-emerald-600"
-                          : "bg-slate-50 text-slate-700 border-slate-200 hover:border-emerald-500"
+                          ? "bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 border-[#FFCD2C]"
+                          : "bg-[#FFF9E6] text-gray-700 border-[#FFE6A3] hover:border-[#FFCD2C]"
                       }`}
                     >
                       {c.label}
                     </button>
                   ))}
                 </div>
-                <p className="text-[10px] text-slate-500 mt-2">
+                <p className="text-[10px] text-gray-500 mt-2">
                   Low: +0.25 / -0.10, Medium: +1 / -0.25, Full: +2 / -0.50
                 </p>
               </div>
@@ -411,7 +412,7 @@ export default function PracticeTestExamPage() {
               <button
                 type="button"
                 onClick={markSkipped}
-                className="px-3 py-1.5 text-[11px] rounded-full bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
+                className="px-3 py-1.5 text-[11px] rounded-full bg-[#FFF7DA] text-[#E0AC00] border border-[#FFE6A3] hover:bg-[#FFEBD0]"
               >
                 Skip this question
               </button>
@@ -423,7 +424,7 @@ export default function PracticeTestExamPage() {
                     onClick={() =>
                       setCurrentIndex((idx) => Math.max(0, idx - 1))
                     }
-                    className="px-3 py-1.5 text-[11px] rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    className="px-3 py-1.5 text-[11px] rounded-full bg-white text-gray-700 border border-gray-200 hover:bg-[#FFF9E6]"
                   >
                     Previous
                   </button>
@@ -436,7 +437,7 @@ export default function PracticeTestExamPage() {
                         Math.min(allQuestions.length - 1, idx + 1)
                       )
                     }
-                    className="px-3 py-1.5 text-[11px] rounded-full bg-amber-500 text-white hover:bg-amber-600"
+                    className="px-3 py-1.5 text-[11px] rounded-full bg-gradient-to-r from-[#FFCD2C] to-[#E0AC00] text-gray-900 font-medium shadow hover:shadow-md"
                   >
                     Next
                   </button>
@@ -448,8 +449,8 @@ export default function PracticeTestExamPage() {
 
         {/* Right: Question palette / summary */}
         <div className="w-full lg:w-64 space-y-4">
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-            <h3 className="text-xs font-semibold text-slate-700 mb-3">
+          <div className="bg-white/90 border border-[#FFE6A3] rounded-2xl p-4 shadow-md">
+            <h3 className="text-xs font-semibold text-gray-800 mb-3">
               Question Palette
             </h3>
             <div className="grid grid-cols-6 gap-2">
@@ -458,11 +459,11 @@ export default function PracticeTestExamPage() {
                 const isCurrent = idx === currentIndex;
                 const status = a?.status;
 
-                let bg = "bg-slate-100 text-slate-700";
+                let bg = "bg-gray-100 text-gray-700";
                 if (status === "attempted")
                   bg = "bg-emerald-500 text-white";
                 else if (status === "skipped")
-                  bg = "bg-amber-400 text-white";
+                  bg = "bg-[#FFCD2C] text-gray-900";
 
                 return (
                   <button
@@ -470,7 +471,7 @@ export default function PracticeTestExamPage() {
                     type="button"
                     onClick={() => setCurrentIndex(idx)}
                     className={`h-7 text-[10px] rounded-full flex items-center justify-center border ${
-                      isCurrent ? "border-slate-900" : "border-transparent"
+                      isCurrent ? "border-gray-900" : "border-transparent"
                     } ${bg}`}
                   >
                     {idx + 1}
@@ -479,17 +480,17 @@ export default function PracticeTestExamPage() {
               })}
             </div>
 
-            <div className="mt-4 space-y-1.5 text-[10px] text-slate-500">
+            <div className="mt-4 space-y-1.5 text-[10px] text-gray-600">
               <div className="flex items-center gap-2">
                 <span className="h-3 w-3 rounded-full bg-emerald-500" />
                 <span>Attempted ({attemptedCount})</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-amber-400" />
+                <span className="h-3 w-3 rounded-full bg-[#FFCD2C]" />
                 <span>Skipped ({skippedCount})</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-slate-100 border border-slate-300" />
+                <span className="h-3 w-3 rounded-full bg-gray-100 border border-gray-300" />
                 <span>
                   Not visited (
                   {allQuestions.length - attemptedCount - skippedCount})
@@ -498,8 +499,8 @@ export default function PracticeTestExamPage() {
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm text-[11px] text-slate-600">
-            <h4 className="text-xs font-semibold text-slate-800 mb-2">
+          <div className="bg-white/90 border border-[#FFE6A3] rounded-2xl p-4 shadow-md text-[11px] text-gray-700">
+            <h4 className="text-xs font-semibold text-gray-900 mb-2">
               Instructions
             </h4>
             <ul className="list-disc list-inside space-y-1">
