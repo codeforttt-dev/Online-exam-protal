@@ -276,7 +276,7 @@ export default function PracticeTestExamPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#FFF9E6] via-white to-[#FFF3C4]">
-      <div className="max-w-6xl mx-auto py-6 px-3 md:px-6 flex flex-col lg:flex-row gap-4">
+      <div className="w-full max-w-none mx-0 py-6 px-2 md:px-3 lg:px-4 flex flex-col lg:flex-row gap-3 lg:gap-4">
         {/* Left: Question + options */}
         <div className="flex-1 space-y-4">
           {/* Top bar */}
@@ -448,7 +448,7 @@ export default function PracticeTestExamPage() {
         </div>
 
         {/* Right: Question palette / summary */}
-        <div className="w-full lg:w-64 space-y-4">
+        <div className="w-full lg:w-72 space-y-4">
           <div className="bg-white/90 border border-[#FFE6A3] rounded-2xl p-4 shadow-md">
             <h3 className="text-xs font-semibold text-gray-800 mb-3">
               Question Palette

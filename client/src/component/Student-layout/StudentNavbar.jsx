@@ -27,7 +27,7 @@ export default function StudentNavbar({ user }) {
 
   return (
     <header className="sticky top-0 z-30 bg-[#FEECD5]/90 backdrop-blur-xl border-b border-[#FFE6A3] shadow-sm">
-      <div className="h-16 max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between gap-4">
+      <div className="h-16 w-full px-2 md:px-3 lg:px-4 flex items-center justify-between gap-4">
         <div className="flex flex-col min-w-0">
           <span className="text-sm md:text-base font-bold text-gray-900 truncate">
             {title}
