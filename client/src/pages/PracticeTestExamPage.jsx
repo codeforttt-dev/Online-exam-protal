@@ -56,13 +56,35 @@ export default function PracticeTestExamPage() {
   }, [examCode]); // ✅ Changed from testId to examCode
 
   const allQuestions = useMemo(() => {
-    const list = [...fixedQuestions];
+    const fixed = [...fixedQuestions].sort(
+      (a, b) => (a.questionNumber || 0) - (b.questionNumber || 0)
+    );
+    const branch = [...branchQuestions].sort(
+      (a, b) => (a.questionNumber || 0) - (b.questionNumber || 0)
+    );
+    const list = [...fixed];
     if (xQuestion) list.push(xQuestion);
-    if (branchQuestions.length) list.push(...branchQuestions);
-    return list.sort((a, b) => a.questionNumber - b.questionNumber);
+    if (branch.length) list.push(...branch);
+    return list;
   }, [fixedQuestions, xQuestion, branchQuestions]);
 
+  const getQuestionLabel = (q, index) => {
+    if (!q) return index + 1;
+    if (q.type === "branch_parent") return "X";
+    if (typeof q.questionNumber === "number") return q.questionNumber;
+    return index + 1;
+  };
+
   const currentQuestion = allQuestions[currentIndex] || null;
+  const currentLabel = getQuestionLabel(currentQuestion, currentIndex);
+  const displayTotal = allQuestions.filter(
+    (q) => q?.type !== "branch_parent"
+  ).length;
+  const currentQuestionNumber = currentQuestion?.questionNumber;
+  const isBranchLocked =
+    currentQuestion?.type === "branch_parent" &&
+    currentQuestionNumber != null &&
+    answers[currentQuestionNumber]?.selectedAnswer;
   const aid = currentQuestion
     ? answers[currentQuestion.questionNumber]
     : undefined;
@@ -76,6 +98,7 @@ export default function PracticeTestExamPage() {
 
   const markSkipped = () => {
     if (!currentQuestion) return;
+    if (isBranchLocked) return;
     updateAnswer(currentQuestion.questionNumber, {
       status: "skipped",
       selectedAnswer: null,
@@ -93,6 +116,12 @@ export default function PracticeTestExamPage() {
       q.type === "branch_parent" ||
       q.type === "branch_child"
     ) {
+      if (
+        q.type === "branch_parent" &&
+        answers[q.questionNumber]?.selectedAnswer
+      ) {
+        return;
+      }
       updateAnswer(q.questionNumber, {
         status: "attempted",
         selectedAnswer: optionKey,
@@ -104,7 +133,11 @@ export default function PracticeTestExamPage() {
       });
 
       if (q.type === "branch_parent") {
-        loadBranchQuestions(optionKey);
+        const branchChoice =
+          typeof optionKey === "string"
+            ? optionKey.trim().toUpperCase()
+            : optionKey;
+        loadBranchQuestions(branchChoice);
       }
     }
 
@@ -141,7 +174,7 @@ export default function PracticeTestExamPage() {
         `/practice-tests/branch/${examCode}/${choice}`
       );
       if (data?.success) {
-        setBranchQuestions(data.data || []);
+        setBranchQuestions((data.data || []).slice(0, 4));
       }
     } catch (e) {
       console.error("loadBranchQuestions error", e);
@@ -293,7 +326,7 @@ export default function PracticeTestExamPage() {
                 Practice Test
               </h1>
               <p className="text-xs text-gray-500">
-                Question {currentIndex + 1} of {allQuestions.length}
+                Question {currentLabel} of {displayTotal}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -318,7 +351,7 @@ export default function PracticeTestExamPage() {
             <div className="flex justify-between items-start gap-3 mb-4">
               <div className="space-y-1">
                 <p className="text-[11px] uppercase tracking-[0.15em] text-[#E0AC00] font-semibold">
-                  Question {currentIndex + 1}
+                  Question {currentLabel}
                 </p>
                 <h2 className="font-semibold text-gray-900 leading-relaxed">
                   {currentQuestion?.questionText}
@@ -366,7 +399,8 @@ export default function PracticeTestExamPage() {
                     key={opt.key}
                     type="button"
                     onClick={() => handleOptionClick(currentQuestion, opt.key)}
-                    className={`w-full text-left px-3.5 py-2.5 rounded-xl border text-sm flex items-start gap-2 transition ${
+                    disabled={isBranchLocked}
+                    className={`w-full text-left px-3.5 py-2.5 rounded-xl border text-sm flex items-start gap-2 transition disabled:opacity-60 disabled:cursor-not-allowed ${
                       isSelected
                         ? "border-[#FFCD2C] bg-[#FFF7DA] shadow-sm"
                         : "border-gray-200 bg-white hover:border-[#FFCD2C]"
@@ -427,7 +461,8 @@ export default function PracticeTestExamPage() {
               <button
                 type="button"
                 onClick={markSkipped}
-                className="px-3 py-1.5 text-[11px] rounded-full bg-[#FFF7DA] text-[#E0AC00] border border-[#FFE6A3] hover:bg-[#FFEBD0]"
+                disabled={isBranchLocked}
+                className="px-3 py-1.5 text-[11px] rounded-full bg-[#FFF7DA] text-[#E0AC00] border border-[#FFE6A3] hover:bg-[#FFEBD0] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Skip this question
               </button>
@@ -489,7 +524,7 @@ export default function PracticeTestExamPage() {
                       isCurrent ? "border-gray-900" : "border-transparent"
                     } ${bg}`}
                   >
-                    {idx + 1}
+                    {getQuestionLabel(q, idx)}
                   </button>
                 );
               })}

@@ -4,6 +4,10 @@ import Question from "../models/questionModel.js";
 import PracticeAttempt from "../models/practiceAttemptModel.js";
 import Exam from "../models/examModel.js";
 
+const TOTAL_QUESTIONS_EXCL_X = 20;
+const BRANCH_QUESTIONS_COUNT = 4;
+const FIXED_QUESTIONS_COUNT = TOTAL_QUESTIONS_EXCL_X - BRANCH_QUESTIONS_COUNT;
+
 // âœ… FIXED: resolveTestContext supports BOTH _id AND examCode
 const resolveTestContext = async (id) => {
   if (!id) return { practiceTest: null, exam: null, examCode: null };
@@ -165,12 +169,15 @@ export const startPracticeTest = async (req, res) => {
 
     console.log("ðŸ“š Fetching questions with query:", questionQuery);
 
-    const questions = await Question.find(questionQuery).sort({ questionNumber: 1 });
+    const questions = await Question.find(questionQuery)
+      .sort({ questionNumber: 1 })
+      .lean();
 
-    const fixedQuestions = questions.filter(
-      (q) => q.questionNumber >= 1 && q.questionNumber <= 15
-    );
-    const xQuestion = questions.find((q) => q.type === "branch_parent");
+    const fixedQuestions = questions
+      .filter((q) => !["branch_parent", "branch_child"].includes(q.type))
+      .sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0))
+      .slice(0, FIXED_QUESTIONS_COUNT);
+    const xQuestion = questions.find((q) => q.type === "branch_parent") || null;
 
     console.log(`âœ… Loaded ${questions.length} total, ${fixedQuestions.length} fixed, xQuestion: ${!!xQuestion}`);
 
@@ -208,19 +215,30 @@ export const loadBranch = async (req, res) => {
       });
     }
 
+    const normalizeChoice = (value) => (value || "").toString().trim();
+    const escapeRegex = (value) =>
+      value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    const choiceKey = normalizeChoice(choice);
+    const branchKeyQuery = choiceKey
+      ? { $regex: `^${escapeRegex(choiceKey)}$`, $options: "i" }
+      : choiceKey;
+
     const questionQuery = ctx.examCode 
       ? { 
           examCode: ctx.examCode, 
           type: "branch_child",
-          branchKey: choice 
+          branchKey: branchKeyQuery 
         }
       : { 
           practiceTestId: examCode,
           type: "branch_child", 
-          branchKey: choice 
+          branchKey: branchKeyQuery 
         };
 
-    const branchQuestions = await Question.find(questionQuery).sort({ questionNumber: 1 });
+    const branchQuestions = await Question.find(questionQuery)
+      .sort({ questionNumber: 1 })
+      .limit(BRANCH_QUESTIONS_COUNT);
 
     console.log(`âœ… Loaded ${branchQuestions.length} branch questions for choice: ${choice}`);
 
