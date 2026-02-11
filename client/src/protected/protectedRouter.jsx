@@ -1,15 +1,13 @@
-// src/components/ProtectedRoute.jsx
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-const ProtectedRoute = ({ children }) => {
-  // Check if user is authenticated
-  const isAuthenticated = localStorage.getItem("nso_token") || true; // For demo, always true
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+const ProtectedRoute = () => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
   }
-  
-  return children;
+
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

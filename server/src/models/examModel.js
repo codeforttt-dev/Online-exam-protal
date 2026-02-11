@@ -1,17 +1,27 @@
+// server/src/models/examModel.js
 import mongoose from "mongoose";
 
 const examSchema = new mongoose.Schema(
   {
-    title: String,
+    title: { type: String, required: true },
     description: String,
     price: Number,
     duration: Number,
     totalMarks: Number,
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
 
-    examDate: Date,          // ⭐ Upcoming Deadlines
-    isActive: { type: Boolean, default: true }
+    // ✅ yeh field ABHI add kar:
+    examCode: {
+      type: String,
+      required: false, // existing data ke liye abhi optional rakho
+      trim: true,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Exam", examSchema);
+export default mongoose.models.Exam ||
+  mongoose.model("Exam", examSchema);
