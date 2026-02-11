@@ -24,6 +24,7 @@ const questionSchema = new mongoose.Schema(
     },
 
     questionText: String,
+    explanation: String,
     options: [optionSchema],
 
     correctAnswer: String,  // for simple / confidence / branch

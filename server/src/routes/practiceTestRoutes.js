@@ -10,22 +10,24 @@ import {
 const router = express.Router();
 
 /* =========================
-   PRACTICE TEST LIST
+   1️⃣ PRACTICE TEST LIST
 ========================= */
 router.get("/", protect, getPracticeTests);
 
 /* =========================
-   START PRACTICE TEST
+   2️⃣ START PRACTICE TEST
+   ✅ FIXED: :testId → :examCode
 ========================= */
-router.get("/start/:examId", protect, startPracticeTest);
+router.get("/start/:examCode", protect, startPracticeTest);
 
 /* =========================
-   LOAD BRANCH QUESTIONS
+   3️⃣ LOAD BRANCH QUESTIONS
+   ✅ FIXED: :testId → :examCode
 ========================= */
-router.get("/branch/:examId/:choice", protect, loadBranch);
+router.get("/branch/:examCode/:choice", protect, loadBranch);
 
 /* =========================
-   SUBMIT PRACTICE TEST
+   4️⃣ SUBMIT PRACTICE TEST
 ========================= */
 router.post("/submit", protect, submitPracticeTest);
 

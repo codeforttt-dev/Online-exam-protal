@@ -1,4 +1,3 @@
-// PracticeTestExamPage.jsx
 import { useEffect, useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
@@ -10,7 +9,8 @@ const CONFIDENCE_OPTS = [
 ];
 
 export default function PracticeTestExamPage() {
-  const { id: examId } = useParams();
+  // ✅ FIXED: Now using examCode instead of testId
+  const { id: examCode } = useParams();
   const navigate = useNavigate();
 
   const [fixedQuestions, setFixedQuestions] = useState([]);
@@ -27,12 +27,14 @@ export default function PracticeTestExamPage() {
     detailedAttempts: [],
   });
 
+  // ✅ FIXED: API call now uses examCode directly
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         setLoading(true);
-        const { data } = await API.get(`/practice-tests/start/${examId}`);
+        console.log("🚀 Loading questions for examCode:", examCode); // Debug
+        const { data } = await API.get(`/practice-tests/start/${examCode}`);
         if (!data?.success) throw new Error("Failed to load questions");
         if (!cancelled) {
           setFixedQuestions(data.data.fixedQuestions || []);
@@ -51,7 +53,7 @@ export default function PracticeTestExamPage() {
     return () => {
       cancelled = true;
     };
-  }, [examId]);
+  }, [examCode]); // ✅ Changed from testId to examCode
 
   const allQuestions = useMemo(() => {
     const list = [...fixedQuestions];
@@ -131,10 +133,12 @@ export default function PracticeTestExamPage() {
     });
   };
 
+  // ✅ FIXED: Branch API call now uses examCode
   const loadBranchQuestions = async (choice) => {
     try {
+      console.log("🌿 Loading branch questions for:", examCode, choice); // Debug
       const { data } = await API.get(
-        `/practice-tests/branch/${examId}/${choice}`
+        `/practice-tests/branch/${examCode}/${choice}`
       );
       if (data?.success) {
         setBranchQuestions(data.data || []);
@@ -144,6 +148,7 @@ export default function PracticeTestExamPage() {
     }
   };
 
+  // ✅ FIXED: Submit now passes examCode
   const handleSubmit = async () => {
     try {
       const payloadAnswers = allQuestions.map((q) => {
@@ -157,8 +162,9 @@ export default function PracticeTestExamPage() {
         };
       });
 
+      console.log("📤 Submitting with examCode:", examCode); // Debug
       const { data } = await API.post("/practice-tests/submit", {
-        examId,
+        examCode, // ✅ Changed from testId to examCode
         answers: payloadAnswers,
       });
 
@@ -249,9 +255,10 @@ export default function PracticeTestExamPage() {
             </div>
           </div>
 
+          {/* ✅ FIXED: Review route also uses examCode */}
           <button
             onClick={() =>
-              navigate(`/student/practice-tests/${examId}/review`, {
+              navigate(`/student/practice-tests/${examCode}/review`, {
                 state: {
                   totalMarks: resultData.totalMarks,
                   detailedAttempts: resultData.detailedAttempts,
@@ -316,6 +323,14 @@ export default function PracticeTestExamPage() {
                 <h2 className="font-semibold text-gray-900 leading-relaxed">
                   {currentQuestion?.questionText}
                 </h2>
+                {currentQuestion?.explanation && (
+                  <div className="mt-2 text-[11px] text-gray-700 bg-[#FFF9E6] border border-[#FFE6A3] rounded-lg px-3 py-2 whitespace-pre-line">
+                    <span className="font-semibold text-gray-800">
+                      Explanation:
+                    </span>{" "}
+                    {currentQuestion.explanation}
+                  </div>
+                )}
                 <p className="text-[11px] text-gray-500">
                   {currentQuestion?.type === "simple" &&
                     "Single correct question"}

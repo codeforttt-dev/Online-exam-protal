@@ -8,6 +8,10 @@ const practiceTestSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Exam"
     },
+    examCode: {
+      type: String,
+      trim: true
+    },
 
     totalQuestions: Number,
     duration: Number,             // minutes

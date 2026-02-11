@@ -256,6 +256,12 @@ export default function PracticeTestReviewPage() {
                         </span>
                       )}
                     </div>
+
+                    {a.marksReason && (
+                      <p className="mt-2 text-[10px] text-slate-500">
+                        Marks logic: {a.marksReason}
+                      </p>
+                    )}
                   </div>
                 </div>
               );
