@@ -4,9 +4,25 @@ import Question from "../models/questionModel.js";
 import PracticeAttempt from "../models/practiceAttemptModel.js";
 import Exam from "../models/examModel.js";
 
-const TOTAL_QUESTIONS_EXCL_X = 20;
-const BRANCH_QUESTIONS_COUNT = 4;
-const FIXED_QUESTIONS_COUNT = TOTAL_QUESTIONS_EXCL_X - BRANCH_QUESTIONS_COUNT;
+const DEFAULT_TOTAL_QUESTIONS_EXCL_X = 20;
+const DEFAULT_BRANCH_QUESTIONS_COUNT = 4;
+
+const getTestCounts = (ctx) => {
+  const totalFromDb =
+    Number(ctx?.practiceTest?.totalQuestions) ||
+    Number(ctx?.exam?.totalQuestions) ||
+    null;
+
+  const total =
+    Number.isFinite(totalFromDb) && totalFromDb > 0
+      ? totalFromDb
+      : DEFAULT_TOTAL_QUESTIONS_EXCL_X;
+
+  const branch = Math.min(DEFAULT_BRANCH_QUESTIONS_COUNT, total);
+  const fixed = Math.max(0, total - branch);
+
+  return { total, fixed, branch };
+};
 
 // âœ… FIXED: resolveTestContext supports BOTH _id AND examCode
 const resolveTestContext = async (id) => {
@@ -173,10 +189,12 @@ export const startPracticeTest = async (req, res) => {
       .sort({ questionNumber: 1 })
       .lean();
 
+    const counts = getTestCounts(ctx);
+
     const fixedQuestions = questions
       .filter((q) => !["branch_parent", "branch_child"].includes(q.type))
       .sort((a, b) => (a.questionNumber || 0) - (b.questionNumber || 0))
-      .slice(0, FIXED_QUESTIONS_COUNT);
+      .slice(0, counts.fixed);
     const xQuestion = questions.find((q) => q.type === "branch_parent") || null;
 
     console.log(`âœ… Loaded ${questions.length} total, ${fixedQuestions.length} fixed, xQuestion: ${!!xQuestion}`);
@@ -188,6 +206,8 @@ export const startPracticeTest = async (req, res) => {
         examCode: ctx.examCode || examCode,
         fixedQuestions,
         xQuestion,
+        counts,
+        duration: ctx.practiceTest?.duration ?? ctx.exam?.duration ?? null,
       },
     });
   } catch (error) {
@@ -236,9 +256,11 @@ export const loadBranch = async (req, res) => {
           branchKey: branchKeyQuery 
         };
 
+    const counts = getTestCounts(ctx);
+
     const branchQuestions = await Question.find(questionQuery)
       .sort({ questionNumber: 1 })
-      .limit(BRANCH_QUESTIONS_COUNT);
+      .limit(counts.branch);
 
     console.log(`âœ… Loaded ${branchQuestions.length} branch questions for choice: ${choice}`);
 
@@ -255,7 +277,7 @@ export const loadBranch = async (req, res) => {
 };
 
 /* =========================
-   4ï¸âƒ£ SUBMIT PRACTICE TEST
+    SUBMIT PRACTICE TEST
 ========================= */
 export const submitPracticeTest = async (req, res) => {
   try {
@@ -301,6 +323,10 @@ export const submitPracticeTest = async (req, res) => {
     for (const ans of answers) {
       const q = questionMap[ans.questionNumber];
       if (!q) continue;
+      if (q.type === "branch_parent") {
+        // X input: not a question, no marks, no attempt stored
+        continue;
+      }
 
       let marks = 0;
       let isCorrect = false;
@@ -415,5 +441,3 @@ export default {
   loadBranch,
   submitPracticeTest,
 };
-
-
