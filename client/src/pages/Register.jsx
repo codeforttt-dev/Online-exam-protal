@@ -79,7 +79,7 @@ function Register() {
       return;
     }
     alert("Registration Completed 🎉");
-    navigate("/olympiads");
+    navigate("/results");
     
     // const age = new Date().getFullYear() - new Date(formData.dob).getFullYear();
     
