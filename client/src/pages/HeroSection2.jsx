@@ -1,17 +1,21 @@
 import logo from "../assets/ttt.jpeg";
 import brainvideo from "../assets/brainvideo.mp4";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { signupUser } from "../redux/thunks/userThunk";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
+import { purchaseExam } from "../redux/thunks/purchaseThunk";
+
 
 const HeroSection2 = () => {
+    const navigate = useNavigate();
+
     const navItems = [
         // { name: "Home", path: "/" },
         { name: "Official Website", path: "https://thetruetopper.com/", external: true },
-        { name: "Register", },
+        // { name: "Register", },
     ];
     const dispatch = useDispatch();
     const signupRef = useRef(null);
@@ -19,11 +23,20 @@ const HeroSection2 = () => {
     const [isLogin, setIsLogin] = useState(false);
     const [expandedCard, setExpandedCard] = useState(null);
     const [formData, setFormData] = useState({
-        name: "",
-        username: "",
-        email: "",
-        password: "",
+    name: "",
+    studentClass: "",
+    whatsapp: "",
     });
+    const [selectedPlan, setSelectedPlan] = useState({
+  name: "",
+  price: 0
+});
+
+    const isFormValid =
+  formData.name.trim() &&
+  formData.studentClass.trim() &&
+  formData.whatsapp.trim().length === 10;
+
 
     const handleChange = (e) => {
         setFormData({
@@ -32,25 +45,77 @@ const HeroSection2 = () => {
         });
     };
 
-    const handleSignup = async (e) => {
-        e.preventDefault();
-            const { name, email, username, password } = formData;
+const handleSignup = async (e) => {
+  e.preventDefault();
 
-            if (!name || !email || !username || !password) {
-            alert("Please fill all fields");
-            return;
-            }
-        const res = await dispatch(signupUser(formData));
-        if (res.meta.requestStatus === "fulfilled") {
-            alert("Signup Successful 🎉");
-            setShowSignup(false);
+  if (!isFormValid) return;
+
+  try {
+    /* ===============================
+       1️⃣ CREATE ORDER
+    =============================== */
+    const order = await dispatch(
+      createPaymentOrderThunk({ amount: selectedPlan.price })
+    ).unwrap();
+
+    /* ===============================
+       2️⃣ OPEN RAZORPAY
+    =============================== */
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: order.amount,
+      currency: order.currency,
+      order_id: order.id,
+
+      name: "The True Topper",
+      description: selectedPlan.name,
+
+      prefill: {
+        name: formData.name,
+        contact: formData.whatsapp,
+      },
+
+      theme: {
+        color: "#2563eb",
+      },
+
+      /* ===============================
+         3️⃣ AFTER SUCCESS PAYMENT
+      =============================== */
+      handler: async function (response) {
+        try {
+          // verify + save guest data
+          await dispatch(
+            verifyPaymentThunk({
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              totalAmount: selectedPlan.price,
+
+              // ⭐ send guest details
+              name: formData.name,
+              whatsapp: formData.whatsapp,
+              studentClass: formData.studentClass,
+              examName: selectedPlan.name
+            })
+          ).unwrap();
+
+          alert("Payment Successful ✅");
+          navigate("/thank-you"); // or success page
+
+        } catch (err) {
+          alert("Payment verification failed ❌");
         }
+      },
+    };
 
-    };
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        // dispatch(loginUser(loginData))
-    };
+    const razor = new window.Razorpay(options);
+    razor.open();
+
+  } catch (err) {
+    alert("Payment failed ❌");
+  }
+};
 
 
 
@@ -113,10 +178,11 @@ const HeroSection2 = () => {
                             <h2 className="text-4xl md:text-5xl font-black leading-tight text-blue-600">
                                 The True Topper<br />
                             </h2>
+                            
                             <p className="text-slate-500 max-w-md mt-2">
                                 Driven by intelligence, powered by technology.
                             </p>
-                            <div className="pt-5 flex items-center gap-2">
+                            {/* <div className="pt-5 flex items-center gap-2">
                                 <span className="text-yellow-700 ">If you want to join our universe:</span>
                                 <button
                                     onClick={scrollToSignup}
@@ -124,7 +190,7 @@ const HeroSection2 = () => {
                                 >
                                     Register here
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
 
 
@@ -169,36 +235,55 @@ const HeroSection2 = () => {
 
 
 
-  {/* Card 2 */}
-  <Link
-    to="/Dashboard"
-    className="p-4 rounded-3xl bg-gradient-to-br from-white to-slate-100
-    border-2 border-transparent hover:border-blue-500 shadow-lg hover:scale-105 transition"
-  >
-    <h3 className="text-blue-600 font-bold text-lg mb-3">
+{/* Card 2 */}
+<div
+  onClick={() => {
+    setSelectedPlan({
+      name: "Olampiyard ++",
+      price: 199
+    });
+    scrollToSignup();
+  }}
+  className="
+    p-4 rounded-3xl bg-gradient-to-br from-white to-slate-100
+    border-2 border-transparent hover:border-blue-500
+    shadow-lg hover:scale-105 transition cursor-pointer
+  "
+>
+  {/* Title + Price */}
+  <div className="flex justify-between items-center mb-2">
+    <h3 className="text-blue-600 font-bold text-sm sm:text-lg">
       Olampiyard ++
     </h3>
 
-    <p
-      className={`
-        text-slate-500 text-sm leading-relaxed
-        ${expandedCard === 2 ? "" : "line-clamp-2 sm:line-clamp-none"}
-      `}
-    >
-      Olympiad++ goes beyond traditional Olympiads,
-      measuring both accuracy and confidence in every answer.
-    </p>
-
-    <span
-      onClick={(e) => {
-        e.preventDefault();
-        setExpandedCard(expandedCard === 2 ? null : 2);
-      }}
-      className="sm:hidden text-blue-600 text-xs font-semibold cursor-pointer"
-    >
-      {expandedCard === 2 ? "Show less" : "Read more"}
+    <span className="text-green-600 font-bold text-sm sm:text-base">
+      ₹199
     </span>
-  </Link>
+  </div>
+
+  {/* Description */}
+  <p
+    className={`
+      text-slate-500 text-sm leading-relaxed
+      ${expandedCard === 2 ? "" : "line-clamp-2 sm:line-clamp-none"}
+    `}
+  >
+    Olympiad++ goes beyond traditional Olympiads,
+    measuring both accuracy and confidence in every answer.
+  </p>
+
+  {/* Mobile read more */}
+  <span
+    onClick={(e) => {
+      e.stopPropagation(); // VERY IMPORTANT (prevents card click)
+      setExpandedCard(expandedCard === 2 ? null : 2);
+    }}
+    className="sm:hidden text-blue-600 text-xs font-semibold cursor-pointer"
+  >
+    {expandedCard === 2 ? "Show less" : "Read more"}
+  </span>
+</div>
+
 </div>
 
 
@@ -245,165 +330,92 @@ const HeroSection2 = () => {
                                     {isLogin ? "Welcome Back 👋" : "Join The True Topper 🚀"}
                                 </h2>
 
-                                {/* ================= LOGIN FORM ================= */}
-                                {isLogin ? (
-                                    /* ================= LOGIN ================= */
-                                    <form onSubmit={handleLogin} className="flex flex-col gap-5">
+                                {/* =================  FORM ================= */}
+                               <form onSubmit={handleSignup} className="flex flex-col gap-4">
 
-                                        <p className="text-sm text-slate-500 text-center -mt-2">
-                                            Login to explore our universe
-                                        </p>
+                                <p className="text-sm text-slate-500 text-center">
+                                    Start learning smarter with The True Topper
+                                </p>
+                                  {/* <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm p-4 rounded-xl mb-8">
+                                    ⚠️ Important Message: It is mandatory to fill all the details on this page. It is strongly advised to complete it right now itself but if due to any reasons you want to fill this page later  please copy the URL and you can come back and fill it later also.
+                                    We have to ensure that if the person loses this URL then still there must be some kind of method through which he can later fill it
+                                  </div> */}
 
-                                        <div className="relative">
-                                            <input
-                                                type="text"
-                                                name="username"
-                                                placeholder="@username"
-                                                onChange={handleChange}
-                                                className="w-full border border-slate-300 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
-                                                required
-                                            />
-                                            <p className="text-xs text-slate-400 mt-1">
-                                                Enter your unique login ID
-                                            </p>
-                                        </div>
+                                {/* Full Name */}
+                                <div>
+                                    <label className="text-xs font-semibold text-slate-600">
+                                    Full Name *
+                                    </label>
+                                    <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Enter your full name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="w-full mt-1 border border-slate-300 p-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                                    required
+                                    />
+                                </div>
 
-                                        <div className="relative">
-                                            <input
-                                                type="password"
-                                                name="password"
-                                                placeholder="Password"
-                                                onChange={handleChange}
-                                                className="w-full border border-slate-300 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
-                                                required
-                                            />
-                                            <p className="text-xs text-slate-400 mt-1">
-                                                Keep your account secure
-                                            </p>
-                                        </div>
+                                {/* Class */}
+                                <div>
+                                    <label className="text-xs font-semibold text-slate-600">
+                                    Class *
+                                    </label>
+                                    <select
+                                    name="studentClass"
+                                    value={formData.studentClass}
+                                    onChange={handleChange}
+                                    className="w-full mt-1 border border-slate-300 p-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                                    required
+                                    >
+                                    <option value="">Select Class</option>
+                                    <option value="6">Class 4</option>
+                                    <option value="7">Class 5</option>
+                                    <option value="6">Class 6</option>
+                                    <option value="7">Class 7</option>
+                                    <option value="8">Class 8</option>
+                                    <option value="9">Class 9</option>
+                                    <option value="10">Class 10</option>
+                                    </select>
+                                </div>
 
-                                        <button
-                                            type="submit"
-                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold shadow-lg hover:scale-105 transition"
-                                        >
-                                            Login
-                                        </button>
+                                {/* WhatsApp Number */}
+                                <div>
+                                    <label className="text-xs font-semibold text-slate-600">
+                                    WhatsApp Number *
+                                    </label>
+                                    <input
+                                    type="tel"
+                                    name="whatsapp"
+                                    placeholder="10 digit number"
+                                    value={formData.whatsapp}
+                                    onChange={handleChange}
+                                    pattern="[0-9]{10}"
+                                    className="w-full mt-1 border border-slate-300 p-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
+                                    required
+                                    />
+                                <div className="bg-yellow-50 mt-2 border border-yellow-200 text-yellow-800 text-sm p-4 rounded-xl mb-1">
+                                    ⚠️ Fill carefully — this WhatsApp number will be used for recovery and important updates.
+                                  </div>
+                                </div>
 
-                                        <p className="text-sm text-center text-slate-500">
-                                            Don’t have an account?{" "}
-                                            <span
-                                                onClick={() => setIsLogin(false)}
-                                                className="text-blue-600 font-semibold cursor-pointer hover:underline"
-                                            >
-                                                Create Account
-                                            </span>
-                                        </p>
-                                        <p className="text-sm text-center text-slate-500">
-                                           
-                                            <span
-                                                onClick={() => setIsLogin(false)}
-                                                className="text-blue-600 font-semibold cursor-pointer hover:underline"
-                                            >
-                                                Forgot password
-                                            </span>
-                                        </p>
-                                    </form>
-                                ) : (
-                                    /* ================= SIGNUP ================= */
-                                    <form onSubmit={handleSignup} className="flex flex-col gap-1">
 
-                                        <p className="text-sm text-slate-500 text-center -mt-2">
-                                            Start learning smarter with The True Topper
-                                        </p>
+                                {/* Submit */}
+                                <button
+                                    type="submit"
+                                    disabled={!isFormValid}
+                                    className={`
+                                    py-2 rounded-xl font-semibold shadow-lg transition
+                                    ${isFormValid
+                                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:scale-105"
+                                        : "bg-gray-300 text-gray-500 cursor-not-allowed"}
+                                    `}
+                                >
+                                    Pay now ₹{selectedPlan.price}
+                                </button>
 
-                                        {/* Full Name */}
-                                        <div>
-                                            <label className="text-xs font-semibold text-slate-600">
-                                                Full Name
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                placeholder="name"
-                                                onChange={handleChange}
-                                                className="w-full mt-1 border border-slate-300 p-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
-                                                required
-                                            />
-                                        </div>
-
-                                        {/* Username */}
-                                        <div>
-                                            <label className="text-xs font-semibold text-slate-600">
-                                                Username
-                                            </label>
-                                            <input
-                                                type="text"
-                                                name="username"
-                                                placeholder="username"
-                                                onChange={handleChange}
-                                                className="w-full mt-1 border border-slate-300 p-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
-                                                required
-                                            />
-                                            <p className="text-xs text-slate-400 mt-1">
-                                                This will be your login ID
-                                            </p>
-                                        </div>
-
-                                        {/* Email */}
-                                        <div>
-                                            <label className="text-xs font-semibold text-slate-600">
-                                                Email Address
-                                            </label>
-                                            <input
-                                                type="email"
-                                                name="email"
-                                                placeholder="student@email.com"
-                                                onChange={handleChange}
-                                                className="w-full mt-1 border border-slate-300 p-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
-                                                required
-                                            />
-                                        </div>
-
-                                        {/* Password */}
-                                        <div>
-                                            <label className="text-xs font-semibold text-slate-600">
-                                                Password
-                                            </label>
-                                            <input
-                                                type="password"
-                                                name="password"
-                                                placeholder="Minimum 8 characters"
-                                                onChange={handleChange}
-                                                className="w-full mt-1 border border-slate-300 p-2 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none shadow-sm"
-                                                required
-                                            />
-                                            <p className="text-xs text-slate-400 mt-1">
-                                                Use letters + numbers for strong security
-                                            </p>
-                                        </div>
-
-                                        <button
-                                            type="submit"
-                                            className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-2 rounded-xl font-semibold shadow-lg hover:scale-105 transition"
-                                        >
-                                            Create Account
-                                        </button>
-
-                                        <p className="text-sm text-center text-slate-500">
-                                            Already have an account?{" "}
-                                            <span
-                                                onClick={() => setIsLogin(true)}
-                                                className="text-blue-600 font-semibold cursor-pointer hover:underline"
-                                            >
-                                                Login
-                                            </span>
-                                        </p>
-
-                                        <p className="text-[11px] text-center text-slate-400">
-                                            By signing up you agree to our Terms & Privacy Policy
-                                        </p>
-                                    </form>
-                                )}
+                                </form>
 
                             </motion.div>
                         )}

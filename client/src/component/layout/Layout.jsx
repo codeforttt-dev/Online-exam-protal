@@ -5,7 +5,7 @@ import Sidebar from "../Student-layout/Sidebar";
 function Layout() {
   const navigate = useNavigate();
   const location = useLocation();
-
+  
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
