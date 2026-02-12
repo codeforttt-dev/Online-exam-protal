@@ -1,6 +1,6 @@
 // src/redux/slices/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { signupUser, loginUser } from "../thunks/userThunk";
+import { signupUser,} from "../thunks/userThunk";
 
 const savedToken = localStorage.getItem("token");
 
@@ -42,20 +42,20 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload || "Signup failed";
       })
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        localStorage.setItem("token", action.payload.token);
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || "Login failed";
-      });
+      // .addCase(loginUser.pending, (state) => {
+      //   state.loading = true;
+      //   state.error = null;
+      // })
+      // .addCase(loginUser.fulfilled, (state, action) => {
+      //   state.loading = false;
+      //   state.user = action.payload.user;
+      //   state.token = action.payload.token;
+      //   localStorage.setItem("token", action.payload.token);
+      // })
+      // .addCase(loginUser.rejected, (state, action) => {
+      //   state.loading = false;
+      //   state.error = action.payload || "Login failed";
+      // });
   },
 });
 

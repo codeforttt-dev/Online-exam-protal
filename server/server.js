@@ -12,6 +12,12 @@ import registrationRoutes from "./src/routes/registrationRoutes.js";
 import studentRoutes from "./src/routes/studentRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
 import practiceTestRoutes from "./src/routes/practiceTestRoutes.js";
+<<<<<<< HEAD
+=======
+import purchaseRoutes from "./src/routes/purchaseRoutes.js";
+import authRoutes from "./src/routes/authRoutes.js";
+import paymentRoutes from "./src/routes/paymentRoutes.js";
+>>>>>>> afzal
 
 dotenv.config();
 
@@ -38,9 +44,14 @@ app.use("/api/exams", examRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/practice-tests", practiceTestRoutes);
 
+app.use("/api/auth", authRoutes);
+app.use("/api/purchases", purchaseRoutes);
+
 // Dashboard
 app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoutes);
+// payment
+app.use("/api/payment", paymentRoutes);
 
 app.get("/", (req, res) => {
   res.send("🚀 Server Running...");

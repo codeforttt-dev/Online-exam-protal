@@ -1,77 +1,89 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
+/* ================= SIBLING ================= */
+const siblingSchema = new mongoose.Schema({
+  name: String,
+  dob: Date,
+  studentClass: String,
+  school: String
+});
+
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
+    name: { type: String, required: true },
 
     username: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
       trim: true,
-      lowercase: true
+      lowercase: true,
+      index: true
     },
 
     email: {
       type: String,
-      required: true,
       unique: true,
+      sparse: true,
+      index: true
     },
 
-    password: {
+    password: String,
+
+    mobile: {
       type: String,
-      required: true,
+      index: true
     },
+
+    studentClass: String,
+
+    whatsapp: {
+      type: String,
+      index: true
+    },
+
+    isPaid: { type: Boolean, default: false },
+    profileCompleted: { type: Boolean, default: false },
+
+    dob: Date,
+
+    state: String,
+    district: String,
+    address: String,
+
+    school: String,
+
+    fatherName: String,
+    motherName: String,
+
+    siblings: [siblingSchema],
+
     role: {
       type: String,
       enum: ["student", "admin"],
       default: "student"
     },
-        // ⭐ NEW FIELDS (for forgot password)
+
     resetToken: String,
     resetTokenExpire: Date
   },
   { timestamps: true }
 );
 
+/* ================= HOOKS ================= */
 
-/* =========================
-   FORMAT USERNAME
-   ========================= */
-userSchema.pre("save", function () {
-  if (this.isModified("username")) {
-    let clean = this.username
-      .toLowerCase()
-      .replace(/\s+/g, "");
-
-    this.username = "@" + clean;
-  }
-});
-
-
-
-/* =========================
-   HASH PASSWORD
-   ========================= */
+// ✅ safe hashing only if password exists
 userSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
+  if (!this.password || !this.isModified("password")) return;
 
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-
-
-/* =========================
-   MATCH PASSWORD
-   ========================= */
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+userSchema.methods.matchPassword = async function (entered) {
+  if (!this.password) return false;
+  return bcrypt.compare(entered, this.password);
 };
-
 
 export default mongoose.model("User", userSchema);

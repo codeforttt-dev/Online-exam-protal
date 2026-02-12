@@ -4,10 +4,10 @@ import API from "../../api/axios";
 
 /* ========== SIGNUP ========== */
 export const signupUser = createAsyncThunk(
-  "users/signup",
+  "/user/signup",
   async (data, { rejectWithValue }) => {
     try {
-      const res = await API.post("/users/signup", data);
+      const res = await API.post("/auth/signup", data);
       // res.data me: { _id, name, username, email, role, token }
       const payload = {
         user: {
@@ -32,34 +32,18 @@ export const signupUser = createAsyncThunk(
   }
 );
 
-/* ========== LOGIN ========== */
-export const loginUser = createAsyncThunk(
-  "users/login",
-  async (data, { rejectWithValue }) => {
+
+
+export const updateProfile = createAsyncThunk(
+  "users/updateProfile",
+  async (data, thunkAPI) => {
     try {
-      const res = await API.post("/users/login", data);
-      // backend se jo send ho raha hai:
-      // { _id, name, username, email, role, token }
-
-      const payload = {
-        user: {
-          _id: res.data._id,
-          name: res.data.name,
-          username: res.data.username,
-          email: res.data.email,
-          role: res.data.role,
-        },
-        token: res.data.token,
-      };
-
-      // 🔐 token ko localStorage me store karo
-      if (payload.token) {
-        localStorage.setItem("token", payload.token);
-      }
-
-      return payload;
+      const res = await API.put("/users/profile", data);
+      return res.data;
     } catch (err) {
-      return rejectWithValue(err?.response?.data?.message || "Login failed");
+      return thunkAPI.rejectWithValue(err.response.data);
     }
   }
 );
+
+

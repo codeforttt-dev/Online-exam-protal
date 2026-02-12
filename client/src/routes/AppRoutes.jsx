@@ -1,9 +1,15 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+<<<<<<< HEAD
 
 // Public pages
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
+=======
+// import Home from "../pages/Home";
+// import Login from "../pages/Login";
+// import Signup from "../pages/Signup";
+>>>>>>> afzal
 import MainLayout from "../component/layout/Layout";
 
 // Student layout + components
@@ -16,6 +22,8 @@ import PracticeTestReviewPage from "../modules/Students/PracticeTestReview";
 import Results from "../modules/Students/Results";
 import StudyMaterials from "../modules/Students/StudyMaterials";
 import Leaderboard from "../modules/Students/Leaderboard";
+import HeroSection2 from "../pages/HeroSection2";
+import Register from "../pages/Register";
 
 // Protected wrapper
 import ProtectedRoute from "../protected/protectedRouter";
@@ -23,7 +31,16 @@ import ProtectedRoute from "../protected/protectedRouter";
 function AppRoutes() {
   return (
     <Routes>
+<<<<<<< HEAD
       {/* ================= PUBLIC ROUTES ================= */}
+=======
+      {/* Public Routes (without sidebar) */}
+      <Route path="/" element={<HeroSection2 />} />
+      {/* <Route path="/login" element={<Login />} /> */}
+      {/* <Route path="/signup" element={<Signup />} /> */}
+      <Route path="/register" element={<Register />} />
+      {/* Protected/Student Routes (with MainLayout sidebar) */}
+>>>>>>> afzal
       <Route path="/" element={<MainLayout />}>
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
