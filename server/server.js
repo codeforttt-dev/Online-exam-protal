@@ -12,12 +12,9 @@ import registrationRoutes from "./src/routes/registrationRoutes.js";
 import studentRoutes from "./src/routes/studentRoutes.js";
 import adminRoutes from "./src/routes/adminRoutes.js";
 import practiceTestRoutes from "./src/routes/practiceTestRoutes.js";
-<<<<<<< HEAD
-=======
 import purchaseRoutes from "./src/routes/purchaseRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import paymentRoutes from "./src/routes/paymentRoutes.js";
->>>>>>> afzal
 
 dotenv.config();
 
