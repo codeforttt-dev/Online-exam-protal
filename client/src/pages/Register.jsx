@@ -78,73 +78,75 @@ function Register() {
       alert("Passwords do not match");
       return;
     }
+    alert("Registration Completed 🎉");
+    navigate("/olympiads");
     
-    const age = new Date().getFullYear() - new Date(formData.dob).getFullYear();
+    // const age = new Date().getFullYear() - new Date(formData.dob).getFullYear();
     
-    if (age < 3 || age > 25) {
-      alert("Please enter valid student age (3-25 years)");
-      return;
-    }
+    // if (age < 3 || age > 25) {
+    //   alert("Please enter valid student age (3-25 years)");
+    //   return;
+    // }
     
-    const payload = {
-      username: formData.username,
-      password: formData.password,
-      email: formData.email,
-      mobile: `${formData.countryCode}${formData.mobile}`,
-      fatherMobile: `${formData.countryCode}${formData.fatherMobile}`,
-      motherMobile: `${formData.countryCode}${formData.motherMobile}`,
-      country: formData.country,
-      state: formData.state,
-      dob: formData.dob,
-      district: formData.district,
-      address: formData.address,
-      school: formData.school,
-      fatherName: formData.fatherName,
-      fatherEmail: formData.fatherEmail,
-      fatherProfession: formData.fatherProfession,
-      motherName: formData.motherName,
-      motherEmail: formData.motherEmail,
-      motherProfession: formData.motherProfession,
-      siblings: formData.siblings
-    };
+    // const payload = {
+    //   username: formData.username,
+    //   password: formData.password,
+    //   email: formData.email,
+    //   mobile: `${formData.countryCode}${formData.mobile}`,
+    //   fatherMobile: `${formData.countryCode}${formData.fatherMobile}`,
+    //   motherMobile: `${formData.countryCode}${formData.motherMobile}`,
+    //   country: formData.country,
+    //   state: formData.state,
+    //   dob: formData.dob,
+    //   district: formData.district,
+    //   address: formData.address,
+    //   school: formData.school,
+    //   fatherName: formData.fatherName,
+    //   fatherEmail: formData.fatherEmail,
+    //   fatherProfession: formData.fatherProfession,
+    //   motherName: formData.motherName,
+    //   motherEmail: formData.motherEmail,
+    //   motherProfession: formData.motherProfession,
+    //   siblings: formData.siblings
+    // };
     
-    try {
-      await dispatch(signupUser(payload)).unwrap();
-      alert("Registration Completed 🎉");
-      setFormData({
-        username: "",
-        password: "",
-        confirmPassword: "",
-        dob: "",
-        mobile: "",
-        email: "",
-        state: "",
-        district: "",
-        address: "",
-        school: "",
-        fatherName: "",
-        fatherMobile: "",
-        fatherEmail: "",
-        fatherProfession: "",
-        motherName: "",
-        motherMobile: "",
-        motherEmail: "",
-        motherProfession: "",
-        siblings: [],
-        siblingCount: 0,
-        socialChecks: {
-          youtube: false,
-          instagram: false,
-          facebook: false,
-          telegram: false,
-          whatsapp: false
-        },
-        acceptTerms: false
-      });
-      navigate("/dashboard");
-    } catch (err) {
-      alert(err || "Registration failed");
-    }
+    // try {
+    //   await dispatch(signupUser(payload)).unwrap();
+    //   alert("Registration Completed 🎉");
+    //   setFormData({
+    //     username: "",
+    //     password: "",
+    //     confirmPassword: "",
+    //     dob: "",
+    //     mobile: "",
+    //     email: "",
+    //     state: "",
+    //     district: "",
+    //     address: "",
+    //     school: "",
+    //     fatherName: "",
+    //     fatherMobile: "",
+    //     fatherEmail: "",
+    //     fatherProfession: "",
+    //     motherName: "",
+    //     motherMobile: "",
+    //     motherEmail: "",
+    //     motherProfession: "",
+    //     siblings: [],
+    //     siblingCount: 0,
+    //     socialChecks: {
+    //       youtube: false,
+    //       instagram: false,
+    //       facebook: false,
+    //       telegram: false,
+    //       whatsapp: false
+    //     },
+    //     acceptTerms: false
+    //   });
+    //   navigate("/dashboard");
+    // } catch (err) {
+    //   alert(err || "Registration failed");
+    // }
   };
 
   const handleSiblingCount = (count) => {
