@@ -49,72 +49,73 @@ const handleSignup = async (e) => {
   e.preventDefault();
 
   if (!isFormValid) return;
-
-  try {
-    /* ===============================
-       1️⃣ CREATE ORDER
-    =============================== */
-    const order = await dispatch(
-      createPaymentOrderThunk({ amount: selectedPlan.price })
-    ).unwrap();
-
-    /* ===============================
-       2️⃣ OPEN RAZORPAY
-    =============================== */
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: order.amount,
-      currency: order.currency,
-      order_id: order.id,
-
-      name: "The True Topper",
-      description: selectedPlan.name,
-
-      prefill: {
-        name: formData.name,
-        contact: formData.whatsapp,
-      },
-
-      theme: {
-        color: "#2563eb",
-      },
-
-      /* ===============================
-         3️⃣ AFTER SUCCESS PAYMENT
-      =============================== */
-      handler: async function (response) {
-        try {
-          // verify + save guest data
-          await dispatch(
-            verifyPaymentThunk({
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-              totalAmount: selectedPlan.price,
-
-              // ⭐ send guest details
-              name: formData.name,
-              whatsapp: formData.whatsapp,
-              studentClass: formData.studentClass,
-              examName: selectedPlan.name
-            })
-          ).unwrap();
-
           alert("Payment Successful ✅");
-          navigate("/thank-you"); // or success page
+          navigate("/register");
+  // try {
+  //   /* ===============================
+  //      1️⃣ CREATE ORDER
+  //   =============================== */
+  //   const order = await dispatch(
+  //     createPaymentOrderThunk({ amount: selectedPlan.price })
+  //   ).unwrap();
 
-        } catch (err) {
-          alert("Payment verification failed ❌");
-        }
-      },
-    };
+  //   /* ===============================
+  //      2️⃣ OPEN RAZORPAY
+  //   =============================== */
+  //   const options = {
+  //     key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+  //     amount: order.amount,
+  //     currency: order.currency,
+  //     order_id: order.id,
 
-    const razor = new window.Razorpay(options);
-    razor.open();
+  //     name: "The True Topper",
+  //     description: selectedPlan.name,
 
-  } catch (err) {
-    alert("Payment failed ❌");
-  }
+  //     prefill: {
+  //       name: formData.name,
+  //       contact: formData.whatsapp,
+  //     },
+
+  //     theme: {
+  //       color: "#2563eb",
+  //     },
+
+  //     /* ===============================
+  //        3️⃣ AFTER SUCCESS PAYMENT
+  //     =============================== */
+  //     handler: async function (response) {
+  //       try {
+  //         // verify + save guest data
+  //         await dispatch(
+  //           verifyPaymentThunk({
+  //             razorpayOrderId: response.razorpay_order_id,
+  //             razorpayPaymentId: response.razorpay_payment_id,
+  //             razorpaySignature: response.razorpay_signature,
+  //             totalAmount: selectedPlan.price,
+
+  //             // ⭐ send guest details
+  //             name: formData.name,
+  //             whatsapp: formData.whatsapp,
+  //             studentClass: formData.studentClass,
+  //             examName: selectedPlan.name
+  //           })
+  //         ).unwrap();
+
+  //         alert("Payment Successful ✅");
+  //         navigate("/thank-you"); // or success page
+
+  //       } catch (err) {
+  //         alert("Payment verification failed ❌");
+  //       }
+  //     },
+  //   };
+
+  //   const razor = new window.Razorpay(options);
+  //   razor.open();
+
+  // } catch (err) {
+  //   alert("Payment failed ❌");
+  // }
 };
 
 
@@ -370,13 +371,13 @@ const handleSignup = async (e) => {
                                     required
                                     >
                                     <option value="">Select Class</option>
-                                    <option value="6">Class 4</option>
-                                    <option value="7">Class 5</option>
                                     <option value="6">Class 6</option>
                                     <option value="7">Class 7</option>
                                     <option value="8">Class 8</option>
                                     <option value="9">Class 9</option>
                                     <option value="10">Class 10</option>
+                                    <option value="11">Class 11</option>
+                                    <option value="12">Class 12</option>
                                     </select>
                                 </div>
 
