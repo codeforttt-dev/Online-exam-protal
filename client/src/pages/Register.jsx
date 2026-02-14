@@ -8,12 +8,14 @@ import { useMemo } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import CreatableSelect from "react-select/creatable";
+import GlobalModal from "../component/ui/GlobalModal";
 
 function Register() {
   const dispatch = useDispatch();
   const [step, setStep] = useState(0);
   const [isIndian, setIsIndian] = useState(true);
   const [isSchoolIndian, setIsSchoolIndian] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -24,8 +26,8 @@ function Register() {
 
     country: "IN",
     countryCode: "+91",
-
     state: "",
+    pincode: "",
     mobile: "",
 
     email: "",
@@ -33,6 +35,11 @@ function Register() {
     address: "",
 
     school: "",
+    schoolCountry: "IN",
+    schoolState: "",
+    schoolDistrict: "",
+    schoolPincode: "",
+
     fatherName: "",
     fatherMobile: "",
     fatherEmail: "",
@@ -72,6 +79,15 @@ function Register() {
       label: s.name
     }));
   }, [formData.country]);
+  const schoolStates = useMemo(() => {
+    if (!formData.schoolCountry) return [];
+
+    return State.getStatesOfCountry(formData.schoolCountry).map(s => ({
+      value: s.isoCode,
+      label: s.name
+    }));
+  }, [formData.schoolCountry]);
+
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -83,8 +99,9 @@ function Register() {
       alert("Passwords do not match");
       return;
     }
-    alert("Registration Completed 🎉");
+    // alert("Registration Completed 🎉");
     navigate("/results");
+    setShowModal(true);
 
     // const age = new Date().getFullYear() - new Date(formData.dob).getFullYear();
 
@@ -170,12 +187,12 @@ function Register() {
     setFormData({ ...formData, siblings: updated });
   };
 
- const schoolOptions = [
-  { value: "Delhi Public School", label: "Delhi Public School" },
-  { value: "Kendriya Vidyalaya", label: "Kendriya Vidyalaya" },
-  { value: "National Public School", label: "National Public School" },
-  { value: "St. Mary's School", label: "St. Mary's School" }
-];
+  const schoolOptions = [
+    { value: "Delhi Public School", label: "Delhi Public School" },
+    { value: "Kendriya Vidyalaya", label: "Kendriya Vidyalaya" },
+    { value: "National Public School", label: "National Public School" },
+    { value: "St. Mary's School", label: "St. Mary's School" }
+  ];
 
 
   const allSocialDone = Object.values(formData.socialChecks).every(Boolean);
@@ -192,7 +209,7 @@ function Register() {
 
   const steps = [
     "User verification",
-    "User Info",
+    "Create Username",
     "Contact",
     "School",
     "Parents",
@@ -324,11 +341,11 @@ function Register() {
             )}
             {step === 1 && (
               <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">User Information</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">User Information</h2> */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Username <span className="text-red-500">*</span>
+                      Choose Username <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -371,331 +388,466 @@ function Register() {
                     />
                   </div>
                 </div>
+                <div className="bg-amber-50 border-l-4 border-amber-500 mx-2 mt-6 p-4 rounded-r-lg">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-amber-800">
+                        <strong>Important:</strong> You can avail all the services of The True Topper through this unique username.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 
+
             {/* Step 2: Contact Details */}
-{/* Step 2: Contact Details */}
-{step === 2 && (
-  <div className="space-y-6">
+            {step === 2 && (
+              <div className="space-y-6">
 
-    {/* ================= FROM WHERE ================= */}
-    <div>
-      <h2 className="text-xl font-semibold text-gray-800 mb-3">
-        Are you from? <span className="text-red-500">*</span>
-      </h2>
+                {/* EMAIL + DOB */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
 
-      <div className="flex gap-6">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1">
+                      Date of Birth <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="dob"
+                      value={formData.dob}
+                      onChange={handleChange}
+                      max={new Date().toISOString().split("T")[0]}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                </div>
 
-        {/* INDIA */}
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="origin"
-            checked={isIndian}
-            onChange={() => {
-              setIsIndian(true);
+                {/* FROM WHERE */}
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                    Are you from? <span className="text-red-500">*</span>
+                  </h2>
 
-              // auto set India
-              setFormData({
-                ...formData,
-                country: "IN",
-                countryCode: "+91",
-                state: ""
-              });
-            }}
-          />
-          India
-        </label>
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="origin"
+                        checked={isIndian}
+                        onChange={() => {
+                          setIsIndian(true);
+                          setFormData(prev => ({
+                            ...prev,
+                            country: "IN",
+                            countryCode: "+91",
+                            state: "",
+                            district: ""
+                          }));
+                        }}
+                      />
+                      India
+                    </label>
 
-        {/* OTHERS */}
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            name="origin"
-            checked={!isIndian}
-            onChange={() => {
-              setIsIndian(false);
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="origin"
+                        checked={!isIndian}
+                        onChange={() => {
+                          setIsIndian(false);
+                          setFormData(prev => ({
+                            ...prev,
+                            country: "",
+                            countryCode: "",
+                            state: "",
+                            district: ""
+                          }));
+                        }}
+                      />
+                      Others
+                    </label>
+                  </div>
+                </div>
 
-              // clear selection
-              setFormData({
-                ...formData,
-                country: "",
-                countryCode: "",
-                state: ""
-              });
-            }}
-          />
-          Others
-        </label>
+                {/* FORM GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      </div>
-    </div>
+                  {/* SHOW COUNTRY ONLY IF OTHERS */}
+                  {!isIndian && (
+                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Country <span className="text-red-500">*</span>
+                        </label>
 
-
-    {/* ================= FORM GRID ================= */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-
-      {/* COUNTRY */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Country <span className="text-red-500">*</span>
-        </label>
-
-        <Select
-          options={countries}
-          placeholder="Select Country"
-
-          value={
-            countries.find(c =>
-              isIndian ? c.value === "IN" : c.value === formData.country
-            )
-          }
-
-          isDisabled={isIndian}  
-
-          onChange={(selected) =>
-            setFormData({
-              ...formData,
-              country: selected.value,
-              countryCode: "+" + selected.phone,
-              state: ""
-            })
-          }
-        />
-      </div>
-
-
-      {/* STATE */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          State <span className="text-red-500">*</span>
-        </label>
-
-        <Select
-          options={states}
-          placeholder="Select State"
-          value={states.find(s => s.value === formData.state)}
-          onChange={(selected) =>
-            setFormData({ ...formData, state: selected.value })
-          }
-        />
-      </div>
-
-
-      {/* PHONE */}
-      <div className="md:col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Phone Number <span className="text-red-500">*</span>
-        </label>
-
-        <PhoneInput
-          country={isIndian ? "in" : undefined}
-          enableSearch
-          value={formData.mobile}
-          onChange={(phone, data) =>
-            setFormData({
-              ...formData,
-              mobile: phone,
-              countryCode: "+" + data.dialCode
-            })
-          }
-          containerClass="w-full"
-          inputClass="!w-full !h-[44px] !pl-14 !rounded-lg !border !border-gray-300"
-        />
-      </div>
+                        <Select
+                          options={countries}
+                          placeholder="Select Country"
+                          value={countries.find(c => c.value === formData.country)}
+                          onChange={(selected) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              country: selected.value,
+                              countryCode: "+" + selected.phone,
+                              state: ""
+                            }))
+                          }
+                        />
+                      </div>
 
 
-      {/* ADDRESS */}
-      <div className="md:col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Address <span className="text-red-500">*</span>
-        </label>
+                      {/* PHONE */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Phone Number <span className="text-red-500">*</span>
+                        </label>
 
-        <textarea
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-          rows="3"
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg"
-        />
-      </div>
-
-    </div>
-  </div>
-)}
-
-
-{step === 3 && (
-  <div className="space-y-6">
-
-    {/* ================= SCHOOL LOCATION QUESTION ================= */}
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Your school is in? <span className="text-red-500">*</span>
-      </label>
-
-      <div className="flex gap-6">
-
-        {/* INDIA */}
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            checked={isSchoolIndian}
-            onChange={() => {
-              setIsSchoolIndian(true);
-
-              setFormData(prev => ({
-                ...prev,
-                country: "IN",
-                countryCode: "+91",
-                state: ""
-              }));
-            }}
-          />
-          India
-        </label>
-
-        {/* OTHERS */}
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="radio"
-            checked={!isSchoolIndian}
-            onChange={() => {
-              setIsSchoolIndian(false);
-
-              setFormData(prev => ({
-                ...prev,
-                country: "",
-                countryCode: "",
-                state: ""
-              }));
-            }}
-          />
-          Others
-        </label>
-
-      </div>
-    </div>
-
-
-    {/* ================= FORM GRID ================= */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-      {/* COUNTRY */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Country <span className="text-red-500">*</span>
-        </label>
-
-        <Select
-          options={countries}
-          placeholder="Select Country"
-
-          value={
-            countries.find(c =>
-              isSchoolIndian ? c.value === "IN" : c.value === formData.country
-            )
-          }
-
-          isDisabled={isSchoolIndian}
-
-          onChange={(selected) =>
-            setFormData(prev => ({
-              ...prev,
-              country: selected.value,
-              countryCode: "+" + selected.phone,
-              state: ""
-            }))
-          }
-
-          styles={{
-            control: (base) => ({
-              ...base,
-              minHeight: "44px",
-              borderRadius: "0.5rem"
-            })
-          }}
-        />
-      </div>
-
-
-      {/* STATE */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          State <span className="text-red-500">*</span>
-        </label>
-
-        <Select
-          options={states}
-          placeholder="Select State"
-          value={states.find(s => s.value === formData.state)}
-          onChange={(selected) =>
-            setFormData(prev => ({ ...prev, state: selected.value }))
-          }
-          isDisabled={!formData.country}
-
-          styles={{
-            control: (base) => ({
-              ...base,
-              minHeight: "44px",
-              borderRadius: "0.5rem"
-            })
-          }}
-        />
-      </div>
-
-
-{/* SCHOOL */}
-<div className="md:col-span-2">
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    School Name <span className="text-red-500">*</span>
-  </label>
-          <p className="text-xs text-gray-500">
-  Can't find your school? Type and press Enter
-</p>
-
-  <CreatableSelect
-    options={schoolOptions}
-    isSearchable
-    placeholder="Search or type your school name"
-
-    value={
-      formData.school
-        ? { label: formData.school, value: formData.school }
-        : null
-    }
-
-    onChange={(selected) =>
-      setFormData(prev => ({
-        ...prev,
-        school: selected.value
-      }))
-    }
-
-    onCreateOption={(inputValue) =>
-      setFormData(prev => ({
-        ...prev,
-        school: inputValue
-      }))
-    }
-
-    styles={{
-      control: (base) => ({
-        ...base,
-        minHeight: "44px",
-        borderRadius: "0.5rem"
-      })
-    }}
-  />
-</div>
+                        <PhoneInput
+                          country="us"
+                          enableSearch
+                          value={formData.mobile}
+                          onChange={(phone, data) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              mobile: phone,
+                              countryCode: "+" + data.dialCode
+                            }))
+                          }
+                          containerClass="w-full"
+                          inputClass="!w-full !h-[44px] !pl-14 !rounded-lg !border !border-gray-300"
+                        />
+                      </div>
+                    </div>
+                  )}
 
 
 
-    </div>
-  </div>
-)}
+                  {/* DISTRICT — ONLY FOR INDIA */}
+                  {isIndian && (
+                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                      {/* STATE */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          State <span className="text-red-500">*</span>
+                        </label>
+
+                        <Select
+                          options={states}
+                          placeholder="Select State"
+                          value={states.find(s => s.value === formData.state)}
+                          onChange={(selected) =>
+                            setFormData(prev => ({ ...prev, state: selected.value }))
+                          }
+                        />
+                      </div>
+
+                      {/* DISTRICT */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          District <span className="text-red-500">*</span>
+                        </label>
+
+                        <input
+                          type="text"
+                          name="district"
+                          value={formData.district}
+                          onChange={handleChange}
+                          className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter district"
+                        />
+                      </div>
+                      {/* DISTRICT */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          Pin code <span className="text-red-500"></span>
+                        </label>
+
+                        <input
+                          type="text"
+                          name="district"
+                          value={formData.pincode}
+                          onChange={handleChange}
+                          className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter district"
+                        />
+                      </div>
+
+                      {/* PHONE */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Phone Number <span className="text-red-500">*</span>
+                        </label>
+
+                        <PhoneInput
+                          country="in"
+                          enableSearch
+                          value={formData.mobile}
+                          onChange={(phone, data) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              mobile: phone,
+                              countryCode: "+" + data.dialCode
+                            }))
+                          }
+                          containerClass="w-full"
+                          inputClass="!w-full !h-[44px] !pl-14 !rounded-lg !border !border-gray-300"
+                        />
+                      </div>
+
+                    </div>
+                  )}
+
+
+
+
+                  {/* ADDRESS */}
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Address <span className="text-red-500"></span>
+                    </label>
+
+                    <textarea
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      rows="3"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg"
+                    />
+                  </div>
+
+                </div>
+              </div>
+            )}
+            {/* Step 2: School Details */}
+            {/* Step 3: School Details */}
+            {step === 3 && (
+              <div className="space-y-6">
+
+                {/* SCHOOL LOCATION QUESTION */}
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-3">
+                    Your school is in? <span className="text-red-500">*</span>
+                  </h2>
+
+                  <div className="flex gap-6">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={isSchoolIndian}
+                        onChange={() => {
+                          setIsSchoolIndian(true);
+                          setFormData(prev => ({
+                            ...prev,
+                            schoolCountry: "IN",
+                            schoolState: "",
+                            schoolDistrict: "",
+                            schoolPincode: ""
+                          }));
+                        }}
+                      />
+                      India
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        checked={!isSchoolIndian}
+                        onChange={() => {
+                          setIsSchoolIndian(false);
+                          setFormData(prev => ({
+                            ...prev,
+                            schoolCountry: "",
+                            schoolState: "",
+                            schoolDistrict: "",
+                            schoolPincode: ""
+                          }));
+                        }}
+                      />
+                      Others
+                    </label>
+                  </div>
+                </div>
+
+                {/* FORM GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* SHOW COUNTRY ONLY IF OTHERS */}
+                  {!isSchoolIndian && (
+
+                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* SCHOOL NAME */}
+                      <div className="">
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          School Name <span className="text-red-500">*</span>
+                        </label>
+
+                        <CreatableSelect
+                          options={schoolOptions}
+                          isSearchable
+                          placeholder="Search or type full school name"
+                          value={
+                            formData.school
+                              ? { label: formData.school, value: formData.school }
+                              : null
+                          }
+                          onChange={(selected) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              school: selected.value
+                            }))
+                          }
+                          onCreateOption={(inputValue) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              school: inputValue
+                            }))
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          Country <span className="text-red-500">*</span>
+                        </label>
+
+                        <Select
+                          options={countries}
+                          placeholder="Select Country"
+                          value={countries.find(c => c.value === formData.schoolCountry)}
+                          onChange={(selected) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              schoolCountry: selected.value,
+                              schoolState: ""
+                            }))
+                          }
+                        />
+                      </div>
+
+                    </div>
+                  )}
+
+                  {/* INDIA FIELDS */}
+                  {isSchoolIndian && (
+                    <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* SCHOOL NAME */}
+                      <div className="">
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          School Name <span className="text-red-500">*</span>
+                        </label>
+
+                        <CreatableSelect
+                          options={schoolOptions}
+                          isSearchable
+                          placeholder="Search or type full school name"
+                          value={
+                            formData.school
+                              ? { label: formData.school, value: formData.school }
+                              : null
+                          }
+                          onChange={(selected) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              school: selected.value
+                            }))
+                          }
+                          onCreateOption={(inputValue) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              school: inputValue
+                            }))
+                          }
+                        />
+                      </div>
+                      {/* STATE */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          State <span className="text-red-500">*</span>
+                        </label>
+
+                        <Select
+                          options={schoolStates}
+                          placeholder="Select State"
+                          value={states.find(s => s.value === formData.schoolStates)}
+                          onChange={(selected) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              schoolStates: selected.value
+                            }))
+                          }
+                        />
+                      </div>
+
+                      {/* DISTRICT */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          District <span className="text-red-500">*</span>
+                        </label>
+
+                        <input
+                          type="text"
+                          value={formData.schoolDistrict}
+                          onChange={(e) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              schoolDistrict: e.target.value
+                            }))
+                          }
+                          className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter district"
+                        />
+                      </div>
+
+                      {/* PINCODE */}
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mb-1">
+                          Pincode
+                        </label>
+
+                        <input
+                          type="text"
+                          value={formData.schoolPincode}
+                          onChange={(e) =>
+                            setFormData(prev => ({
+                              ...prev,
+                              schoolPincode: e.target.value
+                            }))
+                          }
+                          className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter pincode"
+                        />
+                      </div>
+
+
+                    </div>
+                  )}
+
+
+
+                </div>
+              </div>
+            )}
+
 
 
 
@@ -1037,8 +1189,19 @@ function Register() {
 
         {/* Footer */}
         <div className="bg-gray-50 px-6 md:px-8 py-4 border-t text-center text-sm text-gray-500">
-          <p>© 2024 The True Topper. All rights reserved.</p>
+          <p>© 2026 The True Topper. All rights reserved.</p>
         </div>
+        <GlobalModal
+          isOpen={showModal}
+          onClose={() => {
+            setShowModal(false);
+            navigate("/results");
+          }}
+          title="Congratulations 🎉"
+          message="You have successfully registered for the International Ethical Entrepreneurship Olympiad ++."
+          type="success"
+        />
+
       </div>
     </div>
   );

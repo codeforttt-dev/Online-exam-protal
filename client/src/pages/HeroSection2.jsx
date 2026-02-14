@@ -9,9 +9,11 @@ import { AnimatePresence } from "framer-motion";
 import { purchaseExam } from "../redux/thunks/purchaseThunk";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import GlobalModal from "../component/ui/GlobalModal";
 
 const HeroSection2 = () => {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   // const navItems = [
   //     // { name: "Home", path: "/" },
@@ -52,8 +54,10 @@ const isFormValid =
     e.preventDefault();
 
     if (!isFormValid) return;
-    alert("Payment Successful ✅");
-    navigate("/register");
+    // alert("Payment Successful ✅");
+    setShowModal(true);
+    // navigate("/register");
+
     // try {
     //   /* ===============================
     //      1️⃣ CREATE ORDER
@@ -263,7 +267,7 @@ const isFormValid =
                 {/* Title + Price */}
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-blue-600 font-bold text-sm sm:text-lg">
-                    International Ethical Entrepreneurship Olympiad ++
+                    International Ethical Entrepreneurship Olympiad ++ (IEEO++)
                   </h3>
 
                   {/* <span className="text-green-600 font-bold text-sm sm:text-base">
@@ -278,7 +282,7 @@ const isFormValid =
                     ${expandedCard === 2 ? "" : "line-clamp-2 sm:line-clamp-none"}
                   `}
                 >
-                  Top The Real Exam
+                  Click for Registration
                 </p>
 
                 {/* Mobile read more */}
@@ -336,7 +340,7 @@ const isFormValid =
 
                 {/* HEADER */}
                 <h2 className="text-l font-bold text-center text-slate-800 mb-2">
-                  {isLogin ? "Welcome Back 👋" : "Register for the (IEEO ++)"}
+                  {isLogin ? "Welcome Back 👋" : "Payment Registration Page for the IEEO ++"}
                 </h2>
 
                 {/* =================  FORM ================= */}
@@ -466,7 +470,7 @@ const isFormValid =
                       }
                       `}
                   >
-                    Register for Payment ₹{selectedPlan.price}
+                    Register for Payment
                   </button>
 
 
@@ -478,6 +482,17 @@ const isFormValid =
         </div>
 
       </div>
+      <GlobalModal
+  isOpen={showModal}
+  onClose={() => {
+    setShowModal(false);
+    navigate("/register");
+  }}
+  title="Congratulations 🎉"
+  message="Congratulations you have successfully paid the fee for International Ethical Entrepreneurship Olympiad ++"
+  type="success"
+/>
+
     </div>
   );
 };
