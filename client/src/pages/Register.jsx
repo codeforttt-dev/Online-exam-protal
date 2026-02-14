@@ -7,26 +7,31 @@ import { Country, State } from "country-state-city";
 import { useMemo } from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import CreatableSelect from "react-select/creatable";
 
 function Register() {
   const dispatch = useDispatch();
   const [step, setStep] = useState(0);
+  const [isIndian, setIsIndian] = useState(true);
+  const [isSchoolIndian, setIsSchoolIndian] = useState(true);
+
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     confirmPassword: "",
     dob: "",
-    
-    country: "",
-    countryCode: "",
+
+    country: "IN",
+    countryCode: "+91",
+
     state: "",
     mobile: "",
-    
+
     email: "",
     district: "",
     address: "",
-    
+
     school: "",
     fatherName: "",
     fatherMobile: "",
@@ -36,10 +41,10 @@ function Register() {
     motherMobile: "",
     motherEmail: "",
     motherProfession: "",
-    
+
     siblings: [],
     siblingCount: 0,
-    
+
     socialChecks: {
       youtube: false,
       instagram: false,
@@ -47,7 +52,7 @@ function Register() {
       telegram: false,
       whatsapp: false
     },
-    
+
     acceptTerms: false
   });
 
@@ -61,7 +66,7 @@ function Register() {
 
   const states = useMemo(() => {
     if (!formData.country) return [];
-    
+
     return State.getStatesOfCountry(formData.country).map(s => ({
       value: s.isoCode,
       label: s.name
@@ -73,21 +78,21 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (formData.password !== formData.confirmPassword) {
       alert("Passwords do not match");
       return;
     }
     alert("Registration Completed 🎉");
     navigate("/results");
-    
+
     // const age = new Date().getFullYear() - new Date(formData.dob).getFullYear();
-    
+
     // if (age < 3 || age > 25) {
     //   alert("Please enter valid student age (3-25 years)");
     //   return;
     // }
-    
+
     // const payload = {
     //   username: formData.username,
     //   password: formData.password,
@@ -109,7 +114,7 @@ function Register() {
     //   motherProfession: formData.motherProfession,
     //   siblings: formData.siblings
     // };
-    
+
     // try {
     //   await dispatch(signupUser(payload)).unwrap();
     //   alert("Registration Completed 🎉");
@@ -165,12 +170,13 @@ function Register() {
     setFormData({ ...formData, siblings: updated });
   };
 
-  const schoolOptions = [
-    { value: "DPS", label: "Delhi Public School" },
-    { value: "KV", label: "Kendriya Vidyalaya" },
-    { value: "NPS", label: "National Public School" },
-    { value: "StMary", label: "St. Mary's School" }
-  ];
+ const schoolOptions = [
+  { value: "Delhi Public School", label: "Delhi Public School" },
+  { value: "Kendriya Vidyalaya", label: "Kendriya Vidyalaya" },
+  { value: "National Public School", label: "National Public School" },
+  { value: "St. Mary's School", label: "St. Mary's School" }
+];
+
 
   const allSocialDone = Object.values(formData.socialChecks).every(Boolean);
 
@@ -185,6 +191,7 @@ function Register() {
   };
 
   const steps = [
+    "User verification",
     "User Info",
     "Contact",
     "School",
@@ -199,7 +206,7 @@ function Register() {
         {/* Header Section */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-6 md:p-8">
           <h1 className="text-2xl md:text-3xl font-bold text-white">
-            Student Registration Portal
+            Detailed Registration Page
           </h1>
           <p className="text-blue-100 mt-2">
             Complete your profile in {steps.length} simple steps
@@ -207,7 +214,7 @@ function Register() {
         </div>
 
         {/* Info Alert */}
-        <div className="bg-amber-50 border-l-4 border-amber-500 mx-6 mt-6 p-4 rounded-r-lg">
+        {/* <div className="bg-amber-50 border-l-4 border-amber-500 mx-6 mt-6 p-4 rounded-r-lg">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
@@ -220,7 +227,7 @@ function Register() {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Progress Stepper */}
         <div className="px-6 md:px-8 pt-8">
@@ -252,6 +259,70 @@ function Register() {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Step 1: User Information */}
             {step === 0 && (
+              <div className="space-y-2">
+                {/* Info Alert */}
+                <div className="bg-amber-50 border-l-4 border-amber-500 mx-2 mt-6 p-4 rounded-r-lg">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm text-amber-800">
+                        <strong>Important:</strong> Please ensure that you are writing the same name and WhatsApp Number that you have provided in the "Payment Registration Page" earlier.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+
+                  {/* NAME */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1">
+                      Name <span className="text-red-500">*</span>
+                    </label>
+
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                      placeholder="Enter name"
+                    />
+                  </div>
+
+                  {/* WHATSAPP */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1">
+                      Whatsapp Number <span className="text-red-500">*</span>
+                    </label>
+
+                    <PhoneInput
+                      country={"in"}
+                      enableSearch
+                      value={formData.whatsapp}
+                      onChange={(phone, data) =>
+                        setFormData({
+                          ...formData,
+                          whatsapp: phone,
+                          country: data.countryCode,
+                          countryCode: "+" + data.dialCode
+                        })
+                      }
+                      containerClass="w-full"
+                      inputClass="!w-full !h-[44px] !pl-14 !pr-4 !rounded-lg !border !border-gray-300 focus:!border-blue-500 focus:!ring-2 focus:!ring-blue-500"
+                      buttonClass="!border-gray-300 !rounded-l-lg"
+                    />
+                  </div>
+
+                </div>
+
+
+              </div>
+            )}
+            {step === 1 && (
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">User Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -269,7 +340,7 @@ function Register() {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Email <span className="text-red-500">*</span>
@@ -284,7 +355,7 @@ function Register() {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Password <span className="text-red-500">*</span>
@@ -299,7 +370,7 @@ function Register() {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Confirm Password <span className="text-red-500">*</span>
@@ -314,7 +385,7 @@ function Register() {
                       required
                     />
                   </div>
-                  
+
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Date of Birth <span className="text-red-500">*</span>
@@ -334,218 +405,335 @@ function Register() {
             )}
 
             {/* Step 2: Contact Details */}
-            {step === 1 && (
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">Contact Details</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number <span className="text-red-500">*</span>
-                    </label>
-                    <PhoneInput
-                      country={"in"}
-                      enableSearch
-                      value={formData.mobile}
-                      onChange={(phone, data) =>
-                        setFormData({
-                          ...formData,
-                          mobile: phone,
-                          country: data.countryCode,
-                          countryCode: "+" + data.dialCode
-                        })
-                      }
-                      inputClass="!w-full !px-4 !py-3 !pl-14 !rounded-lg !border-gray-300"
-                      containerClass="w-full"
-                    />
-                    <p className="mt-2 text-sm text-amber-600">
-                      ⚠️ This number will be used for login recovery & important updates.
-                    </p>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Country <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      options={countries}
-                      placeholder="Select Country"
-                      value={countries.find(c => c.value === formData.country)}
-                      onChange={(selected) =>
-                        setFormData({
-                          ...formData,
-                          country: selected.value,
-                          countryCode: "+" + selected.phone,
-                          state: ""
-                        })
-                      }
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          borderColor: '#d1d5db',
-                          borderRadius: '0.5rem',
-                          padding: '0.25rem',
-                          '&:hover': {
-                            borderColor: '#3b82f6'
-                          }
-                        })
-                      }}
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      State <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      options={states}
-                      placeholder="Select State"
-                      value={states.find(s => s.value === formData.state)}
-                      onChange={(selected) =>
-                        setFormData({ ...formData, state: selected.value })
-                      }
-                      isDisabled={!formData.country}
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          borderColor: '#d1d5db',
-                          borderRadius: '0.5rem',
-                          padding: '0.25rem',
-                          '&:hover': {
-                            borderColor: '#3b82f6'
-                          }
-                        })
-                      }}
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      City <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      name="district"
-                      value={formData.district}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                      placeholder="Enter city"
-                      required
-                    />
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Address <span className="text-red-500">*</span>
-                    </label>
-                    <textarea
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                      placeholder="Enter complete address"
-                      rows="3"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+{/* Step 2: Contact Details */}
+{step === 2 && (
+  <div className="space-y-6">
 
-            {/* Step 3: School Information */}
-            {step === 2 && (
-              <div className="space-y-6">
-                <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">School Information</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Country <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      options={countries}
-                      placeholder="Select Country"
-                      value={countries.find(c => c.value === formData.country)}
-                      onChange={(selected) =>
-                        setFormData({
-                          ...formData,
-                          country: selected.value,
-                          countryCode: "+" + selected.phone,
-                          state: ""
-                        })
-                      }
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          borderColor: '#d1d5db',
-                          borderRadius: '0.5rem',
-                          padding: '0.25rem',
-                          '&:hover': {
-                            borderColor: '#3b82f6'
-                          }
-                        })
-                      }}
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      State <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      options={states}
-                      placeholder="Select State"
-                      value={states.find(s => s.value === formData.state)}
-                      onChange={(selected) =>
-                        setFormData({ ...formData, state: selected.value })
-                      }
-                      isDisabled={!formData.country}
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          borderColor: '#d1d5db',
-                          borderRadius: '0.5rem',
-                          padding: '0.25rem',
-                          '&:hover': {
-                            borderColor: '#3b82f6'
-                          }
-                        })
-                      }}
-                    />
-                  </div>
-                  
-                  <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      School Name <span className="text-red-500">*</span>
-                    </label>
-                    <Select
-                      options={schoolOptions}
-                      isSearchable
-                      value={schoolOptions.find(o => o.value === formData.school)}
-                      onChange={(selected) =>
-                        setFormData({ ...formData, school: selected.value })
-                      }
-                      placeholder="Search and select your school"
-                      styles={{
-                        control: (base) => ({
-                          ...base,
-                          borderColor: '#d1d5db',
-                          borderRadius: '0.5rem',
-                          padding: '0.25rem',
-                          '&:hover': {
-                            borderColor: '#3b82f6'
-                          }
-                        })
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+    {/* ================= FROM WHERE ================= */}
+    <div>
+      <h2 className="text-xl font-semibold text-gray-800 mb-3">
+        Are you from? <span className="text-red-500">*</span>
+      </h2>
+
+      <div className="flex gap-6">
+
+        {/* INDIA */}
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="origin"
+            checked={isIndian}
+            onChange={() => {
+              setIsIndian(true);
+
+              // auto set India
+              setFormData({
+                ...formData,
+                country: "IN",
+                countryCode: "+91",
+                state: ""
+              });
+            }}
+          />
+          India
+        </label>
+
+        {/* OTHERS */}
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            name="origin"
+            checked={!isIndian}
+            onChange={() => {
+              setIsIndian(false);
+
+              // clear selection
+              setFormData({
+                ...formData,
+                country: "",
+                countryCode: "",
+                state: ""
+              });
+            }}
+          />
+          Others
+        </label>
+
+      </div>
+    </div>
+
+
+    {/* ================= FORM GRID ================= */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
+      {/* COUNTRY */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Country <span className="text-red-500">*</span>
+        </label>
+
+        <Select
+          options={countries}
+          placeholder="Select Country"
+
+          value={
+            countries.find(c =>
+              isIndian ? c.value === "IN" : c.value === formData.country
+            )
+          }
+
+          isDisabled={isIndian}  
+
+          onChange={(selected) =>
+            setFormData({
+              ...formData,
+              country: selected.value,
+              countryCode: "+" + selected.phone,
+              state: ""
+            })
+          }
+        />
+      </div>
+
+
+      {/* STATE */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          State <span className="text-red-500">*</span>
+        </label>
+
+        <Select
+          options={states}
+          placeholder="Select State"
+          value={states.find(s => s.value === formData.state)}
+          onChange={(selected) =>
+            setFormData({ ...formData, state: selected.value })
+          }
+        />
+      </div>
+
+
+      {/* PHONE */}
+      <div className="md:col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Phone Number <span className="text-red-500">*</span>
+        </label>
+
+        <PhoneInput
+          country={isIndian ? "in" : undefined}
+          enableSearch
+          value={formData.mobile}
+          onChange={(phone, data) =>
+            setFormData({
+              ...formData,
+              mobile: phone,
+              countryCode: "+" + data.dialCode
+            })
+          }
+          containerClass="w-full"
+          inputClass="!w-full !h-[44px] !pl-14 !rounded-lg !border !border-gray-300"
+        />
+      </div>
+
+
+      {/* ADDRESS */}
+      <div className="md:col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Address <span className="text-red-500">*</span>
+        </label>
+
+        <textarea
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          rows="3"
+          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg"
+        />
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+{step === 3 && (
+  <div className="space-y-6">
+
+    {/* ================= SCHOOL LOCATION QUESTION ================= */}
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Your school is in? <span className="text-red-500">*</span>
+      </label>
+
+      <div className="flex gap-6">
+
+        {/* INDIA */}
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            checked={isSchoolIndian}
+            onChange={() => {
+              setIsSchoolIndian(true);
+
+              setFormData(prev => ({
+                ...prev,
+                country: "IN",
+                countryCode: "+91",
+                state: ""
+              }));
+            }}
+          />
+          India
+        </label>
+
+        {/* OTHERS */}
+        <label className="flex items-center gap-2 cursor-pointer">
+          <input
+            type="radio"
+            checked={!isSchoolIndian}
+            onChange={() => {
+              setIsSchoolIndian(false);
+
+              setFormData(prev => ({
+                ...prev,
+                country: "",
+                countryCode: "",
+                state: ""
+              }));
+            }}
+          />
+          Others
+        </label>
+
+      </div>
+    </div>
+
+
+    {/* ================= FORM GRID ================= */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      {/* COUNTRY */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Country <span className="text-red-500">*</span>
+        </label>
+
+        <Select
+          options={countries}
+          placeholder="Select Country"
+
+          value={
+            countries.find(c =>
+              isSchoolIndian ? c.value === "IN" : c.value === formData.country
+            )
+          }
+
+          isDisabled={isSchoolIndian}
+
+          onChange={(selected) =>
+            setFormData(prev => ({
+              ...prev,
+              country: selected.value,
+              countryCode: "+" + selected.phone,
+              state: ""
+            }))
+          }
+
+          styles={{
+            control: (base) => ({
+              ...base,
+              minHeight: "44px",
+              borderRadius: "0.5rem"
+            })
+          }}
+        />
+      </div>
+
+
+      {/* STATE */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          State <span className="text-red-500">*</span>
+        </label>
+
+        <Select
+          options={states}
+          placeholder="Select State"
+          value={states.find(s => s.value === formData.state)}
+          onChange={(selected) =>
+            setFormData(prev => ({ ...prev, state: selected.value }))
+          }
+          isDisabled={!formData.country}
+
+          styles={{
+            control: (base) => ({
+              ...base,
+              minHeight: "44px",
+              borderRadius: "0.5rem"
+            })
+          }}
+        />
+      </div>
+
+
+{/* SCHOOL */}
+<div className="md:col-span-2">
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    School Name <span className="text-red-500">*</span>
+  </label>
+          <p className="text-xs text-gray-500">
+  Can't find your school? Type and press Enter
+</p>
+
+  <CreatableSelect
+    options={schoolOptions}
+    isSearchable
+    placeholder="Search or type your school name"
+
+    value={
+      formData.school
+        ? { label: formData.school, value: formData.school }
+        : null
+    }
+
+    onChange={(selected) =>
+      setFormData(prev => ({
+        ...prev,
+        school: selected.value
+      }))
+    }
+
+    onCreateOption={(inputValue) =>
+      setFormData(prev => ({
+        ...prev,
+        school: inputValue
+      }))
+    }
+
+    styles={{
+      control: (base) => ({
+        ...base,
+        minHeight: "44px",
+        borderRadius: "0.5rem"
+      })
+    }}
+  />
+</div>
+
+
+
+    </div>
+  </div>
+)}
+
+
 
             {/* Step 4: Parents Details */}
-            {step === 3 && (
+            {step === 4 && (
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">Parents Details</h2>
-                
+
                 {/* Father's Information */}
                 <div className="bg-blue-50 p-4 rounded-lg mb-6">
                   <h3 className="text-lg font-medium text-blue-800 mb-4">Father's Information</h3>
@@ -564,7 +752,7 @@ function Register() {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Father's Phone <span className="text-red-500">*</span>
@@ -583,7 +771,7 @@ function Register() {
                         containerClass="w-full"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Father's Email
@@ -597,7 +785,7 @@ function Register() {
                         placeholder="father@example.com"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Father's Profession
@@ -613,7 +801,7 @@ function Register() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Mother's Information */}
                 <div className="bg-pink-50 p-4 rounded-lg">
                   <h3 className="text-lg font-medium text-pink-800 mb-4">Mother's Information</h3>
@@ -632,7 +820,7 @@ function Register() {
                         required
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Mother's Phone <span className="text-red-500">*</span>
@@ -651,7 +839,7 @@ function Register() {
                         containerClass="w-full"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Mother's Email
@@ -665,7 +853,7 @@ function Register() {
                         placeholder="mother@example.com"
                       />
                     </div>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Mother's Profession
@@ -685,10 +873,10 @@ function Register() {
             )}
 
             {/* Step 5: Siblings Details */}
-            {step === 4 && (
+            {step === 5 && (
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">Siblings Details</h2>
-                
+
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -705,7 +893,7 @@ function Register() {
                       ))}
                     </select>
                   </div>
-                  
+
                   {formData.siblings.map((sib, i) => (
                     <div key={i} className="mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
                       <h4 className="text-lg font-medium text-gray-700 mb-4">Sibling {i + 1}</h4>
@@ -723,7 +911,7 @@ function Register() {
                             required
                           />
                         </div>
-                        
+
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Date of Birth <span className="text-red-500">*</span>
@@ -736,7 +924,7 @@ function Register() {
                             required
                           />
                         </div>
-                        
+
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             Class/Grade
@@ -749,7 +937,7 @@ function Register() {
                             placeholder="e.g., 10th Grade"
                           />
                         </div>
-                        
+
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">
                             School
@@ -770,22 +958,22 @@ function Register() {
             )}
 
             {/* Step 6: Social Media */}
-            {step === 5 && (
+            {step === 6 && (
               <div className="space-y-6">
                 <h2 className="text-xl font-semibold text-gray-800 border-b pb-3">Follow The True Topper (Mandatory)</h2>
-                
+
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
                   <p className="text-gray-600 mb-6">
                     Please visit all our official social media pages and mark them as visited to complete your registration.
                   </p>
-                  
+
                   <div className="space-y-4">
                     {[
-                      { key: "youtube", label: "YouTube Channel", link: "https://youtube.com/", color: "bg-red-50", border: "border-red-200" },
-                      { key: "instagram", label: "Instagram Page", link: "https://instagram.com/", color: "bg-pink-50", border: "border-pink-200" },
-                      { key: "facebook", label: "Facebook Page", link: "https://facebook.com/", color: "bg-blue-50", border: "border-blue-200" },
-                      { key: "telegram", label: "Telegram Channel", link: "https://t.me/", color: "bg-sky-50", border: "border-sky-200" },
-                      { key: "whatsapp", label: "WhatsApp Group", link: "https://chat.whatsapp.com/", color: "bg-green-50", border: "border-green-200" }
+                      { key: "youtube", label: "YouTube Channel", link: "https://www.youtube.com/channel/UCuhOvW3kyngZhp8J3q54QHA", color: "bg-red-50", border: "border-red-200" },
+                      { key: "instagram", label: "Instagram Page", link: "https://www.instagram.com/thetruetopper?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==", color: "bg-pink-50", border: "border-pink-200" },
+                      { key: "facebook", label: "Facebook Page", link: "https://www.facebook.com/TheTrueTopper", color: "bg-blue-50", border: "border-blue-200" },
+                      { key: "telegram", label: "X ( Twitter )", link: "https://x.com/TheTrueTopper", color: "bg-sky-50", border: "border-sky-200" },
+                      { key: "whatsapp", label: "WhatsApp", link: "https://api.whatsapp.com/send?phone=9622222800", color: "bg-green-50", border: "border-green-200" }
                     ].map((social) => (
                       <div key={social.key} className={`flex items-center justify-between p-4 border rounded-lg ${social.border} ${social.color}`}>
                         <div className="flex items-center space-x-3">
@@ -800,7 +988,7 @@ function Register() {
                             {social.label}
                           </button>
                         </div>
-                        
+
                         <div className="flex items-center space-x-2">
                           {formData.socialChecks[social.key] ? (
                             <>
@@ -821,7 +1009,7 @@ function Register() {
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className={`mt-6 p-4 rounded-lg ${allSocialDone ? 'bg-green-50 border border-green-200' : 'bg-amber-50 border border-amber-200'}`}>
                     <div className="flex items-center">
                       {allSocialDone ? (
@@ -855,7 +1043,7 @@ function Register() {
               >
                 ← Back
               </button>
-              
+
               {step < 5 ? (
                 <button
                   type="button"
@@ -876,7 +1064,7 @@ function Register() {
             </div>
           </form>
         </div>
-        
+
         {/* Footer */}
         <div className="bg-gray-50 px-6 md:px-8 py-4 border-t text-center text-sm text-gray-500">
           <p>© 2024 The True Topper. All rights reserved.</p>
