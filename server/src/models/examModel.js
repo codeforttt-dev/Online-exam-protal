@@ -13,7 +13,7 @@ const examSchema = new mongoose.Schema(
       default: true,
     },
 
-    // ✅ yeh field ABHI add kar:
+   
     examCode: {
       type: String,
       required: false, // existing data ke liye abhi optional rakho
