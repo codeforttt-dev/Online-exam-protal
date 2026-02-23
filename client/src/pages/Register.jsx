@@ -9,6 +9,9 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import CreatableSelect from "react-select/creatable";
 import GlobalModal from "../component/ui/GlobalModal";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { checkPurchaseThunk } from "../redux/thunks/purchaseThunk";
 
 function Register() {
   const dispatch = useDispatch();
@@ -18,50 +21,146 @@ function Register() {
   const [showModal, setShowModal] = useState(false);
 
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    confirmPassword: "",
-    dob: "",
+const [formData, setFormData] = useState({
+  name: "",
+  whatsapp: "",
+  studentClass: "",
 
-    country: "IN",
-    countryCode: "+91",
-    state: "",
-    pincode: "",
-    mobile: "",
+  username: "",
+  password: "",
+  confirmPassword: "",
+  dob: "",
 
-    email: "",
-    district: "",
-    address: "",
+  country: "",
+  countryCode: "",
+  state: "",
+  pincode: "",
+  mobile: "",
 
-    school: "",
-    schoolCountry: "IN",
-    schoolState: "",
-    schoolDistrict: "",
-    schoolPincode: "",
+  email: "",
+  district: "",
+  address: "",
 
-    fatherName: "",
-    fatherMobile: "",
-    fatherEmail: "",
-    fatherProfession: "",
-    motherName: "",
-    motherMobile: "",
-    motherEmail: "",
-    motherProfession: "",
+  school: "",
+  schoolCountry: "IN",
+  schoolState: "",
+  schoolDistrict: "",
+  schoolPincode: "",
 
-    siblings: [],
-    siblingCount: 0,
+  fatherName: "",
+  fatherMobile: "",
+  fatherEmail: "",
+  fatherProfession: "",
+  motherName: "",
+  motherMobile: "",
+  motherEmail: "",
+  motherProfession: "",
 
-    socialChecks: {
-      youtube: false,
-      instagram: false,
-      facebook: false,
-      telegram: false,
-      whatsapp: false
-    },
+  siblings: [],
+  siblingCount: 0,
 
-    acceptTerms: false
-  });
+  socialChecks: {
+    youtube: false,
+    instagram: false,
+    facebook: false,
+    telegram: false,
+    whatsapp: false
+  },
+
+  acceptTerms: false
+});
+
+
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (isIndian) {
+      setFormData(prev => ({
+        ...prev,
+        country: "IN",
+        countryCode: "+91"
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        country: "",
+        countryCode: ""
+      }));
+    }
+  }, [isIndian]);
+
+  useEffect(() => {
+    if (location.state) {
+      setFormData(prev => ({
+        ...prev,
+        name: location.state.name || "",
+        whatsapp: location.state.whatsapp || "",
+        studentClass: location.state.studentClass || ""
+      }));
+    }
+  }, [location]);
+
+  const handleStepClick = async (index) => {
+    // ❌ Prevent jumping forward
+    if (index > step) return;
+
+    // 🔐 If leaving Step 0 → verify purchase
+    if (step === 0 && index === 1) {
+      try {
+        const res = await dispatch(
+          checkPurchaseThunk({
+            name: formData.name,
+            whatsapp: formData.whatsapp
+          })
+        ).unwrap();
+
+        localStorage.setItem("purchaseId", res.purchaseId);
+
+        setStep(1);
+      } catch (err) {
+        alert("First you have to purchase the exam.");
+      }
+
+      return;
+    }
+
+    // ✅ Allow backward movement
+    setStep(index);
+  };
+  const handleContinue = async () => {
+
+    // If first step → verify purchase
+    if (step === 0) {
+
+      if (!formData.name || !formData.whatsapp) {
+        alert("Please enter Name and WhatsApp number.");
+        return;
+      }
+
+      try {
+        const res = await dispatch(
+          checkPurchaseThunk({
+            name: formData.name,
+            whatsapp: formData.whatsapp.replace(/\D/g, "")
+          })
+        ).unwrap();
+
+        localStorage.setItem("purchaseId", res.purchaseId);
+
+        setStep(1);
+
+      } catch (err) {
+        alert("No purchase found with this Name and WhatsApp number.");
+      }
+
+      return;
+    }
+
+    // Other steps → normal move
+    setStep(step + 1);
+  };
+
 
   const countries = useMemo(() => {
     return Country.getAllCountries().map(c => ({
@@ -72,13 +171,15 @@ function Register() {
   }, []);
 
   const states = useMemo(() => {
-    if (!formData.country) return [];
+    if (!isIndian) return [];
 
-    return State.getStatesOfCountry(formData.country).map(s => ({
+    return State.getStatesOfCountry("IN").map(s => ({
       value: s.isoCode,
       label: s.name
     }));
-  }, [formData.country]);
+  }, [isIndian]);
+
+
   const schoolStates = useMemo(() => {
     if (!formData.schoolCountry) return [];
 
@@ -99,76 +200,119 @@ function Register() {
       alert("Passwords do not match");
       return;
     }
-    // alert("Registration Completed 🎉");
-    navigate("/results");
-    setShowModal(true);
 
-    // const age = new Date().getFullYear() - new Date(formData.dob).getFullYear();
 
-    // if (age < 3 || age > 25) {
-    //   alert("Please enter valid student age (3-25 years)");
-    //   return;
-    // }
+    const age = new Date().getFullYear() - new Date(formData.dob).getFullYear();
 
-    // const payload = {
-    //   username: formData.username,
-    //   password: formData.password,
-    //   email: formData.email,
-    //   mobile: `${formData.countryCode}${formData.mobile}`,
-    //   fatherMobile: `${formData.countryCode}${formData.fatherMobile}`,
-    //   motherMobile: `${formData.countryCode}${formData.motherMobile}`,
-    //   country: formData.country,
-    //   state: formData.state,
-    //   dob: formData.dob,
-    //   district: formData.district,
-    //   address: formData.address,
-    //   school: formData.school,
-    //   fatherName: formData.fatherName,
-    //   fatherEmail: formData.fatherEmail,
-    //   fatherProfession: formData.fatherProfession,
-    //   motherName: formData.motherName,
-    //   motherEmail: formData.motherEmail,
-    //   motherProfession: formData.motherProfession,
-    //   siblings: formData.siblings
-    // };
+    if (age < 3 || age > 25) {
+      alert("Please enter valid student age (3-25 years)");
+      return;
+    }
+    const payload = {
+      purchaseId: localStorage.getItem("purchaseId"),
 
-    // try {
-    //   await dispatch(signupUser(payload)).unwrap();
-    //   alert("Registration Completed 🎉");
-    //   setFormData({
-    //     username: "",
-    //     password: "",
-    //     confirmPassword: "",
-    //     dob: "",
-    //     mobile: "",
-    //     email: "",
-    //     state: "",
-    //     district: "",
-    //     address: "",
-    //     school: "",
-    //     fatherName: "",
-    //     fatherMobile: "",
-    //     fatherEmail: "",
-    //     fatherProfession: "",
-    //     motherName: "",
-    //     motherMobile: "",
-    //     motherEmail: "",
-    //     motherProfession: "",
-    //     siblings: [],
-    //     siblingCount: 0,
-    //     socialChecks: {
-    //       youtube: false,
-    //       instagram: false,
-    //       facebook: false,
-    //       telegram: false,
-    //       whatsapp: false
-    //     },
-    //     acceptTerms: false
-    //   });
-    //   navigate("/dashboard");
-    // } catch (err) {
-    //   alert(err || "Registration failed");
-    // }
+      name: formData.name,
+      username: formData.username,
+      password: formData.password,
+      email: formData.email,
+
+      mobile: formData.mobile.startsWith("+")
+        ? formData.mobile
+        : "+" + formData.mobile,
+
+      whatsapp: formData.whatsapp.replace(/\D/g, ""),
+
+      studentClass: formData.studentClass,
+      dob: formData.dob,
+
+      state: formData.state,
+      district: formData.district,
+      pincode: formData.pincode,
+      address: formData.address,
+
+      school: formData.school,
+      schoolCountry: formData.schoolCountry,
+      schoolState: formData.schoolState,
+      schoolDistrict: formData.schoolDistrict,
+      schoolPincode: formData.schoolPincode,
+
+      fatherName: formData.fatherName,
+      fatherMobile: formData.fatherMobile?.startsWith("+")
+        ? formData.fatherMobile
+        : "+" + formData.fatherMobile,
+      fatherEmail: formData.fatherEmail,
+      fatherProfession: formData.fatherProfession,
+
+      motherName: formData.motherName,
+      motherMobile: formData.motherMobile?.startsWith("+")
+        ? formData.motherMobile
+        : "+" + formData.motherMobile,
+
+      motherEmail: formData.motherEmail,
+      motherProfession: formData.motherProfession,
+
+      siblings: formData.siblings
+    };
+
+
+
+    try {
+      // console.log("FINAL PAYLOAD:", payload);
+      await dispatch(signupUser(payload)).unwrap();
+      localStorage.removeItem("purchaseId");
+      alert("Registration Completed 🎉");
+      setFormData({
+        name: "",
+        username: "",
+        password: "",
+        confirmPassword: "",
+        dob: "",
+
+        country: "",
+        countryCode: "",
+        state: "",
+        district: "",
+        pincode: "",
+        address: "",
+        mobile: "",
+        whatsapp: "",
+
+        email: "",
+        studentClass: "",
+
+        school: "",
+        schoolCountry: "IN",
+        schoolState: "",
+        schoolDistrict: "",
+        schoolPincode: "",
+
+        fatherName: "",
+        fatherMobile: "",
+        fatherEmail: "",
+        fatherProfession: "",
+        motherName: "",
+        motherMobile: "",
+        motherEmail: "",
+        motherProfession: "",
+
+        siblings: [],
+        siblingCount: 0,
+
+        socialChecks: {
+          youtube: false,
+          instagram: false,
+          facebook: false,
+          telegram: false,
+          whatsapp: false
+        },
+
+        acceptTerms: false
+      });
+
+      navigate("/dashboard");
+    } catch (err) {
+      alert(err || "Registration failed");
+    }
   };
 
   const handleSiblingCount = (count) => {
@@ -216,6 +360,39 @@ function Register() {
     "Siblings",
     "Social"
   ];
+  const getMobileSteps = () => {
+  const total = steps.length;
+  const current = step;
+
+  let result = [];
+
+  // Always show first step if current > 1
+  if (current > 1) {
+    result.push(0);
+  }
+
+  // Previous
+  if (current - 1 >= 0) {
+    result.push(current - 1);
+  }
+
+  // Current
+  result.push(current);
+
+  // Next
+  if (current + 1 < total) {
+    result.push(current + 1);
+  }
+
+  // If not near last step, show dots + last
+  if (current + 1 < total - 1) {
+    result.push("dots");
+    result.push(total - 1);
+  }
+
+  return [...new Set(result)];
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 md:p-8">
@@ -230,46 +407,76 @@ function Register() {
           </p>
         </div>
 
-        {/* Info Alert */}
-        {/* <div className="bg-amber-50 border-l-4 border-amber-500 mx-6 mt-6 p-4 rounded-r-lg">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm text-amber-800">
-                <strong>Important:</strong> All fields are mandatory. Please save this URL if you wish to complete registration later. You can return anytime using the saved URL.
-              </p>
-            </div>
-          </div>
-        </div> */}
+{/* Progress Stepper */}
+<div className="px-4 md:px-8 pt-6">
 
-        {/* Progress Stepper */}
-        <div className="px-6 md:px-8 pt-8">
-          <div className="relative">
-            <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200"></div>
-            <div className="absolute top-5 left-0 h-0.5 bg-blue-600" style={{ width: `${(step / (steps.length - 1)) * 100}%` }}></div>
-            <div className="relative flex justify-between">
-              {steps.map((stepTitle, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => setStep(index)}
-                  className={`flex flex-col items-center ${index <= step ? "text-blue-600" : "text-gray-400"}`}
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center z-10 ${index <= step ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-600"}`}>
-                    {index + 1}
-                  </div>
-                  <span className={`text-xs font-medium mt-2 ${index === step ? "font-bold" : ""}`}>
-                    {stepTitle}
-                  </span>
-                </button>
-              ))}
-            </div>
+  {/* Desktop Full Stepper */}
+  <div className="hidden md:block relative">
+    <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200"></div>
+    <div
+      className="absolute top-5 left-0 h-0.5 bg-blue-600 transition-all"
+      style={{ width: `${(step / (steps.length - 1)) * 100}%` }}
+    ></div>
+
+    <div className="relative flex justify-between">
+      {steps.map((title, index) => (
+        <button
+          key={index}
+          type="button"
+          disabled={index > step}
+          onClick={() => handleStepClick(index)}
+          className={`flex flex-col items-center ${
+            index <= step ? "text-blue-600" : "text-gray-400"
+          }`}
+        >
+          <div
+            className={`w-10 h-10 rounded-full flex items-center justify-center ${
+              index <= step
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-600"
+            }`}
+          >
+            {index + 1}
           </div>
-        </div>
+          <span className="text-xs mt-2">{title}</span>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  {/* Mobile Smart Stepper */}
+  <div className="md:hidden flex items-center justify-center gap-3">
+
+    {getMobileSteps().map((item, i) => {
+      if (item === "dots") {
+        return (
+          <span key={i} className="text-gray-400 font-bold">
+            ...
+          </span>
+        );
+      }
+
+      return (
+        <button
+          key={i}
+          type="button"
+          onClick={() => handleStepClick(item)}
+          disabled={item > step}
+          className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold ${
+            item === step
+              ? "bg-blue-600 text-white"
+              : item < step
+              ? "bg-blue-100 text-blue-600"
+              : "bg-gray-200 text-gray-500"
+          }`}
+        >
+          {item + 1}
+        </button>
+      );
+    })}
+
+  </div>
+</div>
 
         {/* Form Content */}
         <div className="p-6 md:p-8">
@@ -303,7 +510,7 @@ function Register() {
                     <input
                       type="text"
                       name="name"
-                      value={formData.name}
+                      value={formData.name || ""}
                       onChange={handleChange}
                       className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
                       placeholder="Enter name"
@@ -319,7 +526,7 @@ function Register() {
                     <PhoneInput
                       country={"in"}
                       enableSearch
-                      value={formData.whatsapp}
+                      value={formData.whatsapp || ""}
                       onChange={(phone, data) =>
                         setFormData({
                           ...formData,
@@ -350,7 +557,7 @@ function Register() {
                     <input
                       type="text"
                       name="username"
-                      value={formData.username}
+                      value={formData.username || ""}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                       placeholder="Enter username"
@@ -365,7 +572,7 @@ function Register() {
                     <input
                       type="password"
                       name="password"
-                      value={formData.password}
+                      value={formData.password || ""}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                       placeholder="••••••••"
@@ -380,7 +587,7 @@ function Register() {
                     <input
                       type="password"
                       name="confirmPassword"
-                      value={formData.confirmPassword}
+                      value={formData.confirmPassword || ""}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                       placeholder="••••••••"
@@ -419,7 +626,7 @@ function Register() {
                     <input
                       type="email"
                       name="email"
-                      value={formData.email}
+                      value={formData.email || ""}
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       required
@@ -433,7 +640,7 @@ function Register() {
                     <input
                       type="date"
                       name="dob"
-                      value={formData.dob}
+                      value={formData.dob || ""}
                       onChange={handleChange}
                       max={new Date().toISOString().split("T")[0]}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -456,13 +663,6 @@ function Register() {
                         checked={isIndian}
                         onChange={() => {
                           setIsIndian(true);
-                          setFormData(prev => ({
-                            ...prev,
-                            country: "IN",
-                            countryCode: "+91",
-                            state: "",
-                            district: ""
-                          }));
                         }}
                       />
                       India
@@ -484,7 +684,7 @@ function Register() {
                           }));
                         }}
                       />
-                      Others
+                      Others Country
                     </label>
                   </div>
                 </div>
@@ -503,7 +703,7 @@ function Register() {
                         <Select
                           options={countries}
                           placeholder="Select Country"
-                          value={countries.find(c => c.value === formData.country)}
+                          value={countries.find(c => c.value === formData.country || "")}
                           onChange={(selected) =>
                             setFormData(prev => ({
                               ...prev,
@@ -525,7 +725,7 @@ function Register() {
                         <PhoneInput
                           country="us"
                           enableSearch
-                          value={formData.mobile}
+                          value={formData.mobile || ""}
                           onChange={(phone, data) =>
                             setFormData(prev => ({
                               ...prev,
@@ -555,7 +755,7 @@ function Register() {
                         <Select
                           options={states}
                           placeholder="Select State"
-                          value={states.find(s => s.value === formData.state)}
+                          value={states.find(s => s.value === formData.state || "")}
                           onChange={(selected) =>
                             setFormData(prev => ({ ...prev, state: selected.value }))
                           }
@@ -571,7 +771,7 @@ function Register() {
                         <input
                           type="text"
                           name="district"
-                          value={formData.district}
+                          value={formData.district || ""}
                           onChange={handleChange}
                           className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
                           placeholder="Enter district"
@@ -585,11 +785,11 @@ function Register() {
 
                         <input
                           type="text"
-                          name="district"
-                          value={formData.pincode}
+                          name="pincode"
+                          value={formData.pincode || ""}
                           onChange={handleChange}
                           className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
-                          placeholder="Enter district"
+                          placeholder="Enter Pincode"
                         />
                       </div>
 
@@ -602,7 +802,7 @@ function Register() {
                         <PhoneInput
                           country="in"
                           enableSearch
-                          value={formData.mobile}
+                          value={formData.mobile || ""}
                           onChange={(phone, data) =>
                             setFormData(prev => ({
                               ...prev,
@@ -629,7 +829,7 @@ function Register() {
 
                     <textarea
                       name="address"
-                      value={formData.address}
+                      value={formData.address || ""}
                       onChange={handleChange}
                       rows="3"
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg"
@@ -639,7 +839,7 @@ function Register() {
                 </div>
               </div>
             )}
-            {/* Step 2: School Details */}
+
             {/* Step 3: School Details */}
             {step === 3 && (
               <div className="space-y-6">
@@ -684,7 +884,7 @@ function Register() {
                           }));
                         }}
                       />
-                      Others
+                      Others Country
                     </label>
                   </div>
                 </div>
@@ -733,7 +933,7 @@ function Register() {
                         <Select
                           options={countries}
                           placeholder="Select Country"
-                          value={countries.find(c => c.value === formData.schoolCountry)}
+                          value={countries.find(c => c.value === formData.schoolCountry || "")}
                           onChange={(selected) =>
                             setFormData(prev => ({
                               ...prev,
@@ -788,11 +988,11 @@ function Register() {
                         <Select
                           options={schoolStates}
                           placeholder="Select State"
-                          value={states.find(s => s.value === formData.schoolStates)}
+                          value={schoolStates.find(s => s.value === formData.schoolState || "")}
                           onChange={(selected) =>
                             setFormData(prev => ({
                               ...prev,
-                              schoolStates: selected.value
+                              schoolState: selected.value
                             }))
                           }
                         />
@@ -801,12 +1001,12 @@ function Register() {
                       {/* DISTRICT */}
                       <div>
                         <label className="text-sm font-medium text-gray-700 mb-1">
-                          District <span className="text-red-500">*</span>
+                          District <span className="text-red-500"></span>
                         </label>
 
                         <input
                           type="text"
-                          value={formData.schoolDistrict}
+                          value={formData.schoolDistrict || ""}
                           onChange={(e) =>
                             setFormData(prev => ({
                               ...prev,
@@ -826,7 +1026,7 @@ function Register() {
 
                         <input
                           type="text"
-                          value={formData.schoolPincode}
+                          value={formData.schoolPincode || ""}
                           onChange={(e) =>
                             setFormData(prev => ({
                               ...prev,
@@ -867,7 +1067,7 @@ function Register() {
                       <input
                         type="text"
                         name="fatherName"
-                        value={formData.fatherName}
+                        value={formData.fatherName || ""}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Enter father's name"
@@ -882,7 +1082,7 @@ function Register() {
                       <PhoneInput
                         country={"in"}
                         enableSearch
-                        value={formData.fatherMobile}
+                        value={formData.fatherMobile || ""}
                         onChange={(phone) =>
                           setFormData({
                             ...formData,
@@ -901,7 +1101,7 @@ function Register() {
                       <input
                         type="email"
                         name="fatherEmail"
-                        value={formData.fatherEmail}
+                        value={formData.fatherEmail || ""}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="father@example.com"
@@ -915,7 +1115,7 @@ function Register() {
                       <input
                         type="text"
                         name="fatherProfession"
-                        value={formData.fatherProfession}
+                        value={formData.fatherProfession || ""}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Enter profession"
@@ -935,7 +1135,7 @@ function Register() {
                       <input
                         type="text"
                         name="motherName"
-                        value={formData.motherName}
+                        value={formData.motherName || ""}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Enter mother's name"
@@ -950,7 +1150,7 @@ function Register() {
                       <PhoneInput
                         country={"in"}
                         enableSearch
-                        value={formData.motherMobile}
+                        value={formData.motherMobile || ""}
                         onChange={(phone) =>
                           setFormData({
                             ...formData,
@@ -969,7 +1169,7 @@ function Register() {
                       <input
                         type="email"
                         name="motherEmail"
-                        value={formData.motherEmail}
+                        value={formData.motherEmail || ""}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="mother@example.com"
@@ -983,7 +1183,7 @@ function Register() {
                       <input
                         type="text"
                         name="motherProfession"
-                        value={formData.motherProfession}
+                        value={formData.motherProfession || ""}
                         onChange={handleChange}
                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                         placeholder="Enter profession"
@@ -1007,7 +1207,7 @@ function Register() {
                     <select
                       className="w-full md:w-64 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                       onChange={(e) => handleSiblingCount(Number(e.target.value))}
-                      value={formData.siblingCount}
+                      value={formData.siblingCount || ""}
                     >
                       <option value="0">Select number of siblings</option>
                       {[1, 2, 3, 4, 5, 6].map(num => (
@@ -1026,7 +1226,7 @@ function Register() {
                           </label>
                           <input
                             type="text"
-                            value={sib.name}
+                            value={sib.name || ""}
                             onChange={(e) => handleSiblingChange(i, "name", e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                             placeholder="Enter name"
@@ -1040,7 +1240,7 @@ function Register() {
                           </label>
                           <input
                             type="date"
-                            value={sib.dob}
+                            value={sib.dob || ""}
                             onChange={(e) => handleSiblingChange(i, "dob", e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                             required
@@ -1053,7 +1253,7 @@ function Register() {
                           </label>
                           <input
                             type="text"
-                            value={sib.class}
+                            value={sib.class || ""}
                             onChange={(e) => handleSiblingChange(i, "class", e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                             placeholder="e.g., 10th Grade"
@@ -1066,7 +1266,7 @@ function Register() {
                           </label>
                           <input
                             type="text"
-                            value={sib.school}
+                            value={sib.school || ""}
                             onChange={(e) => handleSiblingChange(i, "school", e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                             placeholder="Enter school name"
@@ -1157,28 +1357,37 @@ function Register() {
 
             {/* Navigation Buttons */}
             <div className="flex justify-between pt-8 border-t">
+              {/* BACK BUTTON */}
               <button
                 type="button"
                 disabled={step === 0}
                 onClick={() => setStep(step - 1)}
-                className={`px-6 py-3 rounded-lg font-medium transition ${step === 0 ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
+                className={`px-6 py-3 rounded-lg font-medium transition ${step === 0
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
               >
                 ← Back
               </button>
 
-              {step < 5 ? (
+              {/* IF NOT LAST STEP → SHOW CONTINUE */}
+              {step !== steps.length - 1 ? (
                 <button
                   type="button"
-                  onClick={() => setStep(step + 1)}
+                  onClick={handleContinue}
                   className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition shadow-md"
                 >
                   Continue →
                 </button>
               ) : (
+                /* ONLY LAST STEP → COMPLETE REGISTRATION */
                 <button
                   type="submit"
                   disabled={!allSocialDone}
-                  className={`px-8 py-3 rounded-lg font-medium transition ${allSocialDone ? 'bg-green-600 hover:bg-green-700 text-white shadow-md' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+                  className={`px-8 py-3 rounded-lg font-medium transition ${allSocialDone
+                    ? "bg-green-600 hover:bg-green-700 text-white shadow-md"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    }`}
                 >
                   Complete Registration
                 </button>

@@ -2,12 +2,19 @@ import mongoose from "mongoose";
 
 const purchaseSchema = new mongoose.Schema(
   {
-    name: String,
-    studentclass:String,
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true
+    },
+
+    studentClass: String,
+
     whatsapp: {
       type: String,
       required: true,
-      index: true // ⭐ important for fast linking
+      trim: true
     },
 
     examName: String,
@@ -26,5 +33,15 @@ const purchaseSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+/* ✅ THIS IS THE KEY PART */
+purchaseSchema.index(
+  { name: 1, whatsapp: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: "success" }
+  }
+);
+
 
 export default mongoose.model("Purchase", purchaseSchema);

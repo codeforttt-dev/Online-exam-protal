@@ -1,5 +1,6 @@
 import User from "../models/userModel.js";
 import jwt from "jsonwebtoken";
+import Purchase from "../models/purchaseModel.js";
 
 
 /* =================================
@@ -22,21 +23,73 @@ const generateToken = (id) => {
 export const registerUser = async (req, res) => {
   try {
     const {
+      purchaseId,
+      name,
       username,
       password,
       email,
       mobile,
+      whatsapp,
+      studentClass,
       dob,
+
       state,
       district,
+      pincode,
       address,
+
       school,
+      schoolCountry,
+      schoolState,
+      schoolDistrict,
+      schoolPincode,
+
       fatherName,
+      fatherMobile,
+      fatherEmail,
+      fatherProfession,
+
       motherName,
+      motherMobile,
+      motherEmail,
+      motherProfession,
+
       siblings
     } = req.body;
 
-    /* ========= CHECK USER ========= */
+    /* ========= VALIDATION ========= */
+    if (!name || !username || !password || !email) {
+      return res.status(400).json({
+        message: "Required fields missing"
+      });
+    }
+
+    if (!purchaseId) {
+      return res.status(400).json({
+        message: "Purchase ID missing"
+      });
+    }
+
+    const purchase = await Purchase.findOne({
+      _id: purchaseId,
+      name,
+      whatsapp,
+      status: "success"
+    });
+
+    if (!purchase) {
+      return res.status(400).json({
+        message: "Purchase not found or details do not match"
+      });
+    }
+
+    if (purchase.user) {
+      return res.status(400).json({
+        message: "Purchase already used"
+      });
+    }
+
+    /* ========= CHECK EXISTING ========= */
     const exists = await User.findOne({
       $or: [{ username }, { email }]
     });
@@ -49,26 +102,53 @@ export const registerUser = async (req, res) => {
 
     /* ========= CREATE USER ========= */
     const user = await User.create({
+      name,
       username,
       password,
       email,
       mobile,
+      whatsapp,
+      studentClass,
       dob,
+
       state,
       district,
+      pincode,
       address,
+
       school,
+      schoolCountry,
+      schoolState,
+      schoolDistrict,
+      schoolPincode,
+
       fatherName,
+      fatherMobile,
+      fatherEmail,
+      fatherProfession,
+
       motherName,
+      motherMobile,
+      motherEmail,
+      motherProfession,
+
       siblings,
+
+      isPaid: true,
       profileCompleted: true
     });
+
+    /* ========= LINK PURCHASE ========= */
+    purchase.user = user._id;
+    await purchase.save();
 
     /* ========= RESPONSE ========= */
     res.status(201).json({
       _id: user._id,
+      name: user.name,
       username: user.username,
       email: user.email,
+      role: user.role,
       token: generateToken(user._id)
     });
 
@@ -77,8 +157,6 @@ export const registerUser = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
-
 
 /* =================================
    LOGIN

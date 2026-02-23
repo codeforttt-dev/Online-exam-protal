@@ -9,11 +9,26 @@ export const purchaseExam = createAsyncThunk(
       const res = await API.post("/purchases", data);
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );
 
+export const checkPurchaseThunk = createAsyncThunk(
+  "purchase/check",
+  async (data, thunkAPI) => {
+    try {
+      const res = await API.post("/purchases/check", data);
+      return res.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Purchase not found"
+      );
+    }
+  }
+);
 
 
 /* GET HISTORY */
@@ -24,7 +39,9 @@ export const fetchPurchases = createAsyncThunk(
       const res = await API.get("/purchases");
       return res.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(
+        err.response?.data?.message || "Something went wrong"
+      );
     }
   }
 );

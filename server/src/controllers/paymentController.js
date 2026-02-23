@@ -1,44 +1,105 @@
 import Razorpay from "razorpay";
 import crypto from "crypto";
-import PaymentLog from "../models/paymentLogModel.js";
+import Purchase from "../models/purchaseModel.js";
+import User from "../models/userModel.js";
 
 /* ===========================
    CREATE RAZORPAY ORDER
 =========================== */
+// export const createRazorpayOrder = async (req, res) => {
+//   try {
+
+//     // ✅ create instance INSIDE function only
+//     const razorpay = new Razorpay({
+//       key_id: process.env.RAZORPAY_KEY_ID,
+//       key_secret: process.env.RAZORPAY_KEY_SECRET,
+//     });
+
+//     const { amount } = req.body;
+
+//     const order = await razorpay.orders.create({
+//       amount: amount * 100,
+//       currency: "INR",
+//       receipt: `receipt_${Date.now()}`,
+//     });
+
+//     res.json(order);
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Payment order creation failed" });
+//   }
+// };
+
 export const createRazorpayOrder = async (req, res) => {
   try {
-
-    // ✅ create instance INSIDE function only
-    const razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_KEY_SECRET,
-    });
-
     const { amount } = req.body;
 
-    const order = await razorpay.orders.create({
+    // ✅ FAKE ORDER FOR TESTING
+    res.json({
+      id: "test_order_" + Date.now(),
       amount: amount * 100,
-      currency: "INR",
-      receipt: `receipt_${Date.now()}`,
+      currency: "INR"
     });
 
-    res.json(order);
-
   } catch (error) {
-    res.status(500).json({ message: "Payment order creation failed" });
+    res.status(500).json({ message: "Test order creation failed" });
   }
 };
-
 
 /* ===========================
    VERIFY PAYMENT
 =========================== */
+
+
+// export const verifyPayment = async (req, res) => {
+//   try {
+//     const {
+//       razorpayOrderId,
+//       razorpayPaymentId,
+//       razorpaySignature,
+//       totalAmount,
+//       name,
+//       whatsapp,
+//       studentClass,
+//       examName
+//     } = req.body;
+
+//     const body = razorpayOrderId + "|" + razorpayPaymentId;
+
+//     const expectedSignature = crypto
+//       .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+//       .update(body)
+//       .digest("hex");
+
+//     if (expectedSignature !== razorpaySignature) {
+//       return res.status(400).json({ message: "Payment failed" });
+//     }
+
+//     /* ==============================
+//        1️⃣ CREATE PURCHASE RECORD
+//     ============================== */
+//     const purchase = await Purchase.create({
+//       name,
+//       whatsapp,
+//       examName,
+//       studentClass,
+//       price: totalAmount,
+//       status: "success"
+//     });
+
+//     res.json({
+//       message: "Payment success",
+//       purchaseId: purchase._id
+//     });
+
+//   } catch (error) {
+//     res.status(500).json({ message: "Verification failed" });
+//   }
+// };
+
 export const verifyPayment = async (req, res) => {
   try {
     const {
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature,
       totalAmount,
       name,
       whatsapp,
@@ -46,36 +107,24 @@ export const verifyPayment = async (req, res) => {
       examName
     } = req.body;
 
-    const body = razorpayOrderId + "|" + razorpayPaymentId;
+    // ❌ SKIP RAZORPAY VERIFICATION FOR TESTING
 
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-      .update(body)
-      .digest("hex");
-
-    if (expectedSignature !== razorpaySignature) {
-      await PaymentLog.create({
-        razorpayOrderId,
-        razorpayPaymentId,
-        amount: totalAmount,
-        status: "FAILED",
-        reason: "Invalid signature"
-      });
-
-      return res.status(400).json({ message: "Payment failed" });
-    }
-
-    await PaymentLog.create({
-      razorpayOrderId,
-      razorpayPaymentId,
-      amount: totalAmount,
-      status: "SUCCESS",
-      reason: `Guest: ${name}, ${whatsapp}, ${studentClass}, ${examName}`
+    const purchase = await Purchase.create({
+      name,
+      whatsapp,
+      studentClass,
+      examName,
+      price: totalAmount,
+      status: "success"
     });
 
-    res.json({ message: "Payment success" });
+    res.json({
+      message: "Test Payment Success",
+      purchaseId: purchase._id
+    });
 
   } catch (error) {
-    res.status(500).json({ message: "Verification failed" });
+    res.status(500).json({ message: "Test Verification failed" });
   }
 };
+

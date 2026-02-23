@@ -3,11 +3,14 @@ import Purchase from "../models/purchaseModel.js";
 /* BUY EXAM */
 export const purchaseExam = async (req, res) => {
   try {
-    const { name, whatsapp, examName, price } = req.body;
+    let { name, whatsapp, examName, price } = req.body;
+
+    const cleanName = name.trim().toLowerCase();
+    const cleanWhatsapp = whatsapp.replace(/\D/g, "");
 
     const purchase = await Purchase.create({
-      name,
-      whatsapp,
+      name: cleanName,
+      whatsapp: cleanWhatsapp,
       examName,
       price
     });
@@ -18,9 +21,47 @@ export const purchaseExam = async (req, res) => {
     });
 
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({
+        message: "This student already purchased with this WhatsApp number."
+      });
+    }
+
     res.status(500).json({ message: "Purchase failed" });
   }
 };
+
+
+export const checkPurchase = async (req, res) => {
+  try {
+    let { name, whatsapp } = req.body;
+
+    const cleanName = name.trim().toLowerCase();
+    const cleanWhatsapp = whatsapp.replace(/\D/g, "");
+
+    const purchase = await Purchase.findOne({
+      name: cleanName,
+      whatsapp: cleanWhatsapp,
+      status: "success",
+      user: null
+    });
+
+    if (!purchase) {
+      return res.status(404).json({
+        message: "No valid purchase found"
+      });
+    }
+
+    res.json({
+      success: true,
+      purchaseId: purchase._id
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 
 /* GET HISTORY */
 export const getPurchases = async (req, res) => {
@@ -30,4 +71,5 @@ export const getPurchases = async (req, res) => {
 
   res.json(purchases);
 };
+
 

@@ -5,9 +5,10 @@ import bcrypt from "bcryptjs";
 const siblingSchema = new mongoose.Schema({
   name: String,
   dob: Date,
-  studentClass: String,
+  class: String,  // match frontend
   school: String
 });
+
 
 const userSchema = new mongoose.Schema(
   {
@@ -31,33 +32,41 @@ const userSchema = new mongoose.Schema(
 
     password: String,
 
-    mobile: {
-      type: String,
-      index: true
-    },
+    mobile: { type: String, index: true },
+    whatsapp: { type: String, index: true },
 
     studentClass: String,
+    dob: Date,
 
-    whatsapp: {
-      type: String,
-      index: true
-    },
+    // 📍 Personal Address
+    state: String,
+    district: String,
+    pincode: String,
+    address: String,
+
+    // 🏫 School Details
+    school: String,
+    schoolCountry: String,
+    schoolState: String,
+    schoolDistrict: String,
+    schoolPincode: String,
+
+    // 👨 Father Details
+    fatherName: String,
+    fatherMobile: String,
+    fatherEmail: String,
+    fatherProfession: String,
+
+    // 👩 Mother Details
+    motherName: String,
+    motherMobile: String,
+    motherEmail: String,
+    motherProfession: String,
+
+    siblings: [siblingSchema],
 
     isPaid: { type: Boolean, default: false },
     profileCompleted: { type: Boolean, default: false },
-
-    dob: Date,
-
-    state: String,
-    district: String,
-    address: String,
-
-    school: String,
-
-    fatherName: String,
-    motherName: String,
-
-    siblings: [siblingSchema],
 
     role: {
       type: String,

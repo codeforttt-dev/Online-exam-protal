@@ -3,13 +3,12 @@ import brainvideo from "../assets/brainvideo.mp4";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
-import { signupUser } from "../redux/thunks/userThunk";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
-import { purchaseExam } from "../redux/thunks/purchaseThunk";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import GlobalModal from "../component/ui/GlobalModal";
+import { createPaymentOrderThunk, verifyPaymentThunk } from "../redux/thunks/paymentThunk";
 
 const HeroSection2 = () => {
   const navigate = useNavigate();
@@ -50,80 +49,123 @@ const isFormValid =
     });
   };
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+// const handleSignup = async (e) => {
+//   e.preventDefault();
 
-    if (!isFormValid) return;
-    // alert("Payment Successful ✅");
-    setShowModal(true);
-    // navigate("/register");
+//   if (!isFormValid) return;
 
-    // try {
-    //   /* ===============================
-    //      1️⃣ CREATE ORDER
-    //   =============================== */
-    //   const order = await dispatch(
-    //     createPaymentOrderThunk({ amount: selectedPlan.price })
-    //   ).unwrap();
+//   try {
+//     /* ===============================
+//        1️⃣ CREATE ORDER
+//     =============================== */
+//     const order = await dispatch(
+//       createPaymentOrderThunk({ amount: selectedPlan.price })
+//     ).unwrap();
 
-    //   /* ===============================
-    //      2️⃣ OPEN RAZORPAY
-    //   =============================== */
-    //   const options = {
-    //     key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-    //     amount: order.amount,
-    //     currency: order.currency,
-    //     order_id: order.id,
+//     /* ===============================
+//        2️⃣ OPEN RAZORPAY
+//     =============================== */
+//     const options = {
+//       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+//       amount: order.amount,
+//       currency: order.currency,
+//       order_id: order.id,
 
-    //     name: "The True Topper",
-    //     description: selectedPlan.name,
+//       name: "The True Topper",
+//       description: selectedPlan.name,
 
-    //     prefill: {
-    //       name: formData.name,
-    //       contact: formData.whatsapp,
-    //     },
+//       prefill: {
+//         name: formData.name,
+//         contact: formData.whatsapp,
+//       },
 
-    //     theme: {
-    //       color: "#2563eb",
-    //     },
+//       theme: {
+//         color: "#2563eb",
+//       },
 
-    //     /* ===============================
-    //        3️⃣ AFTER SUCCESS PAYMENT
-    //     =============================== */
-    //     handler: async function (response) {
-    //       try {
-    //         // verify + save guest data
-    //         await dispatch(
-    //           verifyPaymentThunk({
-    //             razorpayOrderId: response.razorpay_order_id,
-    //             razorpayPaymentId: response.razorpay_payment_id,
-    //             razorpaySignature: response.razorpay_signature,
-    //             totalAmount: selectedPlan.price,
+//       /* ===============================
+//          3️⃣ AFTER SUCCESS PAYMENT
+//       =============================== */
+//       handler: async function (response) {
+//         try {
 
-    //             // ⭐ send guest details
-    //             name: formData.name,
-    //             whatsapp: formData.whatsapp,
-    //             studentClass: formData.studentClass,
-    //             examName: selectedPlan.name
-    //           })
-    //         ).unwrap();
+//           /* ===============================
+//              VERIFY PAYMENT + CREATE PURCHASE
+//           =============================== */
+//           const verifyRes = await dispatch(
+//             verifyPaymentThunk({
+//               razorpayOrderId: response.razorpay_order_id,
+//               razorpayPaymentId: response.razorpay_payment_id,
+//               razorpaySignature: response.razorpay_signature,
+//               totalAmount: selectedPlan.price,
+//               name: formData.name,
+//               whatsapp: formData.whatsapp,
+//               studentClass: formData.studentClass,
+//               examName: selectedPlan.name
+//             })
+//           ).unwrap();
 
-    //         alert("Payment Successful ✅");
-    //         navigate("/thank-you"); // or success page
+//           /* ===============================
+//              NAVIGATE TO REGISTER
+//              SEND REAL purchaseId
+//           =============================== */
+//           navigate("/register", {
+//             state: {
+//               purchaseId: verifyRes.purchaseId,   // ✅ CORRECT MongoDB ID
+//               name: formData.name,
+//               whatsapp: formData.whatsapp,
+//               studentClass: formData.studentClass
+//             }
+//           });
 
-    //       } catch (err) {
-    //         alert("Payment verification failed ❌");
-    //       }
-    //     },
-    //   };
+//         } catch (err) {
+//           alert("Payment verification failed ❌");
+//         }
+//       },
+//     };
 
-    //   const razor = new window.Razorpay(options);
-    //   razor.open();
+//     const razor = new window.Razorpay(options);
+//     razor.open();
 
-    // } catch (err) {
-    //   alert("Payment failed ❌");
-    // }
-  };
+//   } catch (err) {
+//     alert("Payment failed ❌");
+//   }
+// };
+
+const handleSignup = async (e) => {
+  e.preventDefault();
+
+  if (!isFormValid) return;
+
+  try {
+
+    /* ===============================
+       SKIP RAZORPAY
+       DIRECTLY VERIFY (FAKE SUCCESS)
+    =============================== */
+    const verifyRes = await dispatch(
+      verifyPaymentThunk({
+        totalAmount: selectedPlan.price,
+        name: formData.name,
+        whatsapp: formData.whatsapp,
+        studentClass: formData.studentClass,
+        examName: selectedPlan.name
+      })
+    ).unwrap();
+
+    navigate("/register", {
+      state: {
+        purchaseId: verifyRes.purchaseId,
+        name: formData.name,
+        whatsapp: formData.whatsapp,
+        studentClass: formData.studentClass
+      }
+    });
+
+  } catch (err) {
+    alert("Test payment failed ❌");
+  }
+};
 
 
 
@@ -137,80 +179,60 @@ const isFormValid =
     <div className="min-h-screen bg-[#334155] flex items-center justify-center p-4">
 
       {/* MAIN CONTAINER */}
-      <div className="w-full max-w-7xl bg-[#e2e8f0] rounded-[40px] p-12 relative overflow-hidden">
+      <div className="w-full max-w-7xl bg-[#e2e8f0] rounded-[10px] md:rounded-[40px] p-4 md:p-14 relative overflow-hidden">
 
         {/* ================= NAVBAR ================= */}
-        <div className="flex justify-between items-center mb-2">
-          <img
-            src={logo}
-            alt="Blunex Logo"
-            className="h-20 w-auto object-contain cursor-pointer"
-          />
-
-          {/* <div className="bg-white rounded-full px-8 py-3 flex gap-8 shadow-md">
-                        {navItems.map((item) =>
-                            item.external ? (
-                                <a
-                                    key={item.name}
-                                    href={item.path}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm text-slate-600 hover:text-black cursor-pointer"
-                                >
-                                    {item.name}
-                                </a>
-                            ) : (
-                                <button
-                                    key={item.name}
-                                    onClick={scrollToSignup}
-                                    className="text-sm text-slate-600 hover:text-black cursor-pointer"
-                                >
-                                    {item.name}
-                                </button>
-                            )
-                        )}
-                    </div> */}
-
-        </div>
-
-
         {/* ================= CONTENT ================= */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 items-center mt-8">
 
           {/* LEFT TEXT */}
           <div className="space-y-8">
+            <div className="flex justify-between items-center mb-2">
+              <img
+                src={logo}
+                alt="Blunex Logo"
+                className="h-20 w-auto object-contain cursor-pointer"
+              />
+
+              {/* <div className="bg-white rounded-full px-8 py-3 flex gap-8 shadow-md">
+                            {navItems.map((item) =>
+                                item.external ? (
+                                    <a
+                                        key={item.name}
+                                        href={item.path}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm text-slate-600 hover:text-black cursor-pointer"
+                                    >
+                                        {item.name}
+                                    </a>
+                                ) : (
+                                    <button
+                                        key={item.name}
+                                        onClick={scrollToSignup}
+                                        className="text-sm text-slate-600 hover:text-black cursor-pointer"
+                                    >
+                                        {item.name}
+                                    </button>
+                                )
+                            )}
+                        </div> */}
+
+            </div>
             <div>
               <h2 className="text-xl md:text-2xl font-black leading-tight text-gray-600">
                 Welcome to the Universe of<br />
               </h2>
-              <h2 className="text-4xl md:text-5xl font-black leading-tight text-blue-600">
-                The True Topper<br />
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-blue-600 whitespace-nowrap">
+                The True Topper
               </h2>
 
               <p className="text-slate-500 max-w-md mt-2">
                 Top The Real Exam
               </p>
-              {/* <p className="text-slate-500 max-w-md mt-2">
-                Unlock your True Potential Now 
-              </p> */}
-              {/* <div className="pt-5 flex items-center gap-2">
-                                <span className="text-yellow-700 ">If you want to join our universe:</span>
-                                <button
-                                    onClick={scrollToSignup}
-                                    className="bg-slate-800 text-white px-4 py-1 rounded-full shadow-lg hover:scale-105 transition"
-                                >
-                                    Register here
-                                </button>
-                            </div> */}
             </div>
-
-
-
             {/* ================= NEW CARDS ================= */}
-
-
-            {/* ================= NEW CARDS ================= */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 gap-6 pt-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
 
               {/* Card 1 */}
               <a
@@ -218,7 +240,7 @@ const isFormValid =
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block p-4 rounded-3xl bg-gradient-to-br from-white to-slate-100
-  border-2 border-transparent hover:border-blue-500 shadow-lg hover:scale-105 transition"
+                border-2 border-transparent hover:border-blue-500 shadow-lg hover:scale-105 transition"
               >
                 <h3 className="text-blue-600 font-bold text-lg mb-3">
                   Know More About Us
@@ -226,9 +248,9 @@ const isFormValid =
 
                 <p
                   className={`
-      text-slate-500 text-sm leading-relaxed
-      ${expandedCard === 1 ? "" : "line-clamp-2 sm:line-clamp-none"}
-    `}
+                    text-slate-500 text-sm leading-relaxed
+                    ${expandedCard === 1 ? "" : "line-clamp-2"}
+                  `}
                 >
                   Learn more about our mission, values, and terms & conditions.
                   Join us for holistic growth and success.
@@ -240,10 +262,11 @@ const isFormValid =
                     e.preventDefault();
                     setExpandedCard(expandedCard === 1 ? null : 1);
                   }}
-                  className="sm:hidden text-blue-600 text-xs font-semibold cursor-pointer"
+                  className="text-blue-600 text-xs font-semibold cursor-pointer"
                 >
                   {expandedCard === 1 ? "Show less" : "Read more"}
                 </span>
+
               </a>
 
 
@@ -266,13 +289,9 @@ const isFormValid =
                 >
                 {/* Title + Price */}
                 <div className="flex justify-between items-center mb-2">
-                  <h3 className="text-blue-600 font-bold text-sm sm:text-lg">
+                  <h3 className="text-blue-600 font-bold text-sm sm:text-sm">
                     International Ethical Entrepreneurship Olympiad ++ (IEEO++)
                   </h3>
-
-                  {/* <span className="text-green-600 font-bold text-sm sm:text-base">
-      ₹199
-    </span> */}
                 </div>
 
                 {/* Description */}
@@ -298,8 +317,6 @@ const isFormValid =
               </div>
 
             </div>
-
-
           </div>
           {/* ================= RIGHT BRAIN VIDEO ================= */}
           <div className="relative flex justify-center items-center">
@@ -316,7 +333,6 @@ const isFormValid =
               playsInline
               className="w-[420px] h-[430px] rounded-3xl object-cover shadow-xl"
             />
-
           </div>
 
 
