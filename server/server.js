@@ -11,6 +11,7 @@ import practiceTestRoutes from "./src/routes/practiceTestRoutes.js";
 import purchaseRoutes from "./src/routes/purchaseRoutes.js";
 import authRoutes from "./src/routes/authRoutes.js";
 import paymentRoutes from "./src/routes/paymentRoutes.js";
+import schoolRoutes from "./src/routes/school/schoolRegistration-Routes.js";
 
 dotenv.config();
 
@@ -47,7 +48,7 @@ app.use("/api/student", studentRoutes);
 app.use("/api/admin", adminRoutes);
 // payment
 app.use("/api/payment", paymentRoutes);
-
+app.use("/api/school", schoolRoutes);
 app.get("/", (req, res) => {
   res.send("🚀 Server Running...");
 });

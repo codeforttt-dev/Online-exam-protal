@@ -1,6 +1,6 @@
 // src/redux/slices/userSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import { signupUser,} from "../thunks/userThunk";
+import { signupUser, checkUsername} from "../thunks/userThunk";
 
 const savedToken = localStorage.getItem("token");
 
@@ -9,6 +9,8 @@ const initialState = {
   token: savedToken || null,
   loading: false,
   error: null,
+  usernameAvailable: null,   // true | false | null
+  usernameChecking: false
 };
 
 const userSlice = createSlice({
@@ -41,6 +43,18 @@ const userSlice = createSlice({
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Signup failed";
+      })
+      .addCase(checkUsername.pending, (state) => {
+        state.usernameChecking = true;
+        state.usernameAvailable = null;
+      })
+      .addCase(checkUsername.fulfilled, (state, action) => {
+        state.usernameChecking = false;
+        state.usernameAvailable = action.payload.available;
+      })
+      .addCase(checkUsername.rejected, (state) => {
+        state.usernameChecking = false;
+        state.usernameAvailable = null;
       })
       // .addCase(loginUser.pending, (state) => {
       //   state.loading = true;

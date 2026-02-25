@@ -15,13 +15,12 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true },
 
     username: {
-      type: String,
-      unique: true,
-      sparse: true,
-      trim: true,
-      lowercase: true,
-      index: true
-    },
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true
+      },
 
     email: {
       type: String,
@@ -37,6 +36,16 @@ const userSchema = new mongoose.Schema(
 
     studentClass: String,
     dob: Date,
+    gender: {
+        type: String,
+        enum: ["male", "female", "other"],
+        required: true
+      },
+      disability: {
+        type: String,
+        enum: ["yes", "no"],
+        default: "no"
+      },
 
     // 📍 Personal Address
     state: String,
@@ -73,6 +82,10 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "admin"],
       default: "student"
     },
+    school: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "School"
+    },
 
     resetToken: String,
     resetTokenExpire: Date
@@ -94,5 +107,6 @@ userSchema.methods.matchPassword = async function (entered) {
   if (!this.password) return false;
   return bcrypt.compare(entered, this.password);
 };
+
 
 export default mongoose.model("User", userSchema);

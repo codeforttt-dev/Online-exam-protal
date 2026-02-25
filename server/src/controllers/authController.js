@@ -32,7 +32,8 @@ export const registerUser = async (req, res) => {
       whatsapp,
       studentClass,
       dob,
-
+      gender,
+      disability,
       state,
       district,
       pincode,
@@ -110,7 +111,8 @@ export const registerUser = async (req, res) => {
       whatsapp,
       studentClass,
       dob,
-
+      gender,
+      disability,
       state,
       district,
       pincode,
@@ -155,6 +157,33 @@ export const registerUser = async (req, res) => {
   } catch (error) {
     console.error("Signup error:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+export const checkUsername = async (req, res) => {
+  try {
+    let username = req.params.username.toLowerCase().trim();
+
+    // remove special characters
+    username = username.replace(/[^a-z0-9_]/g, "");
+
+    // add @
+    if (!username.startsWith("@")) {
+      username = "@" + username;
+    }
+
+    const existing = await User.findOne({ username });
+
+    res.json({
+      available: !existing
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error"
+    });
   }
 };
 

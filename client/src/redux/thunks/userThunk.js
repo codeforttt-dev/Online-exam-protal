@@ -32,7 +32,19 @@ export const signupUser = createAsyncThunk(
   }
 );
 
-
+export const checkUsername = createAsyncThunk(
+  "user/checkUsername",
+  async (username, { rejectWithValue }) => {
+    try {
+      const res = await API.get(`/auth/check-username/${username}`);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(
+        err?.response?.data?.message || "Username check failed"
+      );
+    }
+  }
+);
 
 export const updateProfile = createAsyncThunk(
   "users/updateProfile",

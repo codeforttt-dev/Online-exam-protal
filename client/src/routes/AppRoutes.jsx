@@ -12,6 +12,7 @@ import StudyMaterials from "../modules/Students/StudyMaterials";
 import Leaderboard from "../modules/Students/Leaderboard";
 import HeroSection2 from "../pages/HeroSection2";
 import Register from "../pages/Register";
+import SchoolRegister from "../pages/school/SchoolRegister";
 
 function AppRoutes() {
   return (
@@ -21,6 +22,7 @@ function AppRoutes() {
       {/* <Route path="/login" element={<Login />} /> */}
       {/* <Route path="/signup" element={<Signup />} /> */}
       <Route path="/register" element={<Register />} />
+      <Route path="/school/register" element={<SchoolRegister />} />
       {/* Protected/Student Routes (with MainLayout sidebar) */}
       <Route path="/" element={<MainLayout />}>
         <Route path="dashboard" element={<Dashboard />} />

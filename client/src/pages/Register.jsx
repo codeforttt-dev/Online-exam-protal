@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { signupUser } from "../redux/thunks/userThunk";
+import { signupUser, checkUsername } from "../redux/thunks/userThunk";
 import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { Country, State } from "country-state-city";
@@ -12,6 +12,9 @@ import GlobalModal from "../component/ui/GlobalModal";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { checkPurchaseThunk } from "../redux/thunks/purchaseThunk";
+import { useSelector } from "react-redux";
+import { useRef } from "react";
+
 
 function Register() {
   const dispatch = useDispatch();
@@ -19,60 +22,85 @@ function Register() {
   const [isIndian, setIsIndian] = useState(true);
   const [isSchoolIndian, setIsSchoolIndian] = useState(true);
   const [showModal, setShowModal] = useState(false);
-
-  const navigate = useNavigate();
-const [formData, setFormData] = useState({
-  name: "",
-  whatsapp: "",
-  studentClass: "",
-
-  username: "",
-  password: "",
-  confirmPassword: "",
-  dob: "",
-
-  country: "",
-  countryCode: "",
-  state: "",
-  pincode: "",
-  mobile: "",
-
-  email: "",
-  district: "",
-  address: "",
-
-  school: "",
-  schoolCountry: "IN",
-  schoolState: "",
-  schoolDistrict: "",
-  schoolPincode: "",
-
-  fatherName: "",
-  fatherMobile: "",
-  fatherEmail: "",
-  fatherProfession: "",
-  motherName: "",
-  motherMobile: "",
-  motherEmail: "",
-  motherProfession: "",
-
-  siblings: [],
-  siblingCount: 0,
-
-  socialChecks: {
-    youtube: false,
-    instagram: false,
-    facebook: false,
-    telegram: false,
-    whatsapp: false
-  },
-
-  acceptTerms: false
-});
-
-
-
+  const [usernameStatus, setUsernameStatus] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const checkedUsernames = useRef({});
+  const [formData, setFormData] = useState({
+    name: "",
+    whatsapp: "",
+    studentClass: "",
+
+    username: "",
+    password: "",
+    confirmPassword: "",
+    dob: "",
+    gender: "",
+    disability: "no",
+    country: "",
+    countryCode: "",
+    state: "",
+    pincode: "",
+    mobile: "",
+
+    email: "",
+    district: "",
+    address: "",
+
+    school: "",
+    schoolCountry: "IN",
+    schoolState: "",
+    schoolDistrict: "",
+    schoolPincode: "",
+
+    fatherName: "",
+    fatherMobile: "",
+    fatherEmail: "",
+    fatherProfession: "",
+    motherName: "",
+    motherMobile: "",
+    motherEmail: "",
+    motherProfession: "",
+
+    siblings: [],
+    siblingCount: 0,
+
+    socialChecks: {
+      youtube: false,
+      instagram: false,
+      facebook: false,
+      telegram: false,
+      whatsapp: false
+    },
+
+    acceptTerms: false
+  });
+
+
+  useEffect(() => {
+    if (location.state) {
+      setFormData(prev => ({
+        ...prev,
+        name: location.state.name || "",
+        whatsapp: location.state.whatsapp || "",
+        studentClass: location.state.studentClass || ""
+      }));
+    }
+  }, [location]);
+  useEffect(() => {
+    const username = formData.username;
+
+    if (!username || username.length < 3) return;
+
+    if (checkedUsernames.current[username]) return;
+
+    const timer = setTimeout(() => {
+      dispatch(checkUsername(username));
+      checkedUsernames.current[username] = true;
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [formData.username, dispatch]);
 
   useEffect(() => {
     if (isIndian) {
@@ -90,16 +118,19 @@ const [formData, setFormData] = useState({
     }
   }, [isIndian]);
 
-  useEffect(() => {
-    if (location.state) {
-      setFormData(prev => ({
-        ...prev,
-        name: location.state.name || "",
-        whatsapp: location.state.whatsapp || "",
-        studentClass: location.state.studentClass || ""
-      }));
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   if (location.state) {
+  //     setFormData(prev => ({
+  //       ...prev,
+  //       name: location.state.name || "",
+  //       whatsapp: location.state.whatsapp || "",
+  //       studentClass: location.state.studentClass || ""
+  //     }));
+  //   }
+  // }, [location]);
+  const { usernameAvailable, usernameChecking } = useSelector(
+    (state) => state.user
+  );
 
   const handleStepClick = async (index) => {
     // ❌ Prevent jumping forward
@@ -208,14 +239,24 @@ const [formData, setFormData] = useState({
       alert("Please enter valid student age (3-25 years)");
       return;
     }
+    if (usernameAvailable === false) {
+      alert("Username already taken ❌");
+      return;
+    }
+
+    if (usernameAvailable === null) {
+      alert("Please verify username availability first.");
+      return;
+    }
     const payload = {
       purchaseId: localStorage.getItem("purchaseId"),
 
       name: formData.name,
-      username: formData.username,
+      username: "@" + formData.username.toLowerCase(),
       password: formData.password,
       email: formData.email,
-
+      gender: formData.gender,
+      disability: formData.disability,
       mobile: formData.mobile.startsWith("+")
         ? formData.mobile
         : "+" + formData.mobile,
@@ -253,9 +294,6 @@ const [formData, setFormData] = useState({
 
       siblings: formData.siblings
     };
-
-
-
     try {
       // console.log("FINAL PAYLOAD:", payload);
       await dispatch(signupUser(payload)).unwrap();
@@ -361,39 +399,57 @@ const [formData, setFormData] = useState({
     "Social"
   ];
   const getMobileSteps = () => {
-  const total = steps.length;
-  const current = step;
+    const total = steps.length;
+    const current = step;
 
-  let result = [];
+    let result = [];
 
-  // Always show first step if current > 1
-  if (current > 1) {
-    result.push(0);
-  }
+    // Always show first step if current > 1
+    if (current > 1) {
+      result.push(0);
+    }
 
-  // Previous
-  if (current - 1 >= 0) {
-    result.push(current - 1);
-  }
+    // Previous
+    if (current - 1 >= 0) {
+      result.push(current - 1);
+    }
 
-  // Current
-  result.push(current);
+    // Current
+    result.push(current);
 
-  // Next
-  if (current + 1 < total) {
-    result.push(current + 1);
-  }
+    // Next
+    if (current + 1 < total) {
+      result.push(current + 1);
+    }
 
-  // If not near last step, show dots + last
-  if (current + 1 < total - 1) {
-    result.push("dots");
-    result.push(total - 1);
-  }
+    // If not near last step, show dots + last
+    if (current + 1 < total - 1) {
+      result.push("dots");
+      result.push(total - 1);
+    }
 
-  return [...new Set(result)];
-};
+    return [...new Set(result)];
+  };
 
-
+const professionOptions = [
+  "Business",
+  "Farmer",
+  "Doctor",
+  "Engineer",
+  "Teacher",
+  "Lawyer",
+  "Defense Services",
+  "Police",
+  "Driver",
+  "Daily Wage Worker",
+  "Housewife",
+  "Retired",
+  "Unemployed",
+  "Self Employed",
+  "Government Employee",
+  "Private Employee",
+  "Other"
+];
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4 md:p-8">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-xl overflow-hidden">
@@ -407,76 +463,73 @@ const [formData, setFormData] = useState({
           </p>
         </div>
 
-{/* Progress Stepper */}
-<div className="px-4 md:px-8 pt-6">
+        {/* Progress Stepper */}
+        <div className="px-4 md:px-8 pt-6">
 
-  {/* Desktop Full Stepper */}
-  <div className="hidden md:block relative">
-    <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200"></div>
-    <div
-      className="absolute top-5 left-0 h-0.5 bg-blue-600 transition-all"
-      style={{ width: `${(step / (steps.length - 1)) * 100}%` }}
-    ></div>
+          {/* Desktop Full Stepper */}
+          <div className="hidden md:block relative">
+            <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200"></div>
+            <div
+              className="absolute top-5 left-0 h-0.5 bg-blue-600 transition-all"
+              style={{ width: `${(step / (steps.length - 1)) * 100}%` }}
+            ></div>
 
-    <div className="relative flex justify-between">
-      {steps.map((title, index) => (
-        <button
-          key={index}
-          type="button"
-          disabled={index > step}
-          onClick={() => handleStepClick(index)}
-          className={`flex flex-col items-center ${
-            index <= step ? "text-blue-600" : "text-gray-400"
-          }`}
-        >
-          <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              index <= step
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-600"
-            }`}
-          >
-            {index + 1}
+            <div className="relative flex justify-between">
+              {steps.map((title, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  disabled={index > step}
+                  onClick={() => handleStepClick(index)}
+                  className={`flex flex-col items-center ${index <= step ? "text-blue-600" : "text-gray-400"
+                    }`}
+                >
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${index <= step
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 text-gray-600"
+                      }`}
+                  >
+                    {index + 1}
+                  </div>
+                  <span className="text-xs mt-2">{title}</span>
+                </button>
+              ))}
+            </div>
           </div>
-          <span className="text-xs mt-2">{title}</span>
-        </button>
-      ))}
-    </div>
-  </div>
 
-  {/* Mobile Smart Stepper */}
-  <div className="md:hidden flex items-center justify-center gap-3">
+          {/* Mobile Smart Stepper */}
+          <div className="md:hidden flex items-center justify-center gap-3">
 
-    {getMobileSteps().map((item, i) => {
-      if (item === "dots") {
-        return (
-          <span key={i} className="text-gray-400 font-bold">
-            ...
-          </span>
-        );
-      }
+            {getMobileSteps().map((item, i) => {
+              if (item === "dots") {
+                return (
+                  <span key={i} className="text-gray-400 font-bold">
+                    ...
+                  </span>
+                );
+              }
 
-      return (
-        <button
-          key={i}
-          type="button"
-          onClick={() => handleStepClick(item)}
-          disabled={item > step}
-          className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold ${
-            item === step
-              ? "bg-blue-600 text-white"
-              : item < step
-              ? "bg-blue-100 text-blue-600"
-              : "bg-gray-200 text-gray-500"
-          }`}
-        >
-          {item + 1}
-        </button>
-      );
-    })}
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => handleStepClick(item)}
+                  disabled={item > step}
+                  className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold ${item === step
+                    ? "bg-blue-600 text-white"
+                    : item < step
+                      ? "bg-blue-100 text-blue-600"
+                      : "bg-gray-200 text-gray-500"
+                    }`}
+                >
+                  {item + 1}
+                </button>
+              );
+            })}
 
-  </div>
-</div>
+          </div>
+        </div>
 
         {/* Form Content */}
         <div className="p-6 md:p-8">
@@ -554,15 +607,47 @@ const [formData, setFormData] = useState({
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Choose Username <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="text"
-                      name="username"
-                      value={formData.username || ""}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                      placeholder="Enter username"
-                      required
-                    />
+                    <div className="relative">
+                      {/* Left @ symbol */}
+                      <span className="absolute left-3 top-2.5 text-gray-500">@</span>
+
+                      {/* Input */}
+                      <input
+                        type="text"
+                        name="username"
+                        value={formData.username}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            username: e.target.value
+                              .toLowerCase()
+                              .replace(/[^a-z0-9_]/g, "")
+                          })
+                        }
+                        className="pl-8 pr-20 w-full border rounded-lg px-4 py-2"
+                        placeholder="afzalreyaz"
+                        required
+                      />
+
+                      {/* Right side status */}
+                      {usernameChecking && (
+                        <span className="absolute right-3 top-2.5 text-gray-400 text-sm">
+                          Checking...
+                        </span>
+                      )}
+
+                      {!usernameChecking && usernameAvailable === true && (
+                        <span className="absolute right-3 top-2.5 text-green-600 text-sm">
+                          ✓
+                        </span>
+                      )}
+
+                      {!usernameChecking && usernameAvailable === false && (
+                        <span className="absolute right-3 top-2.5 text-red-600 text-sm">
+                          ✕
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div>
@@ -617,8 +702,10 @@ const [formData, setFormData] = useState({
             {step === 2 && (
               <div className="space-y-6">
 
-                {/* EMAIL + DOB */}
+                {/* EMAIL + DOB + GENDER + DISABILITY */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                  {/* EMAIL */}
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1">
                       Email <span className="text-red-500">*</span>
@@ -633,6 +720,7 @@ const [formData, setFormData] = useState({
                     />
                   </div>
 
+                  {/* DOB */}
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-1">
                       Date of Birth <span className="text-red-500">*</span>
@@ -647,6 +735,42 @@ const [formData, setFormData] = useState({
                       required
                     />
                   </div>
+
+                  {/* GENDER */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1">
+                      Gender <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {/* DISABILITY */}
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-1">
+                      Disability
+                    </label>
+                    <select
+                      name="disability"
+                      value={formData.disability}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">No</option>
+                      <option value="yes">Yes</option>
+                    </select>
+                  </div>
+
                 </div>
 
                 {/* FROM WHERE */}
@@ -1112,14 +1236,20 @@ const [formData, setFormData] = useState({
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Father's Profession
                       </label>
-                      <input
-                        type="text"
-                        name="fatherProfession"
-                        value={formData.fatherProfession || ""}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                        placeholder="Enter profession"
-                      />
+                      <select
+                          name="fatherProfession"
+                          value={formData.fatherProfession}
+                          onChange={handleChange}
+                          className="w-full text-sm px-3 py-1.5 border border-gray-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                          required
+                        >
+                          <option value="">Select Profession</option>
+                          {professionOptions.map((profession, index) => (
+                            <option key={index} value={profession}>
+                              {profession}
+                            </option>
+                          ))}
+                        </select>
                     </div>
                   </div>
                 </div>
@@ -1180,14 +1310,20 @@ const [formData, setFormData] = useState({
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Mother's Profession
                       </label>
-                      <input
-                        type="text"
-                        name="motherProfession"
-                        value={formData.motherProfession || ""}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                        placeholder="Enter profession"
-                      />
+                      <select
+                            name="motherProfession"
+                            value={formData.motherProfession}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            required
+                          >
+                            <option value="">Select Profession</option>
+                            {professionOptions.map((profession, index) => (
+                              <option key={index} value={profession}>
+                                {profession}
+                              </option>
+                            ))}
+                          </select>
                     </div>
                   </div>
                 </div>
