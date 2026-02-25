@@ -54,7 +54,11 @@ const userSchema = new mongoose.Schema(
     address: String,
 
     // 🏫 School Details
-    school: String,
+    school: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "School",
+      required: true
+    },
     schoolCountry: String,
     schoolState: String,
     schoolDistrict: String,
@@ -82,10 +86,7 @@ const userSchema = new mongoose.Schema(
       enum: ["student", "admin"],
       default: "student"
     },
-    school: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "School"
-    },
+
 
     resetToken: String,
     resetTokenExpire: Date

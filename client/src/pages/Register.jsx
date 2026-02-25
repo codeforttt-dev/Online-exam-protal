@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import { checkPurchaseThunk } from "../redux/thunks/purchaseThunk";
 import { useSelector } from "react-redux";
 import { useRef } from "react";
-
+import { fetchSchools } from "../redux/thunks/school/schoolThunk";
 
 function Register() {
   const dispatch = useDispatch();
@@ -26,6 +26,7 @@ function Register() {
   const location = useLocation();
   const navigate = useNavigate();
   const checkedUsernames = useRef({});
+
   const [formData, setFormData] = useState({
     name: "",
     whatsapp: "",
@@ -117,6 +118,11 @@ function Register() {
       }));
     }
   }, [isIndian]);
+  useEffect(() => {
+  dispatch(fetchSchools());
+}, [dispatch]);
+
+const { schools } = useSelector((state) => state.school);
 
   // useEffect(() => {
   //   if (location.state) {
@@ -717,6 +723,7 @@ const professionOptions = [
                       onChange={handleChange}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       required
+                      placeholder="useremail@gmail.com"
                     />
                   </div>
 
@@ -1026,28 +1033,27 @@ const professionOptions = [
                           School Name <span className="text-red-500">*</span>
                         </label>
 
-                        <CreatableSelect
-                          options={schoolOptions}
-                          isSearchable
-                          placeholder="Search or type full school name"
-                          value={
-                            formData.school
-                              ? { label: formData.school, value: formData.school }
-                              : null
-                          }
-                          onChange={(selected) =>
-                            setFormData(prev => ({
-                              ...prev,
-                              school: selected.value
-                            }))
-                          }
-                          onCreateOption={(inputValue) =>
-                            setFormData(prev => ({
-                              ...prev,
-                              school: inputValue
-                            }))
-                          }
-                        />
+                        <select
+                            name="school"
+                            value={formData.school || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                school: e.target.value
+                              })
+                            }
+                            className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                            required
+                          >
+                            <option value="">Select School</option>
+
+                            {schools?.map((school) => (
+                              <option key={school._id} value={school._id}>
+                                {school.name}
+                              </option>
+                            ))}
+
+                          </select>
                       </div>
                       <div>
                         <label className="text-sm font-medium text-gray-700 mb-1">
@@ -1080,28 +1086,27 @@ const professionOptions = [
                           School Name <span className="text-red-500">*</span>
                         </label>
 
-                        <CreatableSelect
-                          options={schoolOptions}
-                          isSearchable
-                          placeholder="Search or type full school name"
-                          value={
-                            formData.school
-                              ? { label: formData.school, value: formData.school }
-                              : null
-                          }
-                          onChange={(selected) =>
-                            setFormData(prev => ({
-                              ...prev,
-                              school: selected.value
-                            }))
-                          }
-                          onCreateOption={(inputValue) =>
-                            setFormData(prev => ({
-                              ...prev,
-                              school: inputValue
-                            }))
-                          }
-                        />
+                        <select
+                            name="school"
+                            value={formData.school || ""}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                school: e.target.value
+                              })
+                            }
+                            className="w-full h-[44px] px-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500"
+                            required
+                          >
+                            <option value="">Select School</option>
+
+                            {schools?.map((school) => (
+                              <option key={school._id} value={school._id}>
+                                {school.name}
+                              </option>
+                            ))}
+
+                          </select>
                       </div>
                       {/* STATE */}
                       <div>

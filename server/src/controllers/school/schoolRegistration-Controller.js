@@ -29,8 +29,13 @@ export const registerSchool = async (req, res) => {
 
 
 export const getSchools = async (req, res) => {
-  const schools = await School.find({ isApproved: true })
-    .select("name");
+  try {
+    const schools = await School.find({ isApproved: true })
+      .select("_id name")
+      .sort({ name: 1 });
 
-  res.json(schools);
+    res.json(schools);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 };
