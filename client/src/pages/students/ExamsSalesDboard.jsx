@@ -215,7 +215,7 @@ const handleSignup = async (e) => {
             </div>
             <div>
               <h2 className="text-xl md:text-2xl font-black leading-tight text-gray-600">
-                Welcome to the Universe of<br />
+                Welcome to the Universe off<br />
               </h2>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black leading-tight text-blue-600 whitespace-nowrap">
                 The True Topper
