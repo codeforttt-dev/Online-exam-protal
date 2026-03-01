@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { registerSchool, fetchSchools } 
-from "../../thunks/school/schoolThunk";
+import { registerSchool, fetchSchools, checkSchoolUsername } from "../../thunks/school/schoolThunk";
 
 const initialState = {
   schools: [],
   loading: false,
   error: null,
-  success: false
+  success: false,
+  usernameAvailable: null,
+  usernameChecking: false,
+  lastCheckedUsername: null
 };
 
 const schoolSlice = createSlice({
@@ -44,9 +46,23 @@ const schoolSlice = createSlice({
       .addCase(fetchSchools.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(checkSchoolUsername.pending, (state) => {
+        state.usernameChecking = true;
+      })
+      .addCase(checkSchoolUsername.fulfilled, (state, action) => {
+        state.usernameChecking = false;
+        state.usernameAvailable = action.payload.available;
+        state.lastCheckedUsername = action.meta.arg;   // ⭐ IMPORTANT
+      })
+      .addCase(checkSchoolUsername.rejected, (state) => {
+        state.usernameChecking = false;
+        state.usernameAvailable = null;
       });
   }
 });
 
+
 export const { resetSchoolState } = schoolSlice.actions;
 export default schoolSlice.reducer;
+

@@ -28,3 +28,18 @@ export const fetchSchools = createAsyncThunk(
     }
   }
 );
+
+export const checkSchoolUsername = createAsyncThunk(
+  "school/checkUsername",
+  async (username, { rejectWithValue }) => {
+    try {
+      const res = await API.get(
+        `/school/check-username/${username}`
+      );
+      return res.data;
+    } catch (err) {
+      return rejectWithValue("Username check failed");
+    }
+  }
+);
+

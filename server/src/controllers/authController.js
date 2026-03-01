@@ -38,27 +38,23 @@ export const registerUser = async (req, res) => {
       district,
       pincode,
       address,
-
       school,
       schoolCountry,
       schoolState,
       schoolDistrict,
       schoolPincode,
-
       fatherName,
       fatherMobile,
       fatherEmail,
       fatherProfession,
-
       motherName,
       motherMobile,
       motherEmail,
       motherProfession,
-
       siblings
     } = req.body;
 
-    /* ========= VALIDATION ========= */
+    /* ========= BASIC VALIDATION ========= */
     if (!name || !username || !password || !email) {
       return res.status(400).json({
         message: "Required fields missing"
@@ -71,6 +67,17 @@ export const registerUser = async (req, res) => {
       });
     }
 
+    /* ========= CLEAN USERNAME ========= */
+    const cleanUsername = username
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "");
+
+    const finalUsername = "@s-" + cleanUsername;
+
+    /* ========= NORMALIZE EMAIL ========= */
+    const normalizedEmail = email.toLowerCase().trim();
+
+    /* ========= PURCHASE CHECK ========= */
     const purchase = await Purchase.findOne({
       _id: purchaseId,
       name,
@@ -90,9 +97,12 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    /* ========= CHECK EXISTING ========= */
+    /* ========= CHECK EXISTING USER ========= */
     const exists = await User.findOne({
-      $or: [{ username }, { email }]
+      $or: [
+        { username: finalUsername },
+        { email: normalizedEmail }
+      ]
     });
 
     if (exists) {
@@ -104,9 +114,9 @@ export const registerUser = async (req, res) => {
     /* ========= CREATE USER ========= */
     const user = await User.create({
       name,
-      username,
+      username: finalUsername,
       password,
-      email,
+      email: normalizedEmail,
       mobile,
       whatsapp,
       studentClass,
@@ -117,25 +127,20 @@ export const registerUser = async (req, res) => {
       district,
       pincode,
       address,
-
       school,
       schoolCountry,
       schoolState,
       schoolDistrict,
       schoolPincode,
-
       fatherName,
       fatherMobile,
       fatherEmail,
       fatherProfession,
-
       motherName,
       motherMobile,
       motherEmail,
       motherProfession,
-
       siblings,
-
       isPaid: true,
       profileCompleted: true
     });

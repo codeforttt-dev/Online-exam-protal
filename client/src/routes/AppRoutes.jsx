@@ -1,40 +1,51 @@
 // src/components/AppRoutes.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
-// import Home from "../pages/Home";
-// import Login from "../pages/Login";
-// import Signup from "../pages/Signup";
 import MainLayout from "../component/layout/Layout";
 import Dashboard from "../modules/Students/Dashboard";
 import Olympiads from "../modules/Students/Olympiads";
 import PracticeTests from "../modules/Students/PracticeTests";
 import Results from "../modules/Students/Results";
 import StudyMaterials from "../modules/Students/StudyMaterials";
-import Leaderboard from "../modules/Students/Leaderboard";
-import HeroSection2 from "../pages/HeroSection2";
-import Register from "../pages/Register";
+import Leaderboard from "../modules/schoolDashboard/Leaderboard";
+import Register from "../pages/students/Register";
+import ExamsSalesDboard from "../pages/students/ExamsSalesDboard";
+
+// School
 import SchoolRegister from "../pages/school/SchoolRegister";
+import SchoolDash from "../modules/schoolDashboard/SchoolDash";
+import SchoolLayout from "../component/schoolDashboardLayout/schoolLayout";
+import MySchool from "../modules/schoolDashboard/MySchool";
 
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes (without sidebar) */}
-      <Route path="/" element={<HeroSection2 />} />
-      {/* <Route path="/login" element={<Login />} /> */}
-      {/* <Route path="/signup" element={<Signup />} /> */}
+
+      {/* ================= PUBLIC ROUTES ================= */}
+      <Route path="/" element={<ExamsSalesDboard />} />
       <Route path="/register" element={<Register />} />
+
+      {/* ================= SCHOOL PUBLIC ================= */}
       <Route path="/school/register" element={<SchoolRegister />} />
-      {/* Protected/Student Routes (with MainLayout sidebar) */}
+
+      {/* ================= SCHOOL DASHBOARD WITH SIDEBAR ================= */}
+      <Route path="/school" element={<SchoolLayout />}>
+        <Route path="dashboard" element={<SchoolDash />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
+         <Route path="my-school" element={<MySchool />} />
+      </Route>
+
+      {/* ================= STUDENT DASHBOARD ================= */}
       <Route path="/" element={<MainLayout />}>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="olympiads" element={<Olympiads />} />
         <Route path="practice-tests" element={<PracticeTests />} />
         <Route path="results" element={<Results />} />
         <Route path="study-materials" element={<StudyMaterials />} />
-        <Route path="leaderboard" element={<Leaderboard />} />
       </Route>
-      
-      {/* Redirect any unknown routes to home */}
+
+      {/* ================= FALLBACK ================= */}
       <Route path="*" element={<Navigate to="/" />} />
+
     </Routes>
   );
 }
